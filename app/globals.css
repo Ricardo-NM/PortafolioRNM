@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted: #f4f4f5;
+  --muted-foreground: #52525b;
+  --border: #d4d4d8;
+  --ring: #18181b;
+  --content-gutter: 20px;
+  --content-width: calc(100% - (var(--content-gutter) * 2));
+  --content-left: var(--content-gutter);
+  --content-right: calc(100% - var(--content-gutter));
+  --banner-height: max(22vh, 180px, calc(38.7786vw - 15.5114px));
+  --profile-height: 9rem;
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --muted: #09090b;
+  --muted-foreground: #a1a1aa;
+  --border: #27272a;
+  --ring: #fafafa;
+}
+
+* {
+  box-sizing: border-box;
+  border-color: var(--border);
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--foreground) 14%, transparent);
+}
+
+.blueprint-mask-x {
+  background-image: radial-gradient(
+    circle,
+    currentColor 0 0.55px,
+    transparent 0.65px
+  );
+  background-repeat: repeat-x;
+  background-size: 7px 2px;
+  background-position: left center;
+}
+
+.blueprint-mask-y {
+  background-image: radial-gradient(
+    circle,
+    currentColor 0 0.55px,
+    transparent 0.65px
+  );
+  background-repeat: repeat-y;
+  background-size: 2px 7px;
+  background-position: center top;
+}
+
+.blueprint-dot {
+  box-shadow: 0 0 0 1px var(--background);
+}
+
+.theme-banner-frame {
+  display: grid;
+  aspect-ratio: 2014 / 781;
+  width: 100%;
+  min-height: var(--banner-height);
+}
+
+.theme-banner-layer,
+.theme-banner-scrim {
+  grid-area: 1 / 1;
+}
+
+.theme-banner-layer {
+  min-height: inherit;
+  background-position: center;
+  background-size: cover;
+}
+
+.header-actions {
+  position: fixed;
+  top: calc(22vh + 34px);
+  right: 20px;
+  z-index: 20;
+}
+
+.desktop-actions {
+  display: none;
+}
+
+.mobile-theme-action {
+  display: flex;
+}
+
+.content-column {
+  width: var(--content-width);
+  margin-inline: auto;
+}
+
+.profile-section {
+  min-height: var(--profile-height);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --content-gutter: 30%;
+    --content-width: 40%;
+    --banner-height: max(22vh, 180px, 15.5114vw);
+  }
+
+  .content-column {
+    width: var(--content-width);
+  }
+
+  .header-actions {
+    position: static;
+    z-index: auto;
+  }
+
+  .desktop-actions {
+    display: flex;
+  }
+
+  .mobile-theme-action {
+    display: none;
+  }
+}
