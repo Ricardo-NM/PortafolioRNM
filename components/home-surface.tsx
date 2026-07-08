@@ -1,6 +1,8 @@
 import Image from "next/image";
-import { Download, Github, Linkedin, Mail } from "lucide-react";
+import { Download, Github, Linkedin, Mail, MapPin, Star } from "lucide-react";
 
+import linkedInBanner from "@/assets/images/bannerL.jpg";
+import linkedInProfile from "@/assets/images/profileL.jpg";
 import profilePicture from "@/assets/images/profilePicture.jpeg";
 import { Blueprint } from "@/components/blueprint";
 import { ThemeBanner } from "@/components/theme-banner";
@@ -8,9 +10,9 @@ import { Button } from "@/components/ui/button";
 
 const profileSummary = [
   [
-    { text: "Desarrollador Full Stack", highlight: true },
+    { text: "Especialista", highlight: true },
     {
-      text: " especializado en sistemas empresariales, plataformas administrativas y aplicaciones web.",
+      text: " en el desarrollo de sistemas empresariales, plataformas administrativas y aplicaciones web.",
     },
   ],
   [
@@ -30,10 +32,137 @@ const profileSummary = [
 ];
 
 const profileActionButtonClass =
-  "h-8 w-full min-w-0 gap-1.5 border-[#52525c] px-2 text-[10px] font-bold leading-none text-[#52525c] hover:border-[#52525c] hover:bg-transparent hover:text-[#52525c] dark:border-[#d4d4d8] dark:text-[#d4d4d8] dark:hover:border-[#d4d4d8] dark:hover:bg-transparent dark:hover:text-[#d4d4d8] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0 [&_span]:leading-none";
+  "h-8 w-full min-w-0 gap-1.5 border-[#52525c] px-2 text-[10px] font-bold leading-none text-[#52525c] hover:border-[#52525c] hover:bg-[#52525c]/10 hover:text-[#18181b] dark:border-[#d4d4d8] dark:text-[#d4d4d8] dark:hover:border-[#fff] dark:hover:bg-[#d4d4d8]/10 dark:hover:text-[#fff] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0 [&_span]:leading-none";
 
 const profileContactButtonClass =
-  "h-8 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2 text-[10px] font-bold leading-none text-[#d4d4d8] hover:border-[#000] hover:bg-[#000] hover:text-[#d4d4d8] dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#52525c] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0";
+  "h-8 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2 text-[10px] font-bold leading-none text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-[#000] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0";
+
+function GitHubPreviewCard() {
+  return (
+    <aside
+      aria-hidden="true"
+      className="pointer-events-none absolute top-1/2 left-full z-50 hidden w-[262px] origin-left -translate-y-1/2 group-hover/github-preview:pointer-events-auto group-focus-within/github-preview:pointer-events-auto lg:block"
+    >
+      <div className="profile-preview-sweep relative origin-left opacity-0 transition-[clip-path,opacity] delay-0 duration-300 ease-out [clip-path:polygon(0_50%,0_50%,0_50%,0_50%)] group-hover/github-preview:delay-300 group-hover/github-preview:opacity-100 group-hover/github-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)] group-focus-within/github-preview:delay-300 group-focus-within/github-preview:opacity-100 group-focus-within/github-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]">
+        <span className="absolute top-1/2 left-3 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b border-l border-[#e4e4e7] bg-[#fff] dark:border-[#27272a] dark:bg-[#09090b]" />
+
+        <div className="ml-3 rounded-lg border border-[#e4e4e7] bg-[#fff] px-4 py-4 text-left shadow-[0_18px_50px_rgba(0,0,0,0.16)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border border-[#e4e4e7] bg-[#f4f4f5] dark:border-[#27272a] dark:bg-[#18181b]">
+              <Image
+                src={profilePicture}
+                alt=""
+                sizes="48px"
+                className="h-full w-full object-cover"
+              />
+            </div>
+
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5]">
+                Ricardo Nava Mayoral
+              </p>
+              <p className="mt-1 text-xs font-medium leading-none text-[#71717a] dark:text-[#71717a]">
+                Ricardo-NM
+              </p>
+            </div>
+          </div>
+
+          <p className="mt-4 text-[12px] font-normal leading-none text-[#3f3f46] dark:text-[#d4d4d8]">
+            Full Stack Developer
+          </p>
+
+          <div className="mt-4 flex items-center gap-2 text-[11px] font-medium text-[#a1a1aa] dark:text-[#71717a]">
+            <MapPin size={14} strokeWidth={2} aria-hidden="true" />
+            <span>Hidalgo, MX (UTC -06:00)</span>
+          </div>
+
+          <div className="my-4 h-px bg-[#e4e4e7] dark:bg-[#27272a]" />
+
+          <div className="flex items-center justify-between gap-3 text-[13px] leading-none text-[#71717a] dark:text-[#71717a]">
+            <p>
+              <strong className="font-bold text-[#18181b] dark:text-[#f4f4f5]">
+                13
+              </strong>{" "}
+              Repositorios
+            </p>
+
+            <span
+              className="inline-flex items-center gap-1 rounded-full border-1 border-[#826ef8] px-1.5 py-0.5 text-[11px] font-bold leading-none text-[#826ef8]"
+              style={{ borderColor: "#826ef8" }}
+            >
+              <Star
+                size={12}
+                strokeWidth={2}
+                aria-hidden="true"
+                className="text-[#52525c] dark:text-[#d4d4d8]"
+              />
+              PRO
+            </span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function LinkedInPreviewCard() {
+  return (
+    <aside
+      aria-hidden="true"
+      className="pointer-events-none absolute top-1/2 left-full z-50 hidden w-[262px] origin-left -translate-y-1/2 group-hover/linkedin-preview:pointer-events-auto group-focus-within/linkedin-preview:pointer-events-auto lg:block"
+    >
+      <div className="profile-preview-sweep relative origin-left opacity-0 transition-[clip-path,opacity] delay-0 duration-300 ease-out [clip-path:polygon(0_50%,0_50%,0_50%,0_50%)] group-hover/linkedin-preview:delay-300 group-hover/linkedin-preview:opacity-100 group-hover/linkedin-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)] group-focus-within/linkedin-preview:delay-300 group-focus-within/linkedin-preview:opacity-100 group-focus-within/linkedin-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]">
+        <span className="absolute top-1/2 left-3 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b border-l border-[#e4e4e7] bg-[#fff] dark:border-[#27272a] dark:bg-[#09090b]" />
+
+        <div className="ml-3 overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#fff] text-left shadow-[0_18px_50px_rgba(0,0,0,0.16)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
+          <div className="relative h-16">
+            <Image
+              src={linkedInBanner}
+              alt=""
+              sizes="262px"
+              className="h-full w-full object-cover"
+            />
+
+            <div className="absolute left-4 -bottom-7 h-14 w-14 overflow-hidden rounded-full border-2 border-[#fff] bg-[#f4f4f5] dark:border-[#09090b] dark:bg-[#18181b]">
+              <Image
+                src={linkedInProfile}
+                alt=""
+                sizes="56px"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </div>
+
+          <div className="px-4 pt-9 pb-4">
+            <p className="truncate text-sm font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5]">
+              Ricardo Nava Mayoral
+            </p>
+
+            <p className="mt-3 text-[12px] font-normal leading-none text-[#3f3f46] dark:text-[#d4d4d8]">
+              Desarrollador Full Stack
+            </p>
+
+            <div className="mt-4 flex items-center gap-2 text-[11px] font-medium text-[#a1a1aa] dark:text-[#71717a]">
+              <MapPin size={14} strokeWidth={2} aria-hidden="true" />
+              <span>Tizayuca, Hidalgo, México</span>
+            </div>
+
+            <div className="my-4 h-px bg-[#e4e4e7] dark:bg-[#27272a]" />
+
+            <div className="flex justify-start text-[13px] leading-none text-[#71717a] dark:text-[#71717a]">
+              <p>
+                <strong className="font-bold text-[#18181b] dark:text-[#f4f4f5]">
+                  3
+                </strong>{" "}
+                Seguidores
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
 
 export function HomeSurface() {
   return (
@@ -147,27 +276,35 @@ export function HomeSurface() {
             </div>
 
             <div className="hidden flex-col items-end gap-2 lg:flex lg:min-w-28">
-              <Button asChild className={profileActionButtonClass}>
-                <a
-                  href="https://github.com/Ricardo-NM"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Github size={13} strokeWidth={2.5} aria-hidden="true" />
-                  GitHub
-                </a>
-              </Button>
+              <div className="group/github-preview relative">
+                <Button asChild className={profileActionButtonClass}>
+                  <a
+                    href="https://github.com/Ricardo-NM"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Github size={13} strokeWidth={2.5} aria-hidden="true" />
+                    GitHub
+                  </a>
+                </Button>
 
-              <Button asChild className={profileActionButtonClass}>
-                <a
-                  href="https://www.linkedin.com/in/ricardo-nava-mayoral/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Linkedin size={13} strokeWidth={2.5} aria-hidden="true" />
-                  LinkedIn
-                </a>
-              </Button>
+                <GitHubPreviewCard />
+              </div>
+
+              <div className="group/linkedin-preview relative">
+                <Button asChild className={profileActionButtonClass}>
+                  <a
+                    href="https://www.linkedin.com/in/ricardo-nava-mayoral/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Linkedin size={13} strokeWidth={2.5} aria-hidden="true" />
+                    LinkedIn
+                  </a>
+                </Button>
+
+                <LinkedInPreviewCard />
+              </div>
 
               <Button asChild className={profileActionButtonClass}>
                 <a
