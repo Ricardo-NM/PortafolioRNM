@@ -2,6 +2,11 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import { HomeSurface } from "@/components/home-surface";
+import {
+  contactFormConfig,
+  hasContactDraft,
+  isContactFormComplete,
+} from "@/components/contact-drawer";
 
 vi.mock("next/image", () => ({
   default: ({ alt, className }: { alt: string; className?: string }) => (
@@ -34,6 +39,72 @@ vi.mock("next-themes", () => ({
 }));
 
 describe("HomeSurface", () => {
+  it("detects contact form drafts when any field has text", () => {
+    expect(
+      hasContactDraft({
+        fullName: "",
+        email: "",
+        message: "",
+      }),
+    ).toBe(false);
+    expect(
+      hasContactDraft({
+        fullName: "Ricardo",
+        email: "",
+        message: "",
+      }),
+    ).toBe(true);
+    expect(
+      hasContactDraft({
+        fullName: "",
+        email: "ricardo@example.com",
+        message: "",
+      }),
+    ).toBe(true);
+    expect(
+      hasContactDraft({
+        fullName: "",
+        email: "",
+        message: "Hola",
+      }),
+    ).toBe(true);
+  });
+
+  it("requires all contact form fields to be filled before submit", () => {
+    expect(
+      isContactFormComplete({
+        fullName: "",
+        email: "",
+        message: "",
+      }),
+    ).toBe(false);
+    expect(
+      isContactFormComplete({
+        fullName: "Ricardo Nava",
+        email: "ricardo@example.com",
+        message: "",
+      }),
+    ).toBe(false);
+    expect(
+      isContactFormComplete({
+        fullName: "Ricardo Nava",
+        email: "ricardo@example.com",
+        message: "Hola",
+      }),
+    ).toBe(true);
+  });
+
+  it("uses the configured Forminit form and required field names", () => {
+    expect(contactFormConfig.formId).toBe(
+      process.env.NEXT_PUBLIC_FORMINIT_FORM_ID,
+    );
+    expect(contactFormConfig.fields).toEqual({
+      fullName: "fi-sender-fullName",
+      email: "fi-sender-email",
+      message: "fi-text-message",
+    });
+  });
+
   it("renders the profile summary and action links", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
     const text = html.replace(/<[^>]+>/g, "");
@@ -80,7 +151,9 @@ describe("HomeSurface", () => {
       "dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c]",
     );
 
-    expect(html).toContain('href="mailto:');
+    expect(html).toContain('aria-haspopup="dialog"');
+    expect(html).toContain("Abrir formulario de contacto");
+    expect(html).not.toContain('href="mailto:');
     expect(html).toContain('href="/api/cv"');
     expect(html).toContain('download="CV-Ricardo_Nava_Mayoral.pdf"');
     expect(html).toContain('aria-label="Descargar CV"');

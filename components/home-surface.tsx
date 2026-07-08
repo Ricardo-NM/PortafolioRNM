@@ -1,10 +1,11 @@
 import Image from "next/image";
-import { Download, Github, Linkedin, Mail, MapPin, Star } from "lucide-react";
+import { Download, Github, Linkedin, MapPin, Star } from "lucide-react";
 
 import linkedInBanner from "@/assets/images/bannerL.jpg";
 import linkedInProfile from "@/assets/images/profileL.jpg";
 import profilePicture from "@/assets/images/profilePicture.jpeg";
 import { Blueprint } from "@/components/blueprint";
+import { ContactDrawer } from "@/components/contact-drawer";
 import { ThemeBanner } from "@/components/theme-banner";
 import { Button } from "@/components/ui/button";
 
@@ -46,7 +47,7 @@ function GitHubPreviewCard() {
       <div className="profile-preview-sweep relative origin-left opacity-0 transition-[clip-path,opacity] delay-0 duration-300 ease-out [clip-path:polygon(0_50%,0_50%,0_50%,0_50%)] group-hover/github-preview:delay-300 group-hover/github-preview:opacity-100 group-hover/github-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)] group-focus-within/github-preview:delay-300 group-focus-within/github-preview:opacity-100 group-focus-within/github-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]">
         <span className="absolute top-1/2 left-3 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b border-l border-[#e4e4e7] bg-[#fff] dark:border-[#27272a] dark:bg-[#09090b]" />
 
-        <div className="ml-3 rounded-lg border border-[#e4e4e7] bg-[#fff] px-4 py-4 text-left shadow-[0_18px_50px_rgba(0,0,0,0.16)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
+        <div className="ml-3 rounded-lg border border-[#e4e4e7] bg-[#fff] px-4 py-4 text-left dark:border-[#27272a] dark:bg-[#09090b]">
           <div className="flex items-center gap-3">
             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border border-[#e4e4e7] bg-[#f4f4f5] dark:border-[#27272a] dark:bg-[#18181b]">
               <Image
@@ -114,7 +115,7 @@ function LinkedInPreviewCard() {
       <div className="profile-preview-sweep relative origin-left opacity-0 transition-[clip-path,opacity] delay-0 duration-300 ease-out [clip-path:polygon(0_50%,0_50%,0_50%,0_50%)] group-hover/linkedin-preview:delay-300 group-hover/linkedin-preview:opacity-100 group-hover/linkedin-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)] group-focus-within/linkedin-preview:delay-300 group-focus-within/linkedin-preview:opacity-100 group-focus-within/linkedin-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]">
         <span className="absolute top-1/2 left-3 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b border-l border-[#e4e4e7] bg-[#fff] dark:border-[#27272a] dark:bg-[#09090b]" />
 
-        <div className="ml-3 overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#fff] text-left shadow-[0_18px_50px_rgba(0,0,0,0.16)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
+        <div className="ml-3 overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#fff] text-left dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_18px_50px_rgba(0,0,0,0.55)]">
           <div className="relative h-16">
             <Image
               src={linkedInBanner}
@@ -223,22 +224,12 @@ export function HomeSurface() {
               </ul>
 
               <div className="mt-5 hidden items-center justify-start lg:flex">
-                <Button asChild className={profileContactButtonClass}>
-                  <a href="mailto:" aria-label="Enviar email de contacto">
-                    <Mail size={13} strokeWidth={2.5} aria-hidden="true" />
-                    Contacto
-                  </a>
-                </Button>
+                <ContactDrawer className={profileContactButtonClass} />
               </div>
             </div>
 
             <div className="col-span-full grid grid-cols-4 items-center gap-1.5 md:gap-2 lg:hidden">
-              <Button asChild className={profileContactButtonClass}>
-                <a href="mailto:" aria-label="Enviar email de contacto">
-                  <Mail size={13} strokeWidth={2.5} aria-hidden="true" />
-                  Contacto
-                </a>
-              </Button>
+              <ContactDrawer className={profileContactButtonClass} />
 
               <Button asChild className={profileActionButtonClass}>
                 <a
