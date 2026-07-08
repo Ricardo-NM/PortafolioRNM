@@ -4,10 +4,7 @@ const verticalLines = [
   "left-[var(--content-left)]",
   "left-[var(--content-right)]",
 ];
-const horizontalLines = [
-  "top-[var(--banner-height)]",
-  "top-[calc(var(--banner-height)+var(--profile-height))]",
-];
+const horizontalLines = ["top-[var(--banner-height)]"];
 
 const lineStyle: CSSProperties = {
   opacity: 0.18,
@@ -39,7 +36,7 @@ export function Blueprint() {
         horizontalLines.map((top) => (
           <span
             key={`${left}-${top}`}
-            className={`blueprint-dot absolute h-[2px] w-[2px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground/45 ${left} ${top}`}
+            className={`blueprint-dot absolute -translate-x-1/2 -translate-y-1/2 ${left} ${top}`}
           />
         )),
       )}

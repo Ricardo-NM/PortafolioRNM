@@ -28,7 +28,7 @@
   --content-left: var(--content-gutter);
   --content-right: calc(100% - var(--content-gutter));
   --banner-height: max(22vh, 180px, calc(38.7786vw - 15.5114px));
-  --profile-height: 9rem;
+  --profile-height: 7.875rem;
 }
 
 .dark {
@@ -45,8 +45,20 @@
   border-color: var(--border);
 }
 
-html {
+html,
+body {
   background: var(--background);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 body {
@@ -90,7 +102,17 @@ a {
 }
 
 .blueprint-dot {
+  z-index: 70;
+  width: 2px;
+  height: 2px;
+  border-radius: 9999px;
+  background: #000;
   box-shadow: 0 0 0 1px var(--background);
+}
+
+.dark .blueprint-dot,
+[data-theme="dark"] .blueprint-dot {
+  background: #fff;
 }
 
 .theme-banner-frame {
@@ -140,6 +162,7 @@ a {
     --content-gutter: 30%;
     --content-width: 40%;
     --banner-height: max(22vh, 180px, 15.5114vw);
+    --profile-height: 8.875rem;
   }
 
   .content-column {
