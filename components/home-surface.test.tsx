@@ -282,9 +282,6 @@ describe("HomeSurface", () => {
     expect(html).toContain("sm:mt-2");
     expect(html).toContain('aria-label="Expandir experiencia en ArdabyTec"');
     expect(html).toContain(
-      'aria-label="Contraer experiencia en KPUGA | Consultoria en comercio exterior"',
-    );
-    expect(html).toContain(
       "grid h-10 w-10 place-items-center rounded-lg border border-[#e4e4e7] bg-[#fff]",
     );
     expect(html).toContain("object-contain");
@@ -314,49 +311,34 @@ describe("HomeSurface", () => {
     });
   });
 
-  it("renders expanded experience details with stats, bullets, and badges", () => {
+  it("starts with the experience accordion closed", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
     const text = html.replace(/<[^>]+>/g, "");
 
-    expect(html).toContain('id="kpuga-details"');
-    expect(html).toContain('aria-controls="kpuga-details"');
-    expect(html).toContain('aria-expanded="true"');
-    expect(html).toContain("grid auto-rows-fr grid-cols-2 md:grid-cols-4");
-    expect(html).toContain(
-      "relative flex min-h-14 flex-col items-center justify-center px-3 py-3 text-center md:px-4",
-    );
-    expect(html).toContain("experience-detail-local-guide-line");
-    expect(html).toContain("text-justify");
-    expect(text).toContain("+15");
-    expect(text).toContain("USUARIOS");
-    expect(text).toContain("VPS LINUX");
-    expect(text).toContain("Comercio exterior");
-    expect(text).toContain("MySQL");
+    expect(html).not.toContain('id="kpuga-details"');
+    expect(html).not.toContain('aria-expanded="true"');
+    expect(html).toContain('aria-expanded="false"');
+    expect(html).not.toContain("grid auto-rows-fr grid-cols-2 md:grid-cols-4");
+    expect(html).not.toContain("experience-detail-local-guide-line");
+    expect(text).not.toContain("+15");
+    expect(text).not.toContain("USUARIOS");
+    expect(text).not.toContain("VPS LINUX");
+    expect(text).not.toContain("Comercio exterior");
+    expect(text).not.toContain("MySQL");
   });
 
   it("keeps experience detail guide lines aligned with the page grid", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
 
-    expect(html).toContain("experience-detail-local-guide-line");
-    expect(html).toContain("experience-detail-guide-dot");
-    expect(html).toContain("experience-detail-stat-row");
-    expect(html).toContain("experience-detail-bullet-row");
+    expect(html).not.toContain("experience-detail-local-guide-line");
+    expect(html).not.toContain("experience-detail-guide-dot");
+    expect(html).not.toContain("experience-detail-stat-row");
+    expect(html).not.toContain("experience-detail-bullet-row");
     expect(html).toContain("experience-item-guide-line");
     expect(html).toContain("experience-item-guide-dot");
-    expect(html).toContain("col-span-full -mx-3 overflow-visible px-3");
-    expect(html).toContain("absolute left-0 z-50 h-0 w-full");
-    expect(html).toContain("absolute -left-3 z-50 h-0 w-[calc(100%+1.5rem)]");
     expect(html).not.toContain(
       "experience-detail-guide-line blueprint-mask-x pointer-events-none absolute left-0",
     );
-    expect(html).toContain("-mx-3 px-3");
-    expect(html).toContain("stats-column-guide blueprint-mask-y");
-    expect(html).toContain("stats-column-guide-dot");
-    expect(html).toContain("stats-row-guide-line");
-    expect(html).toContain("stats-row-guide-dot");
-    expect(html).toContain("top-1/2 md:hidden");
-    expect(html).toContain("left-1/2 top-0 -translate-x-1/2");
-    expect(html).toContain("md:hidden");
     expect(html).not.toContain("bg-foreground/45");
     expect(html).not.toContain("border-r border-dotted");
     expect(html).not.toContain("odd:border-r");

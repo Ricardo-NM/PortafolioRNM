@@ -344,9 +344,7 @@ function LinkedInPreviewCard() {
 }
 
 function ExperienceSection() {
-  const [openExperienceId, setOpenExperienceId] = useState<string | null>(
-    experiences[0]?.id ?? null,
-  );
+  const [openExperienceId, setOpenExperienceId] = useState<string | null>(null);
   const [pendingExperienceId, setPendingExperienceId] = useState<string | null>(
     null,
   );
