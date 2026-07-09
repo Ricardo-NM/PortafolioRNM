@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, CircleCheck, Mail, Send, X } from "lucide-react";
+import { createPortal } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -62,6 +63,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
   const [values, setValues] = useState<ContactFormValues>(emptyFormValues);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const isFormComplete = isContactFormComplete(values);
+  const portalTarget = typeof document === "undefined" ? null : document.body;
 
   const requestClose = useCallback(() => {
     if (hasContactDraft(values)) {
@@ -183,260 +185,268 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
         Contacto
       </Button>
 
-      <AnimatePresence>
-        {isOpen ? (
-          <motion.div
-            aria-labelledby="contact-drawer-title"
-            aria-modal="true"
-            className="fixed inset-0 z-100 flex justify-end overflow-hidden bg-white backdrop-blur-none dark:bg-black sm:bg-white/35 sm:backdrop-blur-md sm:dark:bg-black/55"
-            exit={{ opacity: 0 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            role="dialog"
-            transition={{ duration: 0.18, ease: "easeOut" }}
-          >
-            <button
-              aria-label="Cerrar formulario de contacto"
-              className="absolute inset-0 hidden cursor-default sm:block"
-              onClick={requestClose}
-              type="button"
-            />
-
-            <motion.aside
-              id="contact-drawer"
-              className="relative z-10 flex h-dvh w-full max-w-none flex-col border-l-0 border-[#d4d4d8] bg-white text-[#18181b] shadow-none dark:border-[#27272a] dark:bg-black dark:text-[#f4f4f5] sm:max-w-[min(92vw,420px)] sm:border-l sm:shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:dark:shadow-[0_24px_80px_rgba(0,0,0,0.72)]"
-              exit={{ x: "100%" }}
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="flex min-h-16 items-center justify-between border-b border-[#e4e4e7] px-5 dark:border-[#27272a] sm:px-6">
-                <div className="min-w-0">
-                  <p
-                    id="contact-drawer-title"
-                    className="text-sm font-bold uppercase leading-none"
-                  >
-                    Contacto
-                  </p>
-                  <p className="mt-2 text-xs font-medium leading-none text-[#71717a] dark:text-[#a1a1aa]">
-                    Envíame un mensaje directo
-                  </p>
-                </div>
-
-                <Button
-                  aria-label="Cerrar formulario"
-                  className="h-10 w-10 border-[#d4d4d8] bg-transparent p-0 text-[#52525c] hover:border-[#18181b] hover:bg-[#f4f4f5] hover:text-[#18181b] dark:border-[#27272a] dark:text-[#d4d4d8] dark:hover:border-white dark:hover:bg-[#18181b] dark:hover:text-white"
-                  onClick={requestClose}
-                  size="icon"
-                  type="button"
+      {portalTarget
+        ? createPortal(
+            <AnimatePresence>
+              {isOpen ? (
+                <motion.div
+                  aria-labelledby="contact-drawer-title"
+                  aria-modal="true"
+                  className="fixed inset-0 z-100 flex justify-end overflow-hidden bg-white backdrop-blur-none dark:bg-black sm:bg-white/35 sm:backdrop-blur-md sm:dark:bg-black/55"
+                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  role="dialog"
+                  transition={{ duration: 0.18, ease: "easeOut" }}
                 >
-                  <X size={16} strokeWidth={2.5} aria-hidden="true" />
-                </Button>
-              </div>
-
-              <form
-                className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-5 py-6 sm:px-6"
-                onSubmit={handleSubmit}
-              >
-                <label className="text-sm font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]">
-                  Nombre completo <span aria-hidden="true">*</span>
-                  <input
-                    ref={nameInputRef}
-                    autoComplete="name"
-                    className={fieldClassName}
-                    name={contactFormConfig.fields.fullName}
-                    placeholder="Ingresa tu nombre"
-                    onChange={(event) =>
-                      setValues((currentValues) => ({
-                        ...currentValues,
-                        fullName: event.target.value,
-                      }))
-                    }
-                    required
-                    type="text"
-                    value={values.fullName}
+                  <button
+                    aria-label="Cerrar formulario de contacto"
+                    className="absolute inset-0 hidden cursor-default sm:block"
+                    onClick={requestClose}
+                    type="button"
                   />
-                </label>
 
-                <label className="text-sm font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]">
-                  Correo electrónico <span aria-hidden="true">*</span>
-                  <input
-                    autoComplete="email"
-                    className={fieldClassName}
-                    inputMode="email"
-                    name={contactFormConfig.fields.email}
-                    placeholder="correo@ejemplo.com"
-                    onChange={(event) =>
-                      setValues((currentValues) => ({
-                        ...currentValues,
-                        email: event.target.value,
-                      }))
-                    }
-                    required
-                    type="email"
-                    value={values.email}
-                  />
-                </label>
-
-                <label className="text-sm font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]">
-                  Mensaje <span aria-hidden="true">*</span>
-                  <textarea
-                    className={cn(fieldClassName, "min-h-36 resize-none py-3")}
-                    name={contactFormConfig.fields.message}
-                    placeholder="Escribe tu mensaje..."
-                    onChange={(event) =>
-                      setValues((currentValues) => ({
-                        ...currentValues,
-                        message: event.target.value,
-                      }))
-                    }
-                    required
-                    value={values.message}
-                  />
-                </label>
-
-                <div
-                  className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden opacity-0"
-                  aria-hidden="true"
-                >
-                  <label>
-                    Website
-                    <input
-                      autoComplete="off"
-                      name="website"
-                      tabIndex={-1}
-                      value={values.website}
-                      onChange={(event) =>
-                        setValues((currentValues) => ({
-                          ...currentValues,
-                          website: event.target.value,
-                        }))
-                      }
-                    />
-                  </label>
-                </div>
-
-                <Button
-                  className="mt-auto h-11 w-full gap-2 border-black bg-black px-4 text-xs font-bold leading-none text-[#d4d4d8] transition-[background-color,border-color,color,opacity,transform] duration-300 ease-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-white disabled:cursor-not-allowed disabled:border-[#18181b]/20 disabled:bg-[#18181b]/15 disabled:text-[#18181b]/40 disabled:opacity-100 dark:border-white dark:bg-white dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-black dark:disabled:border-white/20 dark:disabled:bg-white/15 dark:disabled:text-white/40"
-                  disabled={!isFormComplete || submitStatus === "loading"}
-                  type="submit"
-                >
-                  <Send size={14} strokeWidth={2.5} aria-hidden="true" />
-                  {submitStatus === "loading" ? "Enviando..." : "Enviar"}
-                </Button>
-
-                {submitStatus === "error" ? (
-                  <p
-                    className="text-center text-xs font-medium leading-5 text-[#b91c1c] dark:text-[#fca5a5]"
-                    role="alert"
+                  <motion.aside
+                    id="contact-drawer"
+                    className="relative z-10 flex h-dvh w-full max-w-none flex-col border-l-0 border-[#d4d4d8] bg-white text-[#18181b] shadow-none dark:border-[#27272a] dark:bg-black dark:text-[#f4f4f5] sm:max-w-[min(92vw,420px)] sm:border-l sm:shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:dark:shadow-[0_24px_80px_rgba(0,0,0,0.72)]"
+                    exit={{ x: "100%" }}
+                    initial={{ x: "100%" }}
+                    animate={{ x: 0 }}
+                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    {submitError ?? "No se pudo enviar el mensaje."}
-                  </p>
-                ) : null}
-              </form>
-
-              <AnimatePresence>
-                {submitStatus === "success" ? (
-                  <motion.div
-                    aria-labelledby="contact-success-title"
-                    aria-modal="true"
-                    className="absolute inset-0 z-20 grid place-items-center bg-white/55 px-4 backdrop-blur-sm dark:bg-black/65"
-                    exit={{ opacity: 0 }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    role="alertdialog"
-                    transition={{ duration: 0.16 }}
-                  >
-                    <motion.div
-                      className="w-full max-w-[320px] rounded-lg border border-[#d4d4d8] bg-white p-5 text-left shadow-[0_22px_60px_rgba(0,0,0,0.2)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_22px_60px_rgba(0,0,0,0.66)]"
-                      exit={{ y: 8, scale: 0.98 }}
-                      initial={{ y: 8, scale: 0.98 }}
-                      animate={{ y: 0, scale: 1 }}
-                      transition={{ duration: 0.18, ease: "easeOut" }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="grid h-10 w-10 shrink-0 place-items-center text-[#52525c] dark:text-[#d4d4d8]">
-                          <CircleCheck
-                            size={18}
-                            strokeWidth={2.5}
-                            aria-hidden="true"
-                          />
-                        </span>
-
-                        <div className="min-w-0">
-                          <p
-                            id="contact-success-title"
-                            className="text-sm font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5]"
-                          >
-                            Mensaje enviado correctamente
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                ) : null}
-
-                {showCloseConfirmation ? (
-                  <motion.div
-                    aria-labelledby="contact-close-title"
-                    aria-modal="true"
-                    className="absolute inset-0 z-20 grid place-items-center bg-white/55 px-4 backdrop-blur-sm dark:bg-black/65"
-                    exit={{ opacity: 0 }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    role="alertdialog"
-                    transition={{ duration: 0.16 }}
-                  >
-                    <motion.div
-                      className="w-full max-w-[320px] rounded-lg border border-[#d4d4d8] bg-white p-5 text-left shadow-[0_22px_60px_rgba(0,0,0,0.2)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_22px_60px_rgba(0,0,0,0.66)]"
-                      exit={{ y: 8, scale: 0.98 }}
-                      initial={{ y: 8, scale: 0.98 }}
-                      animate={{ y: 0, scale: 1 }}
-                      transition={{ duration: 0.18, ease: "easeOut" }}
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className="grid h-10 w-10 shrink-0 place-items-center text-[#52525c] dark:text-[#d4d4d8]">
-                          <AlertTriangle
-                            size={18}
-                            strokeWidth={2.25}
-                            aria-hidden="true"
-                          />
-                        </span>
-
-                        <div className="min-w-0">
-                          <p
-                            id="contact-close-title"
-                            className="text-sm font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5]"
-                          >
-                            ¿Deseas cerrar y borrar el contenido?
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                        <Button
-                          className="h-10 border-[#d4d4d8] bg-transparent px-3 text-xs font-bold text-[#52525c] hover:border-[#18181b] hover:bg-[#f4f4f5] hover:text-[#18181b] dark:border-[#27272a] dark:text-[#d4d4d8] dark:hover:border-white dark:hover:bg-[#18181b] dark:hover:text-white"
-                          onClick={() => setShowCloseConfirmation(false)}
-                          type="button"
+                    <div className="flex min-h-16 items-center justify-between border-b border-[#e4e4e7] px-5 dark:border-[#27272a] sm:px-6">
+                      <div className="min-w-0">
+                        <p
+                          id="contact-drawer-title"
+                          className="text-sm font-bold uppercase leading-none"
                         >
-                          No cerrar
-                        </Button>
-                        <Button
-                          className="h-10 border-black bg-black px-3 text-xs font-bold text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-white dark:border-white dark:bg-white dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-black"
-                          onClick={closeAndReset}
-                          type="button"
-                        >
-                          Cerrar
-                        </Button>
+                          Contacto
+                        </p>
+                        <p className="mt-2 text-xs font-medium leading-none text-[#71717a] dark:text-[#a1a1aa]">
+                          Envíame un mensaje directo
+                        </p>
                       </div>
-                    </motion.div>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
-            </motion.aside>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+
+                      <Button
+                        aria-label="Cerrar formulario"
+                        className="h-10 w-10 border-[#d4d4d8] bg-transparent p-0 text-[#52525c] hover:border-[#18181b] hover:bg-[#f4f4f5] hover:text-[#18181b] dark:border-[#27272a] dark:text-[#d4d4d8] dark:hover:border-white dark:hover:bg-[#18181b] dark:hover:text-white"
+                        onClick={requestClose}
+                        size="icon"
+                        type="button"
+                      >
+                        <X size={16} strokeWidth={2.5} aria-hidden="true" />
+                      </Button>
+                    </div>
+
+                    <form
+                      className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-5 py-6 sm:px-6"
+                      onSubmit={handleSubmit}
+                    >
+                      <label className="text-sm font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]">
+                        Nombre completo <span aria-hidden="true">*</span>
+                        <input
+                          ref={nameInputRef}
+                          autoComplete="name"
+                          className={fieldClassName}
+                          name={contactFormConfig.fields.fullName}
+                          placeholder="Ingresa tu nombre"
+                          onChange={(event) =>
+                            setValues((currentValues) => ({
+                              ...currentValues,
+                              fullName: event.target.value,
+                            }))
+                          }
+                          required
+                          type="text"
+                          value={values.fullName}
+                        />
+                      </label>
+
+                      <label className="text-sm font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]">
+                        Correo electrónico <span aria-hidden="true">*</span>
+                        <input
+                          autoComplete="email"
+                          className={fieldClassName}
+                          inputMode="email"
+                          name={contactFormConfig.fields.email}
+                          placeholder="correo@ejemplo.com"
+                          onChange={(event) =>
+                            setValues((currentValues) => ({
+                              ...currentValues,
+                              email: event.target.value,
+                            }))
+                          }
+                          required
+                          type="email"
+                          value={values.email}
+                        />
+                      </label>
+
+                      <label className="text-sm font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]">
+                        Mensaje <span aria-hidden="true">*</span>
+                        <textarea
+                          className={cn(
+                            fieldClassName,
+                            "min-h-36 resize-none py-3",
+                          )}
+                          name={contactFormConfig.fields.message}
+                          placeholder="Escribe tu mensaje..."
+                          onChange={(event) =>
+                            setValues((currentValues) => ({
+                              ...currentValues,
+                              message: event.target.value,
+                            }))
+                          }
+                          required
+                          value={values.message}
+                        />
+                      </label>
+
+                      <div
+                        className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden opacity-0"
+                        aria-hidden="true"
+                      >
+                        <label>
+                          Website
+                          <input
+                            autoComplete="off"
+                            name="website"
+                            tabIndex={-1}
+                            value={values.website}
+                            onChange={(event) =>
+                              setValues((currentValues) => ({
+                                ...currentValues,
+                                website: event.target.value,
+                              }))
+                            }
+                          />
+                        </label>
+                      </div>
+
+                      <Button
+                        className="mt-auto h-11 w-full gap-2 border-black bg-black px-4 text-xs font-bold leading-none text-[#d4d4d8] transition-[background-color,border-color,color,opacity,transform] duration-300 ease-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-white disabled:cursor-not-allowed disabled:border-[#18181b]/20 disabled:bg-[#18181b]/15 disabled:text-[#18181b]/40 disabled:opacity-100 dark:border-white dark:bg-white dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-black dark:disabled:border-white/20 dark:disabled:bg-white/15 dark:disabled:text-white/40"
+                        disabled={!isFormComplete || submitStatus === "loading"}
+                        type="submit"
+                      >
+                        <Send size={14} strokeWidth={2.5} aria-hidden="true" />
+                        {submitStatus === "loading" ? "Enviando..." : "Enviar"}
+                      </Button>
+
+                      {submitStatus === "error" ? (
+                        <p
+                          className="text-center text-xs font-medium leading-5 text-[#b91c1c] dark:text-[#fca5a5]"
+                          role="alert"
+                        >
+                          {submitError ?? "No se pudo enviar el mensaje."}
+                        </p>
+                      ) : null}
+                    </form>
+
+                    <AnimatePresence>
+                      {submitStatus === "success" ? (
+                        <motion.div
+                          aria-labelledby="contact-success-title"
+                          aria-modal="true"
+                          className="absolute inset-0 z-20 grid place-items-center bg-white/55 px-4 backdrop-blur-sm dark:bg-black/65"
+                          exit={{ opacity: 0 }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          role="alertdialog"
+                          transition={{ duration: 0.16 }}
+                        >
+                          <motion.div
+                            className="w-full max-w-[320px] rounded-lg border border-[#d4d4d8] bg-white p-5 text-left shadow-[0_22px_60px_rgba(0,0,0,0.2)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_22px_60px_rgba(0,0,0,0.66)]"
+                            exit={{ y: 8, scale: 0.98 }}
+                            initial={{ y: 8, scale: 0.98 }}
+                            animate={{ y: 0, scale: 1 }}
+                            transition={{ duration: 0.18, ease: "easeOut" }}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="grid h-10 w-10 shrink-0 place-items-center text-[#52525c] dark:text-[#d4d4d8]">
+                                <CircleCheck
+                                  size={18}
+                                  strokeWidth={2.5}
+                                  aria-hidden="true"
+                                />
+                              </span>
+
+                              <div className="min-w-0">
+                                <p
+                                  id="contact-success-title"
+                                  className="text-sm font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5]"
+                                >
+                                  Mensaje enviado correctamente
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                      ) : null}
+
+                      {showCloseConfirmation ? (
+                        <motion.div
+                          aria-labelledby="contact-close-title"
+                          aria-modal="true"
+                          className="absolute inset-0 z-20 grid place-items-center bg-white/55 px-4 backdrop-blur-sm dark:bg-black/65"
+                          exit={{ opacity: 0 }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          role="alertdialog"
+                          transition={{ duration: 0.16 }}
+                        >
+                          <motion.div
+                            className="w-full max-w-[320px] rounded-lg border border-[#d4d4d8] bg-white p-5 text-left shadow-[0_22px_60px_rgba(0,0,0,0.2)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_22px_60px_rgba(0,0,0,0.66)]"
+                            exit={{ y: 8, scale: 0.98 }}
+                            initial={{ y: 8, scale: 0.98 }}
+                            animate={{ y: 0, scale: 1 }}
+                            transition={{ duration: 0.18, ease: "easeOut" }}
+                          >
+                            <div className="flex items-start gap-3">
+                              <span className="grid h-10 w-10 shrink-0 place-items-center text-[#52525c] dark:text-[#d4d4d8]">
+                                <AlertTriangle
+                                  size={18}
+                                  strokeWidth={2.25}
+                                  aria-hidden="true"
+                                />
+                              </span>
+
+                              <div className="min-w-0">
+                                <p
+                                  id="contact-close-title"
+                                  className="text-sm font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5]"
+                                >
+                                  ¿Deseas cerrar y borrar el contenido?
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                              <Button
+                                className="h-10 border-[#d4d4d8] bg-transparent px-3 text-xs font-bold text-[#52525c] hover:border-[#18181b] hover:bg-[#f4f4f5] hover:text-[#18181b] dark:border-[#27272a] dark:text-[#d4d4d8] dark:hover:border-white dark:hover:bg-[#18181b] dark:hover:text-white"
+                                onClick={() => setShowCloseConfirmation(false)}
+                                type="button"
+                              >
+                                No cerrar
+                              </Button>
+                              <Button
+                                className="h-10 border-black bg-black px-3 text-xs font-bold text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-white dark:border-white dark:bg-white dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-black"
+                                onClick={closeAndReset}
+                                type="button"
+                              >
+                                Cerrar
+                              </Button>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                      ) : null}
+                    </AnimatePresence>
+                  </motion.aside>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>,
+            portalTarget,
+          )
+        : null}
     </>
   );
 }
