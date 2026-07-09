@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, CircleCheck, Mail, Send, X } from "lucide-react";
-import { Forminit } from "forminit";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,16 +11,17 @@ export type ContactFormValues = {
   fullName: string;
   email: string;
   message: string;
+  website: string;
 };
 
 const emptyFormValues: ContactFormValues = {
   fullName: "",
   email: "",
   message: "",
+  website: "",
 };
 
 export const contactFormConfig = {
-  formId: process.env.NEXT_PUBLIC_FORMINIT_FORM_ID,
   fields: {
     fullName: "fi-sender-fullName",
     email: "fi-sender-email",
@@ -54,7 +54,6 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
   const [values, setValues] = useState<ContactFormValues>(emptyFormValues);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const isFormComplete = isContactFormComplete(values);
-  const forminit = useMemo(() => new Forminit({ proxyUrl: "/api/forminit" }), []);
 
   const requestClose = useCallback(() => {
     if (hasContactDraft(values)) {
@@ -83,26 +82,35 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
     setSubmitStatus("loading");
     setSubmitError(null);
 
-    if (!contactFormConfig.formId) {
+    try {
+      const response = await fetch("/api/resend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: values.fullName.trim(),
+          email: values.email.trim(),
+          message: values.message.trim(),
+          website: values.website.trim(),
+        }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+
+      if (!response.ok) {
+        setSubmitStatus("error");
+        setSubmitError(payload?.error ?? "No se pudo enviar el mensaje.");
+        return;
+      }
+
+      setSubmitStatus("success");
+    } catch {
       setSubmitStatus("error");
-      setSubmitError("Falta configurar el formulario de contacto.");
-      return;
+      setSubmitError("No se pudo enviar el mensaje.");
     }
-
-    const formData = new FormData();
-    formData.set(contactFormConfig.fields.fullName, values.fullName.trim());
-    formData.set(contactFormConfig.fields.email, values.email.trim());
-    formData.set(contactFormConfig.fields.message, values.message.trim());
-
-    const { error } = await forminit.submit(contactFormConfig.formId, formData);
-
-    if (error) {
-      setSubmitStatus("error");
-      setSubmitError(error.message);
-      return;
-    }
-
-    setSubmitStatus("success");
   };
 
   useEffect(() => {
@@ -172,7 +180,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
           <motion.div
             aria-labelledby="contact-drawer-title"
             aria-modal="true"
-            className="fixed inset-0 z-[100] flex justify-end overflow-hidden bg-[#fff] backdrop-blur-none dark:bg-[#000] sm:bg-[#fff]/35 sm:backdrop-blur-md sm:dark:bg-[#000]/55"
+            className="fixed inset-0 z-100 flex justify-end overflow-hidden bg-white backdrop-blur-none dark:bg-black sm:bg-white/35 sm:backdrop-blur-md sm:dark:bg-black/55"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -188,7 +196,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
 
             <motion.aside
               id="contact-drawer"
-              className="relative z-10 flex h-dvh w-full max-w-none flex-col border-l-0 border-[#d4d4d8] bg-[#fff] text-[#18181b] shadow-none dark:border-[#27272a] dark:bg-[#000] dark:text-[#f4f4f5] sm:max-w-[min(92vw,420px)] sm:border-l sm:shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:dark:shadow-[0_24px_80px_rgba(0,0,0,0.72)]"
+              className="relative z-10 flex h-dvh w-full max-w-none flex-col border-l-0 border-[#d4d4d8] bg-white text-[#18181b] shadow-none dark:border-[#27272a] dark:bg-black dark:text-[#f4f4f5] sm:max-w-[min(92vw,420px)] sm:border-l sm:shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:dark:shadow-[0_24px_80px_rgba(0,0,0,0.72)]"
               exit={{ x: "100%" }}
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -209,7 +217,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
 
                 <Button
                   aria-label="Cerrar formulario"
-                  className="h-10 w-10 border-[#d4d4d8] bg-transparent p-0 text-[#52525c] hover:border-[#18181b] hover:bg-[#f4f4f5] hover:text-[#18181b] dark:border-[#27272a] dark:text-[#d4d4d8] dark:hover:border-[#fff] dark:hover:bg-[#18181b] dark:hover:text-[#fff]"
+                  className="h-10 w-10 border-[#d4d4d8] bg-transparent p-0 text-[#52525c] hover:border-[#18181b] hover:bg-[#f4f4f5] hover:text-[#18181b] dark:border-[#27272a] dark:text-[#d4d4d8] dark:hover:border-white dark:hover:bg-[#18181b] dark:hover:text-white"
                   onClick={requestClose}
                   size="icon"
                   type="button"
@@ -279,8 +287,29 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
                   />
                 </label>
 
+                <div
+                  className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden opacity-0"
+                  aria-hidden="true"
+                >
+                  <label>
+                    Website
+                    <input
+                      autoComplete="off"
+                      name="website"
+                      tabIndex={-1}
+                      value={values.website}
+                      onChange={(event) =>
+                        setValues((currentValues) => ({
+                          ...currentValues,
+                          website: event.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                </div>
+
                 <Button
-                  className="mt-auto h-11 w-full gap-2 border-[#000] bg-[#000] px-4 text-xs font-bold leading-none text-[#d4d4d8] transition-[background-color,border-color,color,opacity,transform] duration-300 ease-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] disabled:cursor-not-allowed disabled:border-[#18181b]/20 disabled:bg-[#18181b]/15 disabled:text-[#18181b]/40 disabled:opacity-100 dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-[#000] dark:disabled:border-[#fff]/20 dark:disabled:bg-[#fff]/15 dark:disabled:text-[#fff]/40"
+                  className="mt-auto h-11 w-full gap-2 border-black bg-black px-4 text-xs font-bold leading-none text-[#d4d4d8] transition-[background-color,border-color,color,opacity,transform] duration-300 ease-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-white disabled:cursor-not-allowed disabled:border-[#18181b]/20 disabled:bg-[#18181b]/15 disabled:text-[#18181b]/40 disabled:opacity-100 dark:border-white dark:bg-white dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-black dark:disabled:border-white/20 dark:disabled:bg-white/15 dark:disabled:text-white/40"
                   disabled={!isFormComplete || submitStatus === "loading"}
                   type="submit"
                 >
@@ -303,7 +332,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
                   <motion.div
                     aria-labelledby="contact-success-title"
                     aria-modal="true"
-                    className="absolute inset-0 z-20 grid place-items-center bg-[#fff]/55 px-4 backdrop-blur-sm dark:bg-[#000]/65"
+                    className="absolute inset-0 z-20 grid place-items-center bg-white/55 px-4 backdrop-blur-sm dark:bg-black/65"
                     exit={{ opacity: 0 }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -311,7 +340,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
                     transition={{ duration: 0.16 }}
                   >
                     <motion.div
-                      className="w-full max-w-[320px] rounded-lg border border-[#d4d4d8] bg-[#fff] p-5 text-left shadow-[0_22px_60px_rgba(0,0,0,0.2)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_22px_60px_rgba(0,0,0,0.66)]"
+                      className="w-full max-w-[320px] rounded-lg border border-[#d4d4d8] bg-white p-5 text-left shadow-[0_22px_60px_rgba(0,0,0,0.2)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_22px_60px_rgba(0,0,0,0.66)]"
                       exit={{ y: 8, scale: 0.98 }}
                       initial={{ y: 8, scale: 0.98 }}
                       animate={{ y: 0, scale: 1 }}
@@ -343,7 +372,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
                   <motion.div
                     aria-labelledby="contact-close-title"
                     aria-modal="true"
-                    className="absolute inset-0 z-20 grid place-items-center bg-[#fff]/55 px-4 backdrop-blur-sm dark:bg-[#000]/65"
+                    className="absolute inset-0 z-20 grid place-items-center bg-white/55 px-4 backdrop-blur-sm dark:bg-black/65"
                     exit={{ opacity: 0 }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -351,7 +380,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
                     transition={{ duration: 0.16 }}
                   >
                     <motion.div
-                      className="w-full max-w-[320px] rounded-lg border border-[#d4d4d8] bg-[#fff] p-5 text-left shadow-[0_22px_60px_rgba(0,0,0,0.2)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_22px_60px_rgba(0,0,0,0.66)]"
+                      className="w-full max-w-[320px] rounded-lg border border-[#d4d4d8] bg-white p-5 text-left shadow-[0_22px_60px_rgba(0,0,0,0.2)] dark:border-[#27272a] dark:bg-[#09090b] dark:shadow-[0_22px_60px_rgba(0,0,0,0.66)]"
                       exit={{ y: 8, scale: 0.98 }}
                       initial={{ y: 8, scale: 0.98 }}
                       animate={{ y: 0, scale: 1 }}
@@ -378,14 +407,14 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
 
                       <div className="mt-5 grid gap-4 sm:grid-cols-2">
                         <Button
-                          className="h-10 border-[#d4d4d8] bg-transparent px-3 text-xs font-bold text-[#52525c] hover:border-[#18181b] hover:bg-[#f4f4f5] hover:text-[#18181b] dark:border-[#27272a] dark:text-[#d4d4d8] dark:hover:border-[#fff] dark:hover:bg-[#18181b] dark:hover:text-[#fff]"
+                          className="h-10 border-[#d4d4d8] bg-transparent px-3 text-xs font-bold text-[#52525c] hover:border-[#18181b] hover:bg-[#f4f4f5] hover:text-[#18181b] dark:border-[#27272a] dark:text-[#d4d4d8] dark:hover:border-white dark:hover:bg-[#18181b] dark:hover:text-white"
                           onClick={() => setShowCloseConfirmation(false)}
                           type="button"
                         >
                           No cerrar
                         </Button>
                         <Button
-                          className="h-10 border-[#000] bg-[#000] px-3 text-xs font-bold text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-[#000]"
+                          className="h-10 border-black bg-black px-3 text-xs font-bold text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-white dark:border-white dark:bg-white dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-black"
                           onClick={closeAndReset}
                           type="button"
                         >

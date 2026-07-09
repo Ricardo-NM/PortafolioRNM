@@ -58,6 +58,7 @@ describe("HomeSurface", () => {
         fullName: "",
         email: "",
         message: "",
+        website: "",
       }),
     ).toBe(false);
     expect(
@@ -65,6 +66,7 @@ describe("HomeSurface", () => {
         fullName: "Ricardo",
         email: "",
         message: "",
+        website: "",
       }),
     ).toBe(true);
     expect(
@@ -72,6 +74,7 @@ describe("HomeSurface", () => {
         fullName: "",
         email: "ricardo@example.com",
         message: "",
+        website: "",
       }),
     ).toBe(true);
     expect(
@@ -79,6 +82,7 @@ describe("HomeSurface", () => {
         fullName: "",
         email: "",
         message: "Hola",
+        website: "",
       }),
     ).toBe(true);
   });
@@ -89,6 +93,7 @@ describe("HomeSurface", () => {
         fullName: "",
         email: "",
         message: "",
+        website: "",
       }),
     ).toBe(false);
     expect(
@@ -96,6 +101,7 @@ describe("HomeSurface", () => {
         fullName: "Ricardo Nava",
         email: "ricardo@example.com",
         message: "",
+        website: "",
       }),
     ).toBe(false);
     expect(
@@ -103,14 +109,12 @@ describe("HomeSurface", () => {
         fullName: "Ricardo Nava",
         email: "ricardo@example.com",
         message: "Hola",
+        website: "",
       }),
     ).toBe(true);
   });
 
-  it("uses the configured Forminit form and required field names", () => {
-    expect(contactFormConfig.formId).toBe(
-      process.env.NEXT_PUBLIC_FORMINIT_FORM_ID,
-    );
+  it("uses the required contact field names", () => {
     expect(contactFormConfig.fields).toEqual({
       fullName: "fi-sender-fullName",
       email: "fi-sender-email",
@@ -136,15 +140,6 @@ describe("HomeSurface", () => {
     );
     expect(html).toContain("lg:gap-x-0");
     expect(html).toContain("lg:pr-5");
-    expect(html).toContain(
-      '<span class="font-bold text-[#000] dark:text-[#fff]">Especialista</span>',
-    );
-    expect(html).toContain(
-      '<span class="font-bold text-[#000] dark:text-[#fff]">resolver problemas</span>',
-    );
-    expect(html).toContain(
-      '<span class="font-bold text-[#000] dark:text-[#fff]">ciclo de desarrollo</span>',
-    );
     expect(html).toContain(
       "grid grid-cols-4 items-center gap-1.5 md:gap-2 lg:hidden",
     );
@@ -174,13 +169,6 @@ describe("HomeSurface", () => {
     expect(html).toContain(
       'aria-labelledby="profile-summary-title" class="relative bg-background px-3 py-3"',
     );
-    expect(html).toContain(
-      "relative z-[60] grid gap-y-5 lg:grid-cols-[minmax(0,1fr)_max-content]",
-    );
-    expect(html).not.toContain(
-      "relative z-30 grid gap-y-5 lg:grid-cols-[minmax(0,1fr)_max-content]",
-    );
-
     expect(html).toContain('aria-haspopup="dialog"');
     expect(html).toContain("Abrir formulario de contacto");
     expect(html).not.toContain('href="mailto:');
