@@ -30,11 +30,19 @@ export const contactFormConfig = {
 } as const;
 
 export function hasContactDraft(values: ContactFormValues) {
-  return Object.values(values).some((value) => value.length > 0);
+  return (
+    values.fullName.length > 0 ||
+    values.email.length > 0 ||
+    values.message.length > 0
+  );
 }
 
 export function isContactFormComplete(values: ContactFormValues) {
-  return Object.values(values).every((value) => value.trim().length > 0);
+  return (
+    values.fullName.trim().length > 0 &&
+    values.email.trim().length > 0 &&
+    values.message.trim().length > 0
+  );
 }
 
 type ContactDrawerProps = {
