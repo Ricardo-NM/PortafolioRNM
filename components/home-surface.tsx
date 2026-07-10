@@ -710,19 +710,19 @@ function TechIcon({ iconSlug, name }: { iconSlug: string; name: string }) {
       className="relative block h-3.5 w-3.5 overflow-hidden"
     >
       <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-100 transition-opacity duration-300 group-hover/tooltip:opacity-0 dark:opacity-0"
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-100 transition-opacity duration-300 group-hover/card:opacity-0 group-hover/tooltip:opacity-0 dark:opacity-0 dark:group-hover/card:opacity-100 dark:group-hover/tooltip:opacity-0"
         style={{ backgroundImage: `url(${iconUrls.lightBase})` }}
       />
       <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/tooltip:opacity-100 dark:opacity-0 dark:group-hover/tooltip:opacity-0"
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/tooltip:opacity-100 group-hover/card:group-hover/tooltip:opacity-0 dark:opacity-0 dark:group-hover/tooltip:opacity-0 dark:group-hover/card:group-hover/tooltip:opacity-100"
         style={{ backgroundImage: `url(${iconUrls.lightHover})` }}
       />
       <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 dark:opacity-100 dark:group-hover/tooltip:opacity-0"
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 group-hover/tooltip:opacity-0 dark:opacity-100 dark:group-hover/card:opacity-0 dark:group-hover/tooltip:opacity-0"
         style={{ backgroundImage: `url(${iconUrls.darkBase})` }}
       />
       <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 dark:group-hover/tooltip:opacity-100"
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/card:group-hover/tooltip:opacity-100 dark:group-hover/tooltip:opacity-100 dark:group-hover/card:group-hover/tooltip:opacity-0"
         style={{ backgroundImage: `url(${iconUrls.darkHover})` }}
       />
       <span className="sr-only">{name}</span>
@@ -774,29 +774,29 @@ function ProjectsSection() {
             return (
               <Fragment key={project.id}>
                 <div className="relative flex px-4 py-4 sm:px-6 sm:py-6">
-                  <article className="group relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 transition-all dark:border-[#27272a] dark:bg-[#18181b]">
-                    <div className="relative mb-4 w-full overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 dark:border-[#27272a] dark:bg-[#27272a]/30">
-                      <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7]  dark:border-[#3f3f46]">
+                  <article className="group/card relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 transition-all duration-300 hover:border-[#27272a] hover:bg-[#18181b] dark:border-[#27272a] dark:bg-[#18181b] dark:hover:border-[#e4e4e7] dark:hover:bg-[#fff]">
+                    <div className="relative mb-4 w-full overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 transition-colors duration-300 group-hover/card:!border-transparent group-hover/card:bg-[#27272a]/30 dark:border-[#27272a] dark:bg-[#27272a]/30 dark:group-hover/card:!border-transparent dark:group-hover/card:bg-[#f4f4f5]/50">
+                      <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7] transition-colors duration-300 group-hover/card:!border-transparent dark:border-[#3f3f46] dark:group-hover/card:!border-transparent">
                         <Image
                           src={project.image}
                           alt={project.name}
-                          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.025]"
+                          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover/card:scale-[1.025]"
                         />
                       </div>
                     </div>
 
                     <div className="flex flex-col flex-grow gap-2">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-[15px] font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5]">
+                        <h3 className="text-[15px] font-bold leading-tight text-[#18181b] transition-colors duration-300 group-hover/card:text-[#f4f4f5] dark:text-[#f4f4f5] dark:group-hover/card:text-[#18181b]">
                           {project.name}
                         </h3>
                       </div>
-                      <p className="text-[13px] font-medium leading-relaxed text-[#52525c] dark:text-[#a1a1aa] text-justify">
+                      <p className="text-[13px] font-medium leading-relaxed text-[#52525c] transition-colors duration-300 group-hover/card:text-[#a1a1aa] dark:text-[#a1a1aa] dark:group-hover/card:text-[#52525c] text-justify">
                         {project.description}
                       </p>
                     </div>
 
-                    <div className="mt-4 flex items-center justify-between pt-3 border-t border-[#e4e4e7] dark:border-[#27272a]">
+                    <div className="mt-4 flex items-center justify-between pt-3 border-t border-[#e4e4e7] transition-colors duration-300 group-hover/card:border-[#27272a] dark:border-[#27272a] dark:group-hover/card:border-[#e4e4e7]">
                       <div className="flex items-center gap-2.5">
                         {project.tech.map((t) => (
                           <div
@@ -814,7 +814,7 @@ function ProjectsSection() {
                       <a
                         href={project.link}
                         target="_blank"
-                        className="group/link flex items-center gap-1 text-[11px] font-semibold tracking-wider text-[#a1a1aa] transition-colors duration-300 hover:text-[#18181b] dark:text-[#71717a] dark:hover:text-[#fff]"
+                        className="group/link flex items-center gap-1 text-[11px] font-semibold tracking-wider text-[#a1a1aa] transition-colors duration-300 hover:text-[#18181b] group-hover/card:text-[#71717a] group-hover/card:hover:text-[#fff] dark:text-[#71717a] dark:hover:text-[#fff] dark:group-hover/card:text-[#a1a1aa] dark:group-hover/card:hover:text-[#18181b]"
                       >
                         Ver proyecto
                         <ArrowUpRight className="h-3.5 w-3.5" />

@@ -341,6 +341,54 @@ describe("HomeSurface", () => {
     expect(html).not.toContain("lucide-database");
   });
 
+  it("inverts project card colors and technology icon variants on card hover", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+
+    expect(html).toContain("group/card");
+    expect(html).toContain("hover:border-[#27272a]");
+    expect(html).toContain("hover:bg-[#18181b]");
+    expect(html).toContain("group-hover/card:text-[#f4f4f5]");
+    expect(html).toContain("group-hover/card:text-[#a1a1aa]");
+    expect(html).toContain("hover:border-[#27272a]");
+    expect(html).toContain("dark:hover:border-[#e4e4e7]");
+    expect(html).toContain("dark:hover:bg-[#fff]");
+    expect(html).toContain("dark:group-hover/card:text-[#18181b]");
+    expect(html).toContain("dark:group-hover/card:text-[#52525c]");
+    expect(html).toContain("dark:hover:border-[#e4e4e7]");
+    expect(html).toContain("group-hover/card:opacity-0");
+    expect(html).toContain("group-hover/card:opacity-100");
+    expect(html).toContain("dark:group-hover/card:opacity-0");
+    expect(html).toContain("dark:group-hover/card:opacity-100");
+  });
+
+  it("keeps project image borders by default and hides them on card hover", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+
+    expect(html).toContain("group-hover/card:bg-[#27272a]/30");
+    expect(html).toContain("dark:group-hover/card:bg-[#f4f4f5]/50");
+    expect(html).toContain(
+      "rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 transition-colors duration-300 group-hover/card:!border-transparent",
+    );
+    expect(html).toContain(
+      "dark:border-[#27272a] dark:bg-[#27272a]/30 dark:group-hover/card:!border-transparent",
+    );
+    expect(html).toContain(
+      "aspect-[4/3] overflow-hidden border-[#e4e4e7] transition-colors duration-300 group-hover/card:!border-transparent",
+    );
+    expect(html).toContain(
+      "dark:border-[#3f3f46] dark:group-hover/card:!border-transparent",
+    );
+    expect(html).not.toContain(
+      "aspect-[4/3] overflow-hidden dark:border-[#3f3f46]",
+    );
+    expect(html).not.toContain(
+      "bg-[#f4f4f5]/50 transition-colors duration-300 group-hover/card:border-[#27272a]",
+    );
+    expect(html).not.toContain(
+      "aspect-[4/3] overflow-hidden border-[#e4e4e7] transition-colors duration-300 group-hover/card:border-[#3f3f46]",
+    );
+  });
+
   it("keeps project cards free of hover glow while preserving image zoom", () => {
     const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
     const html = renderToStaticMarkup(<HomeSurface />);
@@ -350,7 +398,7 @@ describe("HomeSurface", () => {
     expect(css).not.toContain(".project-card::before");
     expect(css).not.toContain(".project-card::after");
     expect(css).not.toContain("drop-shadow");
-    expect(html).toContain("group-hover:scale-[1.025]");
+    expect(html).toContain("group-hover/card:scale-[1.025]");
     expect(html).toContain("transition-transform duration-300 ease-out");
   });
 
