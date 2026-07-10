@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Fragment } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import {
@@ -50,10 +50,10 @@ const profileSummary = [
 ];
 
 const profileActionButtonClass =
-  "h-8 w-full min-w-0 gap-1.5 border-[#52525c] px-2 text-[10px] font-bold leading-none text-[#52525c] hover:border-[#52525c] hover:bg-[#52525c]/10 hover:text-[#18181b] dark:border-[#d4d4d8] dark:text-[#d4d4d8] dark:hover:border-[#fff] dark:hover:bg-[#d4d4d8]/10 dark:hover:text-[#fff] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0 [&_span]:leading-none";
+  "h-8 w-full min-w-0 gap-1.5 border-[#d4d4d8] bg-transparent px-2 text-[10px] font-semibold leading-none text-[#52525c] transition-colors duration-300 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#3f3f46] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0 [&_span]:leading-none";
 
 const profileContactButtonClass =
-  "h-8 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2 text-[10px] font-bold leading-none text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-[#000] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0";
+  "h-8 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2 text-[10px] font-semibold leading-none text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-[#000] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0";
 
 const experiences = [
   {
@@ -135,12 +135,30 @@ export function getNextExperienceTransition(
   return { activeId: requestedId, pendingId: null };
 }
 
+export function getNextAutoSkillIndex(
+  currentIndex: number | null,
+  totalItems: number,
+  random = Math.random,
+) {
+  if (totalItems <= 0) {
+    return null;
+  }
+
+  if (totalItems === 1) {
+    return 0;
+  }
+
+  const nextIndex = Math.floor(random() * totalItems);
+
+  return nextIndex === currentIndex ? (nextIndex + 1) % totalItems : nextIndex;
+}
+
 function ViewportGuideLine({
   position,
   scope,
 }: {
   position: "top" | "bottom";
-  scope: "experience" | "experience-detail" | "profile" | "projects";
+  scope: "experience" | "experience-detail" | "profile" | "projects" | "skills";
 }) {
   const verticalPosition = position === "top" ? "top-0" : "bottom-0";
 
@@ -398,9 +416,10 @@ function ExperienceSection() {
       </div>
 
       <div>
-        {experiences.map((experience) => {
+        {experiences.map((experience, experienceIndex) => {
           const isOpen = openExperienceId === experience.id;
           const detailsId = `${experience.id}-details`;
+          const isLastExperience = experienceIndex === experiences.length - 1;
 
           return (
             <article
@@ -564,7 +583,7 @@ function ExperienceSection() {
                 ) : null}
               </AnimatePresence>
 
-              <ItemGuideLine position="bottom" />
+              {!isLastExperience ? <ItemGuideLine position="bottom" /> : null}
             </article>
           );
         })}
@@ -629,6 +648,35 @@ const projectsData = [
   },
 ];
 
+const skillsData = [
+  { name: "JavaScript", iconSlug: "javascript" },
+  { name: "TypeScript", iconSlug: "typescript" },
+  { name: "HTML5", iconSlug: "html5" },
+  { name: "CSS", iconSlug: "css" },
+  { name: "Tailwind CSS", iconSlug: "tailwindcss" },
+  { name: "React", iconSlug: "react" },
+  { name: "Expo", iconSlug: "expo" },
+  { name: "Prisma ORM", iconSlug: "prisma" },
+  { name: "Flutter", iconSlug: "flutter" },
+  { name: "C#", iconSlug: "sharp" },
+  { name: ".NET", iconSlug: "dotnet" },
+  { name: "Node.js", iconSlug: "nodedotjs" },
+  { name: "NestJS", iconSlug: "nestjs" },
+  { name: "Express.js", iconSlug: "express" },
+  { name: "MongoDB", iconSlug: "mongodb" },
+  { name: "MySQL", iconSlug: "mysql" },
+  { name: "PostgreSQL", iconSlug: "postgresql" },
+  { name: "Redis", iconSlug: "redis" },
+  { name: "Git", iconSlug: "git" },
+  { name: "GitHub", iconSlug: "github" },
+  { name: "VPS Linux", iconSlug: "linux" },
+  { name: "Nginx", iconSlug: "nginx" },
+  { name: "PM2", iconSlug: "pm2" },
+  { name: "IIS", iconSlug: "googlecloudstorage" },
+  { name: "Docker", iconSlug: "docker" },
+  { name: "Figma", iconSlug: "figma" },
+];
+
 const techIconColorByTheme = {
   light: {
     base: "71717a",
@@ -686,9 +734,11 @@ function ProjectsSection() {
   return (
     <section
       aria-labelledby="projects-title"
-      className="relative bg-background px-3 pb-8"
+      className="relative bg-background px-3 pb-0"
     >
       <div className="projects-section-title-row relative flex h-12 items-center">
+        <ViewportGuideLine position="top" scope="projects" />
+
         <h2
           id="projects-title"
           className="text-base font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]"
@@ -707,6 +757,10 @@ function ProjectsSection() {
         <span
           aria-hidden="true"
           className="blueprint-mask-y pointer-events-none absolute top-0 left-1/2 hidden h-full w-[2px] -translate-x-1/2 text-foreground opacity-[0.18] z-20 md:block"
+        />
+        <span
+          aria-hidden="true"
+          className="projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block"
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2">
@@ -795,13 +849,114 @@ function ProjectsSection() {
             );
           })}
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div aria-hidden="true" className="relative h-0 w-full">
-          <div className="experience-detail-local-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]" />
-          <span className="experience-detail-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2" />
-          <span className="experience-detail-guide-dot blueprint-dot hidden md:block absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" />
-          <span className="experience-detail-guide-dot blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2" />
-        </div>
+function SkillIcon({ iconSlug, name }: { iconSlug: string; name: string }) {
+  const iconUrls = {
+    lightBase: getSimpleIconUrl(iconSlug, "light", "base"),
+    lightHover: getSimpleIconUrl(iconSlug, "dark", "hover"),
+    darkBase: getSimpleIconUrl(iconSlug, "dark", "base"),
+    darkHover: getSimpleIconUrl(iconSlug, "light", "hover"),
+  };
+
+  return (
+    <span
+      aria-hidden="true"
+      className="relative block h-3.5 w-3.5 shrink-0 overflow-hidden"
+    >
+      <span
+        className="skill-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-100 transition-opacity duration-700 ease-in-out group-hover/skill:opacity-0 group-data-[auto-active=true]/skill:opacity-0 dark:opacity-0"
+        style={{ backgroundImage: `url(${iconUrls.lightBase})` }}
+      />
+      <span
+        className="skill-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-700 ease-in-out group-hover/skill:opacity-100 group-data-[auto-active=true]/skill:opacity-100 dark:opacity-0 dark:group-hover/skill:opacity-0 dark:group-data-[auto-active=true]/skill:opacity-0"
+        style={{ backgroundImage: `url(${iconUrls.lightHover})` }}
+      />
+      <span
+        className="skill-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-700 ease-in-out dark:opacity-100 dark:group-hover/skill:opacity-0 dark:group-data-[auto-active=true]/skill:opacity-0"
+        style={{ backgroundImage: `url(${iconUrls.darkBase})` }}
+      />
+      <span
+        className="skill-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-700 ease-in-out dark:group-hover/skill:opacity-100 dark:group-data-[auto-active=true]/skill:opacity-100"
+        style={{ backgroundImage: `url(${iconUrls.darkHover})` }}
+      />
+      <span className="sr-only">{name}</span>
+    </span>
+  );
+}
+
+function SkillsSection() {
+  const [autoActiveSkillIndex, setAutoActiveSkillIndex] = useState<
+    number | null
+  >(null);
+  const [isAutoSkillPaused, setIsAutoSkillPaused] = useState(false);
+
+  useEffect(() => {
+    if (isAutoSkillPaused) {
+      return;
+    }
+
+    const activateNextSkill = () => {
+      setAutoActiveSkillIndex((currentIndex) =>
+        getNextAutoSkillIndex(currentIndex, skillsData.length),
+      );
+    };
+
+    activateNextSkill();
+
+    const intervalId = window.setInterval(activateNextSkill, 1800);
+
+    return () => window.clearInterval(intervalId);
+  }, [isAutoSkillPaused]);
+
+  function pauseAutoSkillHover() {
+    setIsAutoSkillPaused(true);
+    setAutoActiveSkillIndex(null);
+  }
+
+  function resumeAutoSkillHover() {
+    setIsAutoSkillPaused(false);
+  }
+
+  return (
+    <section
+      aria-labelledby="skills-title"
+      className="relative bg-background px-3 pb-8"
+    >
+      <div className="skills-section-title-row relative flex h-12 items-center">
+        <ViewportGuideLine position="top" scope="skills" />
+
+        <h2
+          id="skills-title"
+          className="text-base font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]"
+        >
+          Habilidades y Tecnologías
+        </h2>
+
+        <ViewportGuideLine position="bottom" scope="skills" />
+      </div>
+
+      <div
+        className="flex flex-wrap gap-2 py-4"
+        data-auto-skills="true"
+        onBlur={resumeAutoSkillHover}
+        onFocus={pauseAutoSkillHover}
+        onPointerEnter={pauseAutoSkillHover}
+        onPointerLeave={resumeAutoSkillHover}
+      >
+        {skillsData.map((skill, index) => (
+          <div
+            key={skill.name}
+            className="group/skill flex h-8 flex-auto basis-auto items-center justify-center gap-2 rounded-md border border-[#d4d4d8] bg-transparent px-3 text-[12px] font-medium leading-none text-[#52525c] transition-colors duration-700 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] data-[auto-active=true]:border-[#18181b] data-[auto-active=true]:bg-[#18181b] data-[auto-active=true]:text-[#fff] dark:border-[#3f3f46] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b] dark:data-[auto-active=true]:border-[#fff] dark:data-[auto-active=true]:bg-[#fff] dark:data-[auto-active=true]:text-[#18181b]"
+            data-auto-active={autoActiveSkillIndex === index}
+          >
+            <SkillIcon iconSlug={skill.iconSlug} name={skill.name} />
+            <span className="min-w-0 truncate">{skill.name}</span>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -918,7 +1073,7 @@ export function HomeSurface() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <Github size={13} strokeWidth={2.5} aria-hidden="true" />
+                    <Github size={13} strokeWidth={2} aria-hidden="true" />
                     GitHub
                   </a>
                 </Button>
@@ -933,7 +1088,7 @@ export function HomeSurface() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <Linkedin size={13} strokeWidth={2.5} aria-hidden="true" />
+                    <Linkedin size={13} strokeWidth={2} aria-hidden="true" />
                     LinkedIn
                   </a>
                 </Button>
@@ -947,7 +1102,7 @@ export function HomeSurface() {
                   download="CV-Ricardo_Nava_Mayoral.pdf"
                   aria-label="Curriculum"
                 >
-                  <FileUser size={13} strokeWidth={2.5} aria-hidden="true" />
+                  <FileUser size={13} strokeWidth={2} aria-hidden="true" />
                   <span className="lg:hidden">CV</span>
                   <span className="hidden lg:inline">Curriculum</span>
                 </a>
@@ -958,6 +1113,7 @@ export function HomeSurface() {
 
         <ExperienceSection />
         <ProjectsSection />
+        <SkillsSection />
       </header>
     </main>
   );

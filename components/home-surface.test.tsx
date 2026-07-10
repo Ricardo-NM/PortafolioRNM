@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  getNextAutoSkillIndex,
   getNextExperienceTransition,
   HomeSurface,
 } from "@/components/home-surface";
@@ -144,15 +145,22 @@ describe("HomeSurface", () => {
       "grid grid-cols-4 items-center gap-1.5 md:gap-2 lg:hidden",
     );
     expect(html).toContain(
-      "h-8 w-full min-w-0 gap-1.5 border-[#52525c] px-2 text-[10px] font-bold leading-none text-[#52525c]",
+      "h-8 w-full min-w-0 gap-1.5 border-[#d4d4d8] bg-transparent px-2 text-[10px] font-semibold leading-none text-[#52525c]",
+    );
+    expect(html).toContain("transition-colors duration-300 ease-in-out");
+    expect(html).toContain(
+      "hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff]",
     );
     expect(html).toContain("md:h-9 md:px-2.5 md:text-[11px]");
     expect(html).toContain("lg:w-auto lg:gap-2 lg:px-3");
     expect(html).toContain("[&amp;_svg]:shrink-0");
     expect(html).toContain("[&amp;_span]:leading-none");
-    expect(html).toContain("dark:border-[#d4d4d8] dark:text-[#d4d4d8]");
+    expect(html).toContain("dark:border-[#3f3f46] dark:text-[#a1a1aa]");
     expect(html).toContain(
-      "h-8 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2 text-[10px] font-bold leading-none text-[#d4d4d8]",
+      "dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b]",
+    );
+    expect(html).toContain(
+      "h-8 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2 text-[10px] font-semibold leading-none text-[#d4d4d8]",
     );
     expect(html).toContain('stroke-width="2.5"');
     expect(html).toContain(
@@ -168,6 +176,10 @@ describe("HomeSurface", () => {
     );
     expect(html).toContain(
       'aria-labelledby="profile-summary-title" class="relative bg-background px-3 py-3"',
+    );
+    expect(html).toContain('aria-label="Cambiar a tema claro"');
+    expect(html).toContain(
+      "border-[#d4d4d8] bg-transparent text-[#52525c] transition-colors duration-300 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#3f3f46] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b] h-8 min-w-8 w-8 rounded-md p-0",
     );
     expect(html).toContain('aria-haspopup="dialog"');
     expect(html).toContain("Abrir formulario de contacto");
@@ -358,6 +370,79 @@ describe("HomeSurface", () => {
     expect(html).toContain("transition-transform duration-300 ease-out");
   });
 
+  it("renders projects and skills section headers with full viewport guide lines", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+    const text = html.replace(/<[^>]+>/g, "");
+    const skillsText = text.slice(text.indexOf("Habilidades"));
+
+    expect(text.indexOf("Proyectos")).toBeGreaterThan(
+      text.indexOf("Experiencia"),
+    );
+    expect(text.indexOf("Habilidades y Tecnologías")).toBeGreaterThan(
+      text.indexOf("Saldo Claro"),
+    );
+    expect(html).toContain("projects-guide-line");
+    expect(html).toContain("skills-guide-line");
+    expect(html).toContain("skills-guide-dot");
+    expect(html).toContain("projects-skills-intersection-dot");
+    expect(html).toContain(
+      "projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block",
+    );
+    expect(html).toContain('aria-labelledby="skills-title"');
+    expect(html).not.toContain("Frontend");
+    expect(html).not.toContain("Backend");
+    expect(html).not.toContain("Infraestructura");
+    expect(html).toContain("JavaScript");
+    expect(html).toContain("HTML5");
+    expect(html).toContain("Express.js");
+    expect(html).toContain("MongoDB");
+    expect(html).toContain("GitHub");
+    expect(html).toContain("Figma");
+    expect(skillsText.indexOf("Prisma ORM")).toBeGreaterThan(
+      skillsText.indexOf("Expo"),
+    );
+    expect(skillsText.indexOf("Flutter")).toBeGreaterThan(
+      skillsText.indexOf("Prisma ORM"),
+    );
+    expect(skillsText.indexOf("Redis")).toBeGreaterThan(
+      skillsText.indexOf("PostgreSQL"),
+    );
+    expect(skillsText.indexOf("VPS Linux")).toBeGreaterThan(
+      skillsText.indexOf("GitHub"),
+    );
+    expect(skillsText.indexOf("Nginx")).toBeGreaterThan(
+      skillsText.indexOf("VPS Linux"),
+    );
+    expect(skillsText.indexOf("PM2")).toBeGreaterThan(
+      skillsText.indexOf("Nginx"),
+    );
+    expect(html).toContain("group/skill");
+    expect(html).toContain("skill-icon-layer");
+    expect(html).toContain("data-auto-active");
+    expect(html).toContain("data-auto-skills");
+    expect(html).toContain("data-[auto-active=true]:border-[#18181b]");
+    expect(html).toContain("dark:data-[auto-active=true]:border-[#fff]");
+    expect(html).toContain("group-data-[auto-active=true]/skill:opacity-0");
+    expect(html).toContain("dark:group-data-[auto-active=true]/skill:opacity-100");
+    expect(html).toContain("hover:border-[#18181b]");
+    expect(html).toContain("dark:hover:border-[#fff]");
+    expect(html).toContain("flex flex-wrap gap-2");
+    expect(html).toContain("flex-auto");
+    expect(html).toContain("duration-700");
+    expect(html).toContain("ease-in-out");
+    expect(html).toContain("https://cdn.simpleicons.org/javascript/71717a");
+    expect(html).toContain("https://cdn.simpleicons.org/javascript/fff");
+    expect(html).toContain("https://cdn.simpleicons.org/javascript/a1a1aa");
+    expect(html).toContain("https://cdn.simpleicons.org/javascript/18181b");
+  });
+
+  it("selects a different automatic skill hover target when possible", () => {
+    expect(getNextAutoSkillIndex(null, 0, () => 0)).toBeNull();
+    expect(getNextAutoSkillIndex(null, 1, () => 0)).toBe(0);
+    expect(getNextAutoSkillIndex(2, 5, () => 0.4)).toBe(3);
+    expect(getNextAutoSkillIndex(2, 5, () => 0.8)).toBe(4);
+  });
+
   it("queues experience accordion changes so one panel closes before the next opens", () => {
     expect(getNextExperienceTransition(null, "kpuga")).toEqual({
       activeId: "kpuga",
@@ -393,6 +478,18 @@ describe("HomeSurface", () => {
     expect(html).not.toContain("experience-detail-bullet-row");
     expect(html).toContain("experience-item-guide-line");
     expect(html).toContain("experience-item-guide-dot");
+    expect(html).toContain(
+      "experience-item-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full",
+    );
+    expect(html).toContain(
+      "pointer-events-none absolute -left-3 z-50 h-0 w-[calc(100%+1.5rem)]",
+    );
+    expect(html).toContain(
+      "experience-item-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2",
+    );
+    expect(html).toContain(
+      "experience-item-guide-dot blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2",
+    );
     expect(html).not.toContain(
       "experience-detail-guide-line blueprint-mask-x pointer-events-none absolute left-0",
     );

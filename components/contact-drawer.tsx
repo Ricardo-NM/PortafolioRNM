@@ -181,7 +181,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
         onClick={() => setIsOpen(true)}
         type="button"
       >
-        <Mail size={13} strokeWidth={2.5} aria-hidden="true" />
+        <Mail size={13} strokeWidth={2} aria-hidden="true" />
         Contacto
       </Button>
 
