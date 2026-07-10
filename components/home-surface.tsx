@@ -11,14 +11,6 @@ import {
   MapPin,
   Star,
   ArrowUpRight,
-  Code2,
-  Database,
-  Globe,
-  Layout,
-  Sparkles,
-  Box,
-  Terminal,
-  Cloud,
 } from "lucide-react";
 
 import linkedInBanner from "@/assets/images/bannerL.png";
@@ -590,11 +582,13 @@ const projectsData = [
     image: projectO,
     link: "https://ricardo-nm.github.io/K-PUGA-Docs/",
     tech: [
-      { name: "Next.js", icon: <Globe size={14} /> },
-      { name: "TypeScript", icon: <Code2 size={14} /> },
-      { name: "Tailwind CSS", icon: <Layout size={14} /> },
-      { name: "OpenAI", icon: <Sparkles size={14} /> },
-      { name: "PostgreSQL", icon: <Database size={14} /> },
+      { name: "React", iconSlug: "react" },
+      { name: "Tailwind CSS", iconSlug: "tailwindcss" },
+      { name: "Node.js", iconSlug: "nodedotjs" },
+      { name: "MySQL", iconSlug: "mysql" },
+      { name: "VPS Linux", iconSlug: "linux" },
+      { name: "NGINX", iconSlug: "nginx" },
+      { name: "PM2", iconSlug: "pm2" },
     ],
   },
   {
@@ -605,10 +599,14 @@ const projectsData = [
     image: projectS,
     link: "https://ricardo-nm.github.io/totis-gdb-docs/",
     tech: [
-      { name: "React", icon: <Box size={14} /> },
-      { name: "Node.js", icon: <Terminal size={14} /> },
-      { name: "Socket.io", icon: <Globe size={14} /> },
-      { name: "Supabase", icon: <Database size={14} /> },
+      { name: "C#", iconSlug: "sharp" },
+      { name: ".NET", iconSlug: "dotnet" },
+      { name: "JavaScript", iconSlug: "javascript" },
+      { name: "CSS", iconSlug: "css" },
+      { name: "Bootstrap", iconSlug: "bootstrap" },
+      { name: "MySQL", iconSlug: "mysql" },
+      { name: "IIS", iconSlug: "googlecloudstorage" },
+      { name: "Active Directory", iconSlug: "springsecurity" },
     ],
   },
   {
@@ -619,12 +617,70 @@ const projectsData = [
     image: projectT,
     link: "https://github.com/Ricardo-NM/SaldoClaro",
     tech: [
-      { name: "Next.js", icon: <Globe size={14} /> },
-      { name: "Python", icon: <Code2 size={14} /> },
-      { name: "AWS", icon: <Cloud size={14} /> },
+      { name: "React Native", iconSlug: "react" },
+      { name: "Expo", iconSlug: "expo" },
+      { name: "TypeScript", iconSlug: "typescript" },
+      { name: "NestJS", iconSlug: "nestjs" },
+      { name: "Prisma", iconSlug: "prisma" },
+      { name: "PostgreSQL", iconSlug: "postgresql" },
+      { name: "Docker", iconSlug: "docker" },
+      { name: "NGINX", iconSlug: "nginx" },
     ],
   },
 ];
+
+const techIconColorByTheme = {
+  light: {
+    base: "71717a",
+    hover: "18181b",
+  },
+  dark: {
+    base: "a1a1aa",
+    hover: "fff",
+  },
+} as const;
+
+function getSimpleIconUrl(
+  iconSlug: string,
+  theme: keyof typeof techIconColorByTheme,
+  state: keyof (typeof techIconColorByTheme)["light"],
+) {
+  return `https://cdn.simpleicons.org/${iconSlug}/${techIconColorByTheme[theme][state]}`;
+}
+
+function TechIcon({ iconSlug, name }: { iconSlug: string; name: string }) {
+  const iconUrls = {
+    lightBase: getSimpleIconUrl(iconSlug, "light", "base"),
+    lightHover: getSimpleIconUrl(iconSlug, "light", "hover"),
+    darkBase: getSimpleIconUrl(iconSlug, "dark", "base"),
+    darkHover: getSimpleIconUrl(iconSlug, "dark", "hover"),
+  };
+
+  return (
+    <span
+      aria-hidden="true"
+      className="relative block h-3.5 w-3.5 overflow-hidden"
+    >
+      <span
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-100 transition-opacity duration-300 group-hover/tooltip:opacity-0 dark:opacity-0"
+        style={{ backgroundImage: `url(${iconUrls.lightBase})` }}
+      />
+      <span
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/tooltip:opacity-100 dark:opacity-0 dark:group-hover/tooltip:opacity-0"
+        style={{ backgroundImage: `url(${iconUrls.lightHover})` }}
+      />
+      <span
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 dark:opacity-100 dark:group-hover/tooltip:opacity-0"
+        style={{ backgroundImage: `url(${iconUrls.darkBase})` }}
+      />
+      <span
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 dark:group-hover/tooltip:opacity-100"
+        style={{ backgroundImage: `url(${iconUrls.darkHover})` }}
+      />
+      <span className="sr-only">{name}</span>
+    </span>
+  );
+}
 
 function ProjectsSection() {
   return (
@@ -664,10 +720,14 @@ function ProjectsSection() {
             return (
               <Fragment key={project.id}>
                 <div className="relative flex px-4 py-4 sm:px-6 sm:py-6">
-                  <article className="group relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 shadow-[0_1px_4px_rgba(24,24,27,0.05)] transition-all hover:shadow-[0_4px_12px_rgba(24,24,27,0.1)] dark:border-[#27272a] dark:bg-[#18181b] dark:shadow-[0_1px_8px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
+                  <article className="project-card group relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 transition-all dark:border-[#27272a] dark:bg-[#18181b]">
                     <div className="relative mb-4 w-full overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 dark:border-[#27272a] dark:bg-[#27272a]/30">
-                      <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7] shadow-sm dark:border-[#3f3f46]">
-                        <Image src={project.image} alt={project.name} fill />
+                      <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7]  dark:border-[#3f3f46]">
+                        <Image
+                          src={project.image}
+                          alt={project.name}
+                          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.025]"
+                        />
                       </div>
                     </div>
 
@@ -689,9 +749,7 @@ function ProjectsSection() {
                             key={t.name}
                             className="group/tooltip relative flex items-center justify-center"
                           >
-                            <div className="text-[#a1a1aa] transition-colors duration-300 hover:text-[#18181b] dark:text-[#71717a] dark:hover:text-[#fff]">
-                              {t.icon}
-                            </div>
+                            <TechIcon iconSlug={t.iconSlug} name={t.name} />
 
                             <span className=" pointer-events-none  absolute -top-6 left-1/2 z-10 -translate-x-1/2 translate-y-2 whitespace-nowrap rounded bg-[#18181b] px-2 py-0.5 text-[10px] font-medium text-white transition-all duration-300 ease-out group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 opacity-0 dark:bg-white dark:text-[#18181b]">
                               {t.name}

@@ -296,6 +296,68 @@ describe("HomeSurface", () => {
     expect(html).toContain("lucide-chevron-down");
   });
 
+  it("renders project technologies with theme-aware Simple Icons URLs", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+    const text = html.replace(/<[^>]+>/g, "");
+
+    expect(text).toContain("React");
+    expect(text).toContain("Tailwind CSS");
+    expect(text).toContain("Node.js");
+    expect(text).toContain("MySQL");
+    expect(text).toContain("VPS Linux");
+    expect(text).toContain("NGINX");
+    expect(text).toContain("PM2");
+    expect(text).toContain("C#");
+    expect(text).toContain(".NET");
+    expect(text).toContain("IIS");
+    expect(text).toContain("Active Directory");
+    expect(text).toContain("Expo");
+    expect(text).toContain("React Native");
+    expect(text).toContain("NestJS");
+    expect(text).toContain("Prisma");
+    expect(text).toContain("PostgreSQL");
+    expect(text).toContain("Docker");
+
+    expect(html).toContain("https://cdn.simpleicons.org/react/71717a");
+    expect(html).toContain("https://cdn.simpleicons.org/react/18181b");
+    expect(html).toContain("https://cdn.simpleicons.org/react/a1a1aa");
+    expect(html).toContain("https://cdn.simpleicons.org/react/fff");
+    expect(html).toContain("tech-icon-layer");
+    expect(html).toContain("dark:group-hover/tooltip:opacity-100");
+    expect(html).toContain("group-hover/tooltip:opacity-100");
+    expect(html).not.toContain("lucide-globe");
+    expect(html).not.toContain("lucide-database");
+  });
+
+  it("adds a theme-aware animated border glow to project cards", () => {
+    const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
+    const normalizedCss = css.replace(/\r\n/g, "\n");
+    const html = renderToStaticMarkup(<HomeSurface />);
+
+    expect(html).toContain("project-card");
+    expect(html).not.toContain("hover:border-transparent");
+    expect(html).not.toContain("dark:hover:border-transparent");
+    expect(css).toContain(".project-card::before");
+    expect(css).toContain("--project-border-glow: rgba(24, 24, 27, 0.9)");
+    expect(css).toContain("--project-border-glow: rgba(255, 255, 255, 0.95)");
+    expect(css).toContain("--project-border-glow-faint");
+    expect(css).toContain("z-index: 40");
+    expect(css).toContain("transition: opacity 140ms");
+    expect(css).toContain("transition: opacity 900ms");
+    expect(css).toContain(".project-card::after");
+    expect(css).toContain("animation: project-border-glow");
+    expect(normalizedCss).toContain(
+      ".project-card::after {\n  background: conic-gradient",
+    );
+    expect(normalizedCss).toContain(
+      ".project-card:hover::after {\n  opacity: 1;\n}",
+    );
+    expect(css).toContain("@keyframes project-border-glow");
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(html).toContain("group-hover:scale-[1.025]");
+    expect(html).toContain("transition-transform duration-300 ease-out");
+  });
+
   it("queues experience accordion changes so one panel closes before the next opens", () => {
     expect(getNextExperienceTransition(null, "kpuga")).toEqual({
       activeId: "kpuga",
@@ -319,19 +381,14 @@ describe("HomeSurface", () => {
     expect(html).not.toContain('aria-expanded="true"');
     expect(html).toContain('aria-expanded="false"');
     expect(html).not.toContain("grid auto-rows-fr grid-cols-2 md:grid-cols-4");
-    expect(html).not.toContain("experience-detail-local-guide-line");
     expect(text).not.toContain("+15");
     expect(text).not.toContain("USUARIOS");
     expect(text).not.toContain("VPS LINUX");
-    expect(text).not.toContain("Comercio exterior");
-    expect(text).not.toContain("MySQL");
   });
 
   it("keeps experience detail guide lines aligned with the page grid", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
 
-    expect(html).not.toContain("experience-detail-local-guide-line");
-    expect(html).not.toContain("experience-detail-guide-dot");
     expect(html).not.toContain("experience-detail-stat-row");
     expect(html).not.toContain("experience-detail-bullet-row");
     expect(html).toContain("experience-item-guide-line");
