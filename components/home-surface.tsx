@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import {
@@ -10,6 +10,15 @@ import {
   Linkedin,
   MapPin,
   Star,
+  ArrowUpRight,
+  Code2,
+  Database,
+  Globe,
+  Layout,
+  Sparkles,
+  Box,
+  Terminal,
+  Cloud,
 } from "lucide-react";
 
 import linkedInBanner from "@/assets/images/bannerL.png";
@@ -17,6 +26,9 @@ import experienceOne from "@/assets/images/experienceOne.png";
 import experienceSecond from "@/assets/images/experienceSecond.png";
 import linkedInProfile from "@/assets/images/profileL.jpg";
 import profilePicture from "@/assets/images/profilePicture.jpeg";
+import projectO from "@/assets/images/projectO.jpg";
+import projectS from "@/assets/images/projectS.jpg";
+import projectT from "@/assets/images/projectT.jpg";
 import { Blueprint } from "@/components/blueprint";
 import { ContactDrawer } from "@/components/contact-drawer";
 import { ThemeBanner } from "@/components/theme-banner";
@@ -136,7 +148,7 @@ function ViewportGuideLine({
   scope,
 }: {
   position: "top" | "bottom";
-  scope: "experience" | "experience-detail" | "profile";
+  scope: "experience" | "experience-detail" | "profile" | "projects";
 }) {
   const verticalPosition = position === "top" ? "top-0" : "bottom-0";
 
@@ -569,6 +581,174 @@ function ExperienceSection() {
   );
 }
 
+const projectsData = [
+  {
+    id: "gestionO",
+    name: "Gestión operativa – Comercio exterior",
+    description:
+      "Sistema privado orientado a centralizar procesos operativos, administrativos y documentales relacionados con gestión logística, seguimiento de referencias, control de documentos, facturación, reportes, comunicación interna y actividades de recursos humanos.",
+    image: projectO,
+    link: "https://ricardo-nm.github.io/K-PUGA-Docs/",
+    tech: [
+      { name: "Next.js", icon: <Globe size={14} /> },
+      { name: "TypeScript", icon: <Code2 size={14} /> },
+      { name: "Tailwind CSS", icon: <Layout size={14} /> },
+      { name: "OpenAI", icon: <Sparkles size={14} /> },
+      { name: "PostgreSQL", icon: <Database size={14} /> },
+    ],
+  },
+  {
+    id: "gestionB",
+    name: "Totis® | Gestión de bienes",
+    description:
+      "Sistema web orientado a la gestión y control operativo de activos fijos contables. Su propósito es centralizar información, facilitar solicitudes internas, mantener trazabilidad de movimientos y apoyar la generación de documentos relacionados con asignaciones, bajas, devoluciones y traspasos.",
+    image: projectS,
+    link: "https://ricardo-nm.github.io/totis-gdb-docs/",
+    tech: [
+      { name: "React", icon: <Box size={14} /> },
+      { name: "Node.js", icon: <Terminal size={14} /> },
+      { name: "Socket.io", icon: <Globe size={14} /> },
+      { name: "Supabase", icon: <Database size={14} /> },
+    ],
+  },
+  {
+    id: "saldoC",
+    name: "Saldo Claro",
+    description:
+      "Aplicación móvil para centralizar deudas, pagos próximos y pagos realizados. El proyecto sigue en desarrollo y está enfocado en una primera versión funcional para uso personal.",
+    image: projectT,
+    link: "https://github.com/Ricardo-NM/SaldoClaro",
+    tech: [
+      { name: "Next.js", icon: <Globe size={14} /> },
+      { name: "Python", icon: <Code2 size={14} /> },
+      { name: "AWS", icon: <Cloud size={14} /> },
+    ],
+  },
+];
+
+function ProjectsSection() {
+  return (
+    <section
+      aria-labelledby="projects-title"
+      className="relative bg-background px-3 pb-8"
+    >
+      <div className="projects-section-title-row relative flex h-12 items-center">
+        <h2
+          id="projects-title"
+          className="text-base font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]"
+        >
+          Proyectos
+        </h2>
+
+        <ViewportGuideLine position="bottom" scope="projects" />
+        <span
+          aria-hidden="true"
+          className="projects-guide-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block"
+        />
+      </div>
+
+      <div className="relative -mx-3">
+        <span
+          aria-hidden="true"
+          className="blueprint-mask-y pointer-events-none absolute top-0 left-1/2 hidden h-full w-[2px] -translate-x-1/2 text-foreground opacity-[0.18] z-20 md:block"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2">
+          {projectsData.map((project, index) => {
+            const isMobileLast = index === projectsData.length - 1;
+            const isDesktopRight = index % 2 === 1;
+            const isDesktopLastRow =
+              index >=
+              projectsData.length - (projectsData.length % 2 === 0 ? 2 : 1);
+
+            return (
+              <Fragment key={project.id}>
+                <div className="relative flex px-4 py-4 sm:px-6 sm:py-6">
+                  <article className="group relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 shadow-[0_1px_4px_rgba(24,24,27,0.05)] transition-all hover:shadow-[0_4px_12px_rgba(24,24,27,0.1)] dark:border-[#27272a] dark:bg-[#18181b] dark:shadow-[0_1px_8px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
+                    <div className="relative mb-4 w-full overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 dark:border-[#27272a] dark:bg-[#27272a]/30">
+                      <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7] shadow-sm dark:border-[#3f3f46]">
+                        <Image src={project.image} alt={project.name} fill />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col flex-grow gap-2">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-[15px] font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5]">
+                          {project.name}
+                        </h3>
+                      </div>
+                      <p className="text-[13px] font-medium leading-relaxed text-[#52525c] dark:text-[#a1a1aa] text-justify">
+                        {project.description}
+                      </p>
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between pt-3 border-t border-[#e4e4e7] dark:border-[#27272a]">
+                      <div className="flex items-center gap-2.5">
+                        {project.tech.map((t) => (
+                          <div
+                            key={t.name}
+                            className="group/tooltip relative flex items-center justify-center"
+                          >
+                            <div className="text-[#a1a1aa] transition-colors duration-300 hover:text-[#18181b] dark:text-[#71717a] dark:hover:text-[#fff]">
+                              {t.icon}
+                            </div>
+
+                            <span className=" pointer-events-none  absolute -top-6 left-1/2 z-10 -translate-x-1/2 translate-y-2 whitespace-nowrap rounded bg-[#18181b] px-2 py-0.5 text-[10px] font-medium text-white transition-all duration-300 ease-out group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 opacity-0 dark:bg-white dark:text-[#18181b]">
+                              {t.name}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        className="group/link flex items-center gap-1 text-[11px] font-semibold tracking-wider text-[#a1a1aa] transition-colors duration-300 hover:text-[#18181b] dark:text-[#71717a] dark:hover:text-[#fff]"
+                      >
+                        Ver proyecto
+                        <ArrowUpRight className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  </article>
+                </div>
+
+                {!isMobileLast && (
+                  <div
+                    aria-hidden="true"
+                    className="col-span-1 md:hidden relative h-0 w-full"
+                  >
+                    <div className="experience-detail-local-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]" />
+                    <span className="experience-detail-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2" />
+                    <span className="experience-detail-guide-dot blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2" />
+                  </div>
+                )}
+
+                {isDesktopRight && !isDesktopLastRow && (
+                  <div
+                    aria-hidden="true"
+                    className="col-span-2 hidden md:block relative h-0 w-full"
+                  >
+                    <div className="experience-detail-local-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]" />
+                    <span className="experience-detail-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2" />
+                    <span className="experience-detail-guide-dot blueprint-dot absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" />
+                    <span className="experience-detail-guide-dot blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2" />
+                  </div>
+                )}
+              </Fragment>
+            );
+          })}
+        </div>
+
+        <div aria-hidden="true" className="relative h-0 w-full">
+          <div className="experience-detail-local-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]" />
+          <span className="experience-detail-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2" />
+          <span className="experience-detail-guide-dot blueprint-dot hidden md:block absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" />
+          <span className="experience-detail-guide-dot blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function HomeSurface() {
   return (
     <main className="relative min-h-dvh overflow-hidden bg-background text-foreground">
@@ -719,6 +899,7 @@ export function HomeSurface() {
         </section>
 
         <ExperienceSection />
+        <ProjectsSection />
       </header>
     </main>
   );
