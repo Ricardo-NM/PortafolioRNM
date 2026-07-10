@@ -341,31 +341,15 @@ describe("HomeSurface", () => {
     expect(html).not.toContain("lucide-database");
   });
 
-  it("adds a theme-aware animated border glow to project cards", () => {
+  it("keeps project cards free of hover glow while preserving image zoom", () => {
     const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
-    const normalizedCss = css.replace(/\r\n/g, "\n");
     const html = renderToStaticMarkup(<HomeSurface />);
 
-    expect(html).toContain("project-card");
-    expect(html).not.toContain("hover:border-transparent");
-    expect(html).not.toContain("dark:hover:border-transparent");
-    expect(css).toContain(".project-card::before");
-    expect(css).toContain("--project-border-glow: rgba(24, 24, 27, 0.9)");
-    expect(css).toContain("--project-border-glow: rgba(255, 255, 255, 0.95)");
-    expect(css).toContain("--project-border-glow-faint");
-    expect(css).toContain("z-index: 40");
-    expect(css).toContain("transition: opacity 140ms");
-    expect(css).toContain("transition: opacity 900ms");
-    expect(css).toContain(".project-card::after");
-    expect(css).toContain("animation: project-border-glow");
-    expect(normalizedCss).toContain(
-      ".project-card::after {\n  background: conic-gradient",
-    );
-    expect(normalizedCss).toContain(
-      ".project-card:hover::after {\n  opacity: 1;\n}",
-    );
-    expect(css).toContain("@keyframes project-border-glow");
-    expect(css).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(html).not.toContain("project-card");
+    expect(css).not.toContain("project-border-glow");
+    expect(css).not.toContain(".project-card::before");
+    expect(css).not.toContain(".project-card::after");
+    expect(css).not.toContain("drop-shadow");
     expect(html).toContain("group-hover:scale-[1.025]");
     expect(html).toContain("transition-transform duration-300 ease-out");
   });

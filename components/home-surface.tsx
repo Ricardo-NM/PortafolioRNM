@@ -774,7 +774,7 @@ function ProjectsSection() {
             return (
               <Fragment key={project.id}>
                 <div className="relative flex px-4 py-4 sm:px-6 sm:py-6">
-                  <article className="project-card group relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 transition-all dark:border-[#27272a] dark:bg-[#18181b]">
+                  <article className="group relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 transition-all dark:border-[#27272a] dark:bg-[#18181b]">
                     <div className="relative mb-4 w-full overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 dark:border-[#27272a] dark:bg-[#27272a]/30">
                       <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7]  dark:border-[#3f3f46]">
                         <Image
