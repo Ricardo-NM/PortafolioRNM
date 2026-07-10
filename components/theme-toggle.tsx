@@ -18,7 +18,7 @@ type ThemeToggleProps = {
 };
 
 const themeToggleButtonClass =
-  "border-[#d4d4d8] bg-transparent text-[#52525c] transition-colors duration-300 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#3f3f46] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b]";
+  "border-[#d4d4d8] bg-[#fff] text-[#52525c] transition-colors duration-300 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#3f3f46] dark:bg-[#000] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b]";
 
 export function ThemeToggle({ className, iconSize = 16 }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();

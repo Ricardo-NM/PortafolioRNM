@@ -179,7 +179,7 @@ describe("HomeSurface", () => {
     );
     expect(html).toContain('aria-label="Cambiar a tema claro"');
     expect(html).toContain(
-      "border-[#d4d4d8] bg-transparent text-[#52525c] transition-colors duration-300 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#3f3f46] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b] h-8 min-w-8 w-8 rounded-md p-0",
+      "border-[#d4d4d8] bg-[#fff] text-[#52525c] transition-colors duration-300 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#3f3f46] dark:bg-[#000] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b] h-8 min-w-8 w-8 rounded-md p-0",
     );
     expect(html).toContain('aria-haspopup="dialog"');
     expect(html).toContain("Abrir formulario de contacto");
@@ -423,7 +423,9 @@ describe("HomeSurface", () => {
     expect(html).toContain("data-[auto-active=true]:border-[#18181b]");
     expect(html).toContain("dark:data-[auto-active=true]:border-[#fff]");
     expect(html).toContain("group-data-[auto-active=true]/skill:opacity-0");
-    expect(html).toContain("dark:group-data-[auto-active=true]/skill:opacity-100");
+    expect(html).toContain(
+      "dark:group-data-[auto-active=true]/skill:opacity-100",
+    );
     expect(html).toContain("hover:border-[#18181b]");
     expect(html).toContain("dark:hover:border-[#fff]");
     expect(html).toContain("flex flex-wrap gap-2");
