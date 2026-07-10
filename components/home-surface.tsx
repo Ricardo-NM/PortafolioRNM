@@ -158,7 +158,13 @@ function ViewportGuideLine({
   scope,
 }: {
   position: "top" | "bottom";
-  scope: "experience" | "experience-detail" | "profile" | "projects" | "skills";
+  scope:
+    | "experience"
+    | "experience-detail"
+    | "profile"
+    | "projects"
+    | "skills"
+    | "github-activity";
 }) {
   const verticalPosition = position === "top" ? "top-0" : "bottom-0";
 
@@ -710,19 +716,19 @@ function TechIcon({ iconSlug, name }: { iconSlug: string; name: string }) {
       className="relative block h-3.5 w-3.5 overflow-hidden"
     >
       <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-100 transition-opacity duration-300 group-hover/card:opacity-0 group-hover/tooltip:opacity-0 dark:opacity-0 dark:group-hover/card:opacity-100 dark:group-hover/tooltip:opacity-0"
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-100 transition-opacity duration-300 group-hover/card:opacity-0 group-active/card:opacity-0 group-hover/tooltip:opacity-0 dark:opacity-0 dark:group-hover/card:opacity-100 dark:group-active/card:opacity-100 dark:group-hover/tooltip:opacity-0"
         style={{ backgroundImage: `url(${iconUrls.lightBase})` }}
       />
       <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/tooltip:opacity-100 group-hover/card:group-hover/tooltip:opacity-0 dark:opacity-0 dark:group-hover/tooltip:opacity-0 dark:group-hover/card:group-hover/tooltip:opacity-100"
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/tooltip:opacity-100 group-hover/card:group-hover/tooltip:opacity-0 group-active/card:group-hover/tooltip:opacity-0 dark:opacity-0 dark:group-hover/tooltip:opacity-0 dark:group-hover/card:group-hover/tooltip:opacity-100 dark:group-active/card:group-hover/tooltip:opacity-100"
         style={{ backgroundImage: `url(${iconUrls.lightHover})` }}
       />
       <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 group-hover/tooltip:opacity-0 dark:opacity-100 dark:group-hover/card:opacity-0 dark:group-hover/tooltip:opacity-0"
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 group-active/card:opacity-100 group-hover/tooltip:opacity-0 dark:opacity-100 dark:group-hover/card:opacity-0 dark:group-active/card:opacity-0 dark:group-hover/tooltip:opacity-0"
         style={{ backgroundImage: `url(${iconUrls.darkBase})` }}
       />
       <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/card:group-hover/tooltip:opacity-100 dark:group-hover/tooltip:opacity-100 dark:group-hover/card:group-hover/tooltip:opacity-0"
+        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/card:group-hover/tooltip:opacity-100 group-active/card:group-hover/tooltip:opacity-100 dark:group-hover/tooltip:opacity-100 dark:group-hover/card:group-hover/tooltip:opacity-0 dark:group-active/card:group-hover/tooltip:opacity-0"
         style={{ backgroundImage: `url(${iconUrls.darkHover})` }}
       />
       <span className="sr-only">{name}</span>
@@ -774,29 +780,29 @@ function ProjectsSection() {
             return (
               <Fragment key={project.id}>
                 <div className="relative flex px-4 py-4 sm:px-6 sm:py-6">
-                  <article className="group/card relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 transition-all duration-300 hover:border-[#27272a] hover:bg-[#18181b] dark:border-[#27272a] dark:bg-[#18181b] dark:hover:border-[#e4e4e7] dark:hover:bg-[#fff]">
-                    <div className="relative mb-4 w-full overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 transition-colors duration-300 group-hover/card:!border-transparent group-hover/card:bg-[#27272a]/30 dark:border-[#27272a] dark:bg-[#27272a]/30 dark:group-hover/card:!border-transparent dark:group-hover/card:bg-[#f4f4f5]/50">
-                      <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7] transition-colors duration-300 group-hover/card:!border-transparent dark:border-[#3f3f46] dark:group-hover/card:!border-transparent">
+                  <article className="group/card relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 transition-all duration-300 hover:border-[#27272a] hover:bg-[#18181b] active:border-[#27272a] active:bg-[#18181b] dark:border-[#27272a] dark:bg-[#18181b] dark:hover:border-[#e4e4e7] dark:hover:bg-[#fff] dark:active:border-[#e4e4e7] dark:active:bg-[#fff]">
+                    <div className="relative mb-4 w-full overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 transition-colors duration-300 group-hover/card:!border-transparent group-hover/card:bg-[#27272a]/30 group-active/card:!border-transparent group-active/card:bg-[#27272a]/30 dark:border-[#27272a] dark:bg-[#27272a]/30 dark:group-hover/card:!border-transparent dark:group-hover/card:bg-[#f4f4f5]/50 dark:group-active/card:!border-transparent dark:group-active/card:bg-[#f4f4f5]/50">
+                      <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7] transition-colors duration-300 group-hover/card:!border-transparent group-active/card:!border-transparent dark:border-[#3f3f46] dark:group-hover/card:!border-transparent dark:group-active/card:!border-transparent">
                         <Image
                           src={project.image}
                           alt={project.name}
-                          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover/card:scale-[1.025]"
+                          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover/card:scale-[1.025] group-active/card:scale-[1.025]"
                         />
                       </div>
                     </div>
 
                     <div className="flex flex-col flex-grow gap-2">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-[15px] font-bold leading-tight text-[#18181b] transition-colors duration-300 group-hover/card:text-[#f4f4f5] dark:text-[#f4f4f5] dark:group-hover/card:text-[#18181b]">
+                        <h3 className="text-[15px] font-bold leading-tight text-[#18181b] transition-colors duration-300 group-hover/card:text-[#f4f4f5] group-active/card:text-[#f4f4f5] dark:text-[#f4f4f5] dark:group-hover/card:text-[#18181b] dark:group-active/card:text-[#18181b]">
                           {project.name}
                         </h3>
                       </div>
-                      <p className="text-[13px] font-medium leading-relaxed text-[#52525c] transition-colors duration-300 group-hover/card:text-[#a1a1aa] dark:text-[#a1a1aa] dark:group-hover/card:text-[#52525c] text-justify">
+                      <p className="text-[13px] font-medium leading-relaxed text-[#52525c] transition-colors duration-300 group-hover/card:text-[#a1a1aa] group-active/card:text-[#a1a1aa] dark:text-[#a1a1aa] dark:group-hover/card:text-[#52525c] dark:group-active/card:text-[#52525c] text-justify">
                         {project.description}
                       </p>
                     </div>
 
-                    <div className="mt-4 flex items-center justify-between pt-3 border-t border-[#e4e4e7] transition-colors duration-300 group-hover/card:border-[#27272a] dark:border-[#27272a] dark:group-hover/card:border-[#e4e4e7]">
+                    <div className="mt-4 flex items-center justify-between pt-3 border-t border-[#e4e4e7] transition-colors duration-300 group-hover/card:border-[#27272a] group-active/card:border-[#27272a] dark:border-[#27272a] dark:group-hover/card:border-[#e4e4e7] dark:group-active/card:border-[#e4e4e7]">
                       <div className="flex items-center gap-2.5">
                         {project.tech.map((t) => (
                           <div
@@ -814,7 +820,7 @@ function ProjectsSection() {
                       <a
                         href={project.link}
                         target="_blank"
-                        className="group/link flex items-center gap-1 text-[11px] font-semibold tracking-wider text-[#a1a1aa] transition-colors duration-300 hover:text-[#18181b] group-hover/card:text-[#71717a] group-hover/card:hover:text-[#fff] dark:text-[#71717a] dark:hover:text-[#fff] dark:group-hover/card:text-[#a1a1aa] dark:group-hover/card:hover:text-[#18181b]"
+                        className="group/link flex items-center gap-1 text-[11px] font-semibold tracking-wider text-[#a1a1aa] transition-colors duration-300 hover:text-[#18181b] group-hover/card:text-[#71717a] group-hover/card:hover:text-[#fff] group-active/card:text-[#71717a] dark:text-[#71717a] dark:hover:text-[#fff] dark:group-hover/card:text-[#a1a1aa] dark:group-hover/card:hover:text-[#18181b] dark:group-active/card:text-[#a1a1aa]"
                       >
                         Ver proyecto
                         <ArrowUpRight className="h-3.5 w-3.5" />
@@ -924,7 +930,7 @@ function SkillsSection() {
   return (
     <section
       aria-labelledby="skills-title"
-      className="relative bg-background px-3 pb-8"
+      className="relative bg-background px-3"
     >
       <div className="skills-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="skills" />
@@ -957,6 +963,28 @@ function SkillsSection() {
             <span className="min-w-0 truncate">{skill.name}</span>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function GitHubActivitySection() {
+  return (
+    <section
+      aria-labelledby="github-activity-title"
+      className="relative bg-background px-3 pb-8"
+    >
+      <div className="github-activity-section-title-row relative flex h-12 items-center">
+        <ViewportGuideLine position="top" scope="github-activity" />
+
+        <h2
+          id="github-activity-title"
+          className="text-base font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]"
+        >
+          Actividad de GitHub
+        </h2>
+
+        <ViewportGuideLine position="bottom" scope="github-activity" />
       </div>
     </section>
   );
@@ -1114,6 +1142,7 @@ export function HomeSurface() {
         <ExperienceSection />
         <ProjectsSection />
         <SkillsSection />
+        <GitHubActivitySection />
       </header>
     </main>
   );

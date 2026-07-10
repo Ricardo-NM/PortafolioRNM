@@ -361,6 +361,23 @@ describe("HomeSurface", () => {
     expect(html).toContain("dark:group-hover/card:opacity-100");
   });
 
+  it("inverts project card colors and technology icon variants while pressed", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+
+    expect(html).toContain("active:border-[#27272a]");
+    expect(html).toContain("active:bg-[#18181b]");
+    expect(html).toContain("group-active/card:text-[#f4f4f5]");
+    expect(html).toContain("group-active/card:text-[#a1a1aa]");
+    expect(html).toContain("dark:active:border-[#e4e4e7]");
+    expect(html).toContain("dark:active:bg-[#fff]");
+    expect(html).toContain("dark:group-active/card:text-[#18181b]");
+    expect(html).toContain("dark:group-active/card:text-[#52525c]");
+    expect(html).toContain("group-active/card:opacity-0");
+    expect(html).toContain("group-active/card:opacity-100");
+    expect(html).toContain("dark:group-active/card:opacity-0");
+    expect(html).toContain("dark:group-active/card:opacity-100");
+  });
+
   it("keeps project image borders by default and hides them on card hover", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
 
@@ -468,6 +485,32 @@ describe("HomeSurface", () => {
     expect(html).toContain("https://cdn.simpleicons.org/javascript/fff");
     expect(html).toContain("https://cdn.simpleicons.org/javascript/a1a1aa");
     expect(html).toContain("https://cdn.simpleicons.org/javascript/18181b");
+  });
+
+  it("renders a GitHub activity header with the shared viewport guide style", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+    const text = html.replace(/<[^>]+>/g, "");
+
+    expect(text.indexOf("Actividad de GitHub")).toBeGreaterThan(
+      text.indexOf("Habilidades y TecnologÃ­as"),
+    );
+    expect(html).toContain('aria-labelledby="github-activity-title"');
+    expect(html).toContain("github-activity-guide-line");
+    expect(html).toContain("github-activity-guide-dot");
+    expect(html).toContain(
+      "github-activity-section-title-row relative flex h-12 items-center",
+    );
+    expect(html).not.toContain('data-auto-github-activity="true"');
+  });
+
+  it("keeps equal vertical padding around the skills pills before the next guide line", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+
+    expect(html).toContain('aria-labelledby="skills-title"');
+    expect(html).toContain("flex flex-wrap gap-2 py-4");
+    expect(html).not.toContain(
+      'aria-labelledby="skills-title" class="relative bg-background px-3 pb-8"',
+    );
   });
 
   it("selects a different automatic skill hover target when possible", () => {
