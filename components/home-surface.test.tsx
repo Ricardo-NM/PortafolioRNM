@@ -503,6 +503,65 @@ describe("HomeSurface", () => {
     expect(html).not.toContain('data-auto-github-activity="true"');
   });
 
+  it("renders the GitHub activity calendar shell with inverted theme palettes", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+
+    expect(html).toContain("github-activity-calendar");
+    expect(html).toContain('class="github-activity-calendar py-4"');
+    expect(html).toContain("Cargando actividad de GitHub");
+    expect(html).toContain("Menos");
+    expect(html).toContain("Más");
+    expect(html).toContain(">Ene<");
+    expect(html).toContain(">Abr<");
+    expect(html).toContain(">Ago<");
+    expect(html).toContain(">Dic<");
+    expect(html).toContain("github-activity-summary-row");
+    expect(html).toContain("github-activity-summary-text");
+    expect(html).toContain("github-activity-legend ml-auto");
+    expect(html).toContain("bg-[#18181b] dark:bg-[#f4f4f5]");
+    expect(html).toContain("bg-[#52525c] dark:bg-[#d4d4d8]");
+    expect(html).toContain("aria-label=\"Calendario de contribuciones\"");
+    expect(html).toContain("github-activity-frame rounded-md border");
+    expect(html).toContain("github-activity-scroll overflow-x-auto");
+    expect(html).toContain("github-activity-grid min-w-[686px] w-full");
+    expect(html).not.toContain("github-activity-legend sticky right-0");
+    expect(html.indexOf("github-activity-summary-row")).toBeGreaterThan(
+      html.indexOf("github-activity-scroll overflow-x-auto"),
+    );
+    expect(html.lastIndexOf(">Jul<")).toBeGreaterThan(
+      html.indexOf(">Jun<"),
+    );
+    expect(html).toContain(
+      "grid w-full gap-[3px] overflow-visible text-[11px]",
+    );
+    expect(html).toContain(
+      "whitespace-nowrap last:justify-self-end",
+    );
+    expect(html).toContain(
+      "grid w-full auto-cols-[minmax(10px,1fr)] grid-flow-col grid-rows-7",
+    );
+    expect(html).toContain("aspect-square w-full rounded-[2px]");
+    expect(html).not.toContain("grid-cols-[auto_1fr]");
+    expect(html).not.toContain(">Mon<");
+    expect(html).not.toContain(">Wed<");
+    expect(html).not.toContain(">Fri<");
+    expect(html).not.toContain(">Jan<");
+    expect(html).not.toContain(">Apr<");
+    expect(html).not.toContain(">Aug<");
+    expect(html).not.toContain(">Dec<");
+    expect(html).not.toContain(
+      'aria-labelledby="github-activity-title" class="relative bg-background px-3 pb-8"',
+    );
+
+    const source = readFileSync(
+      join(process.cwd(), "components", "home-surface.tsx"),
+      "utf8",
+    );
+    expect(source).toContain(
+      "scrollElement.scrollWidth - scrollElement.clientWidth",
+    );
+  });
+
   it("keeps equal vertical padding around the skills pills before the next guide line", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
 

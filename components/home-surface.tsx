@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useRef, useState, Fragment } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import {
@@ -683,6 +683,169 @@ const skillsData = [
   { name: "Figma", iconSlug: "figma" },
 ];
 
+type GitHubContributionDay = {
+  contributionCount: number;
+  contributionLevel: string;
+  date: string;
+  weekday: number;
+};
+
+type GitHubContributionWeek = {
+  contributionDays: GitHubContributionDay[];
+  firstDay: string;
+};
+
+type GitHubContributionMonth = {
+  firstDay: string;
+  name: string;
+  totalWeeks: number;
+  year: number;
+};
+
+type GitHubActivity = {
+  months: GitHubContributionMonth[];
+  totalContributions: number;
+  weeks: GitHubContributionWeek[];
+};
+
+const githubContributionLevelClassNames = [
+  "bg-[#f4f4f5] dark:bg-[#18181b]",
+  "bg-[#d4d4d8] dark:bg-[#3f3f46]",
+  "bg-[#a1a1aa] dark:bg-[#71717a]",
+  "bg-[#52525c] dark:bg-[#d4d4d8]",
+  "bg-[#18181b] dark:bg-[#f4f4f5]",
+];
+
+const githubContributionLevelMap: Record<string, number> = {
+  FIRST_QUARTILE: 1,
+  FOURTH_QUARTILE: 4,
+  NONE: 0,
+  SECOND_QUARTILE: 2,
+  THIRD_QUARTILE: 3,
+};
+
+const githubMonthNames = [
+  "Ene",
+  "Feb",
+  "Mar",
+  "Abr",
+  "May",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dic",
+];
+
+const githubActivityFallbackStartDate = Date.UTC(2025, 6, 6);
+const millisecondsPerDay = 24 * 60 * 60 * 1000;
+
+const githubActivityFallbackWeeks = Array.from({ length: 53 }, (_, index) => {
+  const firstDay = new Date(
+    githubActivityFallbackStartDate + index * 7 * millisecondsPerDay,
+  );
+
+  return {
+    contributionDays: Array.from({ length: 7 }, (_, dayIndex) => {
+      const date = new Date(firstDay.getTime() + dayIndex * millisecondsPerDay);
+
+      return {
+        contributionCount: 0,
+        contributionLevel: "NONE",
+        date: date.toISOString().slice(0, 10),
+        weekday: dayIndex,
+      };
+    }),
+    firstDay: firstDay.toISOString().slice(0, 10),
+  };
+});
+
+const githubActivityFallbackMonths = [
+  "Jul",
+  "Ago",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dic",
+  "Ene",
+  "Feb",
+  "Mar",
+  "Abr",
+  "May",
+  "Jun",
+].map((name, index) => ({
+  firstDay: "",
+  name,
+  totalWeeks: index % 2 === 0 ? 4 : 5,
+  year: 2026,
+}));
+
+function getGitHubContributionLevelIndex(contributionLevel: string) {
+  return githubContributionLevelMap[contributionLevel] ?? 0;
+}
+
+function getGitHubWeekDate(week: GitHubContributionWeek) {
+  const date =
+    week.contributionDays.find((day) => day.date)?.date ?? week.firstDay;
+  const timestamp = Date.parse(`${date}T00:00:00.000Z`);
+
+  return Number.isNaN(timestamp) ? null : new Date(timestamp);
+}
+
+function getGitHubMonthLabels(
+  weeks: GitHubContributionWeek[],
+  fallbackMonths: GitHubContributionMonth[],
+) {
+  const labels: Array<GitHubContributionMonth & { monthKey: string }> = [];
+
+  weeks.forEach((week) => {
+    const weekDate = getGitHubWeekDate(week);
+
+    if (!weekDate) {
+      if (labels.length > 0) {
+        labels[labels.length - 1].totalWeeks += 1;
+      }
+
+      return;
+    }
+
+    const month = weekDate.getUTCMonth();
+    const year = weekDate.getUTCFullYear();
+    const monthKey = `${year}-${month}`;
+    const lastLabel = labels[labels.length - 1];
+
+    if (lastLabel?.monthKey === monthKey) {
+      lastLabel.totalWeeks += 1;
+      return;
+    }
+
+    labels.push({
+      firstDay: weekDate.toISOString().slice(0, 10),
+      monthKey,
+      name: githubMonthNames[month],
+      totalWeeks: 1,
+      year,
+    });
+  });
+
+  return labels.length > 0 ? labels : fallbackMonths;
+}
+
+function isGitHubActivity(
+  value: GitHubActivity | { error?: string },
+): value is GitHubActivity {
+  return (
+    "months" in value &&
+    "totalContributions" in value &&
+    "weeks" in value &&
+    Array.isArray(value.months) &&
+    Array.isArray(value.weeks) &&
+    typeof value.totalContributions === "number"
+  );
+}
+
 const techIconColorByTheme = {
   light: {
     base: "71717a",
@@ -740,7 +903,7 @@ function ProjectsSection() {
   return (
     <section
       aria-labelledby="projects-title"
-      className="relative bg-background px-3 pb-0"
+      className="relative bg-background px-3"
     >
       <div className="projects-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="projects" />
@@ -969,10 +1132,76 @@ function SkillsSection() {
 }
 
 function GitHubActivitySection() {
+  const [activity, setActivity] = useState<GitHubActivity | null>(null);
+  const [activityError, setActivityError] = useState<string | null>(null);
+  const activityScrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadGitHubActivity() {
+      try {
+        const response = await fetch("/api/github-activity");
+        const payload = (await response.json()) as
+          | GitHubActivity
+          | { error?: string };
+
+        if (!isMounted) {
+          return;
+        }
+
+        const errorMessage = "error" in payload ? payload.error : undefined;
+
+        if (!response.ok || errorMessage || !isGitHubActivity(payload)) {
+          setActivityError(
+            errorMessage ?? "No se pudo cargar la actividad de GitHub.",
+          );
+          return;
+        }
+
+        setActivity(payload);
+      } catch {
+        if (isMounted) {
+          setActivityError("No se pudo cargar la actividad de GitHub.");
+        }
+      }
+    }
+
+    loadGitHubActivity();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const scrollElement = activityScrollRef.current;
+
+    if (!scrollElement) {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      scrollElement.scrollLeft =
+        scrollElement.scrollWidth - scrollElement.clientWidth;
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [activity]);
+
+  const weeks = activity?.weeks ?? githubActivityFallbackWeeks;
+  const months = getGitHubMonthLabels(
+    weeks,
+    activity?.months ?? githubActivityFallbackMonths,
+  );
+  const totalContributions = activity?.totalContributions;
+
   return (
     <section
       aria-labelledby="github-activity-title"
-      className="relative bg-background px-3 pb-8"
+      className="relative bg-background px-3"
     >
       <div className="github-activity-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="github-activity" />
@@ -985,6 +1214,97 @@ function GitHubActivitySection() {
         </h2>
 
         <ViewportGuideLine position="bottom" scope="github-activity" />
+      </div>
+
+      <div className="github-activity-calendar py-4">
+        <div
+          aria-label="Calendario de contribuciones"
+          className="github-activity-frame rounded-md border border-[#e4e4e7] bg-transparent dark:border-[#27272a]"
+          role="img"
+        >
+          <div
+            ref={activityScrollRef}
+            className="github-activity-scroll overflow-x-auto p-3"
+          >
+            <div className="github-activity-grid min-w-[686px] w-full">
+              <div
+                aria-hidden="true"
+                className="grid w-full gap-[3px] overflow-visible text-[11px] font-medium leading-none text-[#71717a] dark:text-[#a1a1aa]"
+                style={{
+                  gridTemplateColumns: `repeat(${weeks.length}, minmax(10px, 1fr))`,
+                }}
+              >
+                {months.map((month) => (
+                  <span
+                    key={`${month.name}-${month.year}-${month.firstDay}`}
+                    className="whitespace-nowrap last:justify-self-end"
+                    style={{ gridColumn: `span ${month.totalWeeks}` }}
+                  >
+                    {month.name}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-2">
+                <div
+                  className="grid w-full auto-cols-[minmax(10px,1fr)] grid-flow-col grid-rows-7 gap-[3px]"
+                  role="presentation"
+                >
+                  {weeks.map((week) =>
+                    week.contributionDays.map((day) => {
+                      const levelIndex = getGitHubContributionLevelIndex(
+                        day.contributionLevel,
+                      );
+
+                      return (
+                        <span
+                          key={`${week.firstDay}-${day.weekday}-${day.date}`}
+                          aria-label={
+                            day.date
+                              ? `${day.contributionCount} contribuciones el ${day.date}`
+                              : "Sin contribuciones"
+                          }
+                          className={`aspect-square w-full rounded-[2px] ${githubContributionLevelClassNames[levelIndex]}`}
+                          title={
+                            day.date
+                              ? `${day.contributionCount} contribuciones el ${day.date}`
+                              : undefined
+                          }
+                        />
+                      );
+                    }),
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="github-activity-summary-row flex items-center justify-between gap-3 px-3 pb-3">
+            <p className="github-activity-summary-text min-w-0 truncate text-[11px] font-semibold leading-none text-[#18181b] dark:text-[#f4f4f5] sm:text-[13px]">
+              {typeof totalContributions === "number"
+                ? `${totalContributions} contribuciones en el último año`
+                : "Cargando actividad de GitHub"}
+            </p>
+
+            <div className="github-activity-legend ml-auto flex shrink-0 items-center justify-end gap-1.5 text-[10px] font-medium leading-none text-[#52525c] dark:text-[#d4d4d8] sm:text-[11px]">
+              <span>Menos</span>
+              {githubContributionLevelClassNames.map((levelClassName) => (
+                <span
+                  key={levelClassName}
+                  aria-hidden="true"
+                  className={`h-[7px] w-[7px] rounded-[2px] sm:h-[8px] sm:w-[8px] ${levelClassName}`}
+                />
+              ))}
+              <span>Más</span>
+            </div>
+          </div>
+        </div>
+
+        {activityError && (
+          <p className="github-activity-error-message mt-2 text-right text-[11px] font-medium leading-snug text-[#71717a] dark:text-[#a1a1aa]">
+            {activityError}
+          </p>
+        )}
       </div>
     </section>
   );
