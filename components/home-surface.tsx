@@ -430,7 +430,7 @@ function ExperienceSection() {
           return (
             <article
               key={experience.company}
-              className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 gap-y-2 py-3 sm:gap-y-0 lg:grid-cols-[40px_minmax(0,1fr)_max-content] lg:items-start lg:gap-x-4"
+              className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 gap-y-0 py-3 lg:grid-cols-[40px_minmax(0,1fr)_max-content] lg:items-start lg:gap-x-4"
             >
               <div className="row-span-2 grid h-10 w-10 place-items-center rounded-lg border border-[#e4e4e7] bg-[#fff] p-1 shadow-[0_1px_4px_rgba(24,24,27,0.1)] dark:border-[#27272a] dark:shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
                 <Image
@@ -450,7 +450,7 @@ function ExperienceSection() {
                 </p>
               </div>
 
-              <div className="col-start-2 flex min-w-0 items-start justify-between gap-3 lg:col-start-3 lg:row-start-1 lg:min-w-40 lg:justify-end">
+              <div className="col-start-2 mt-2 flex min-w-0 items-start justify-between gap-3 sm:mt-0 lg:col-start-3 lg:row-start-1 lg:min-w-40 lg:justify-end">
                 <div className="text-left lg:text-right">
                   <p className="text-xs font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5] sm:text-[13px]">
                     {experience.date}
@@ -491,7 +491,7 @@ function ExperienceSection() {
                   <motion.div
                     key={detailsId}
                     id={detailsId}
-                    className="col-span-full -mx-3 overflow-visible px-3"
+                    className="col-span-full -mx-3 overflow-hidden px-3"
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}

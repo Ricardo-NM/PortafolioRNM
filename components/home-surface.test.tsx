@@ -284,7 +284,9 @@ describe("HomeSurface", () => {
     expect(html).toContain("top-0");
     expect(html).toContain("bottom-0");
     expect(html).toContain("py-3");
-    expect(html).toContain("gap-x-3 gap-y-2 py-3 sm:gap-y-0");
+    expect(html).toContain("gap-x-3 gap-y-0 py-3");
+    expect(html).toContain("col-start-2 mt-2 flex");
+    expect(html).toContain("sm:mt-0");
     expect(html).not.toContain("gap-y-2 py-5");
     expect(html).toContain("lg:grid-cols-[40px_minmax(0,1fr)_max-content]");
     expect(html).not.toContain("sm:grid-cols-[40px_minmax(0,1fr)_max-content]");
@@ -605,6 +607,37 @@ describe("HomeSurface", () => {
     expect(text).not.toContain("+15");
     expect(text).not.toContain("USUARIOS");
     expect(text).not.toContain("VPS LINUX");
+  });
+
+  it("clips the animated experience details while collapsing", () => {
+    const source = readFileSync(
+      join(process.cwd(), "components", "home-surface.tsx"),
+      "utf8",
+    );
+
+    expect(source).toContain(
+      'className="col-span-full -mx-3 overflow-hidden px-3"',
+    );
+    expect(source).not.toContain(
+      'className="col-span-full -mx-3 overflow-visible px-3"',
+    );
+  });
+
+  it("keeps mobile experience spacing out of the animated grid row gap", () => {
+    const source = readFileSync(
+      join(process.cwd(), "components", "home-surface.tsx"),
+      "utf8",
+    );
+
+    expect(source).toContain(
+      'className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 gap-y-0 py-3',
+    );
+    expect(source).toContain(
+      'className="col-start-2 mt-2 flex min-w-0 items-start justify-between gap-3 sm:mt-0',
+    );
+    expect(source).not.toContain(
+      'className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 gap-y-2 py-3',
+    );
   });
 
   it("keeps experience detail guide lines aligned with the page grid", () => {
