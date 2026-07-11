@@ -139,10 +139,10 @@ describe("HomeSurface", () => {
     expect(html).toContain(
       "font-medium leading-5 text-[#52525c] dark:text-[#d4d4d8]",
     );
-    expect(html).toContain("lg:gap-x-0");
-    expect(html).toContain("lg:pr-5");
+    expect(html).toContain("min-[1440px]:gap-x-0");
+    expect(html).toContain("min-[1440px]:pr-5");
     expect(html).toContain(
-      "grid grid-cols-2 items-center gap-2 sm:grid-cols-4 lg:hidden",
+      "grid grid-cols-2 items-center gap-2 sm:grid-cols-4 min-[1440px]:hidden",
     );
     expect(html).toContain(
       "h-9 w-full min-w-0 gap-1.5 border-[#d4d4d8] bg-transparent px-2.5 text-[11px] font-semibold leading-none text-[#52525c]",
@@ -152,7 +152,9 @@ describe("HomeSurface", () => {
       "hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff]",
     );
     expect(html).toContain("px-2.5 text-[11px]");
-    expect(html).toContain("lg:w-auto lg:gap-2 lg:px-3");
+    expect(html).toContain(
+      "min-[1440px]:w-auto min-[1440px]:gap-2 min-[1440px]:px-3",
+    );
     expect(html).toContain("[&amp;_svg]:shrink-0");
     expect(html).toContain("[&amp;_span]:leading-none");
     expect(html).toContain("dark:border-[#3f3f46] dark:text-[#a1a1aa]");
@@ -187,8 +189,10 @@ describe("HomeSurface", () => {
     expect(html).toContain('href="/api/cv"');
     expect(html).toContain('download="CV-Ricardo_Nava_Mayoral.pdf"');
     expect(html).toContain('aria-label="Curriculum"');
-    expect(html).toContain('<span class="lg:hidden">CV</span>');
-    expect(html).toContain('<span class="hidden lg:inline">Curriculum</span>');
+    expect(html).toContain('<span class="min-[1440px]:hidden">CV</span>');
+    expect(html).toContain(
+      '<span class="hidden min-[1440px]:inline">Curriculum</span>',
+    );
     expect(html).toContain('href="https://github.com/Ricardo-NM"');
     expect(html).toContain("group-hover/github-preview:pointer-events-auto");
     expect(html).toContain("group/github-preview relative z-[80]");
@@ -222,7 +226,7 @@ describe("HomeSurface", () => {
       'href="https://www.linkedin.com/in/ricardo-nava-mayoral/"',
     );
     const desktopActionsStart = html.indexOf(
-      "hidden flex-col items-end gap-2 lg:flex lg:min-w-28",
+      "hidden flex-col items-end gap-2 min-[1440px]:flex min-[1440px]:min-w-28",
     );
     expect(desktopActionsStart).toBeGreaterThan(-1);
     expect(
@@ -288,7 +292,13 @@ describe("HomeSurface", () => {
     expect(html).toContain("col-start-2 mt-2 flex");
     expect(html).toContain("sm:mt-0");
     expect(html).not.toContain("gap-y-2 py-5");
-    expect(html).toContain("lg:grid-cols-[40px_minmax(0,1fr)_max-content]");
+    expect(html).toContain(
+      "min-[1200px]:grid-cols-[40px_minmax(0,1fr)_max-content_20px]",
+    );
+    expect(html).toContain("min-[1200px]:contents");
+    expect(html).toContain("min-[1200px]:col-start-3 min-[1200px]:row-start-1");
+    expect(html).toContain("min-[1200px]:col-start-4 min-[1200px]:row-start-1");
+    expect(html).toContain("min-[1200px]:text-right");
     expect(html).not.toContain("sm:grid-cols-[40px_minmax(0,1fr)_max-content]");
     expect(html).toContain("mt-0.5 text-xs font-medium");
     expect(html).toContain("sm:mt-1 sm:text-sm");
@@ -437,7 +447,7 @@ describe("HomeSurface", () => {
     expect(html).toContain("skills-guide-dot");
     expect(html).toContain("projects-skills-intersection-dot");
     expect(html).toContain(
-      "projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 lg:block",
+      "projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block",
     );
     expect(html).toContain('aria-labelledby="skills-title"');
     expect(html).not.toContain("Frontend");
@@ -640,20 +650,44 @@ describe("HomeSurface", () => {
     );
   });
 
-  it("keeps the mobile-style reading layout through narrow tablets", () => {
+  it("uses a tablet reading layout through hub-sized viewports before the desktop breakpoint", () => {
     const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
     const source = readFileSync(
       join(process.cwd(), "components", "home-surface.tsx"),
       "utf8",
     );
 
-    expect(css).toContain("@media (min-width: 1024px)");
-    expect(css).not.toContain("@media (min-width: 768px)");
-    expect(source).toContain("grid auto-rows-fr grid-cols-2 lg:grid-cols-4");
-    expect(source).toContain("grid grid-cols-1 lg:grid-cols-2");
-    expect(source).toContain("hidden -translate-x-1/2 translate-y-1/2 z-50 lg:block");
-    expect(source).not.toContain("grid auto-rows-fr grid-cols-2 md:grid-cols-4");
-    expect(source).not.toContain("grid grid-cols-1 md:grid-cols-2");
+    expect(css).toContain("@media (min-width: 768px)");
+    expect(css).toContain(
+      "@media (min-width: 1200px) and (max-width: 1439px)",
+    );
+    expect(css).toContain("--content-width: 76%");
+    expect(css).toContain("@media (min-width: 1440px)");
+    expect(css).not.toContain("@media (min-width: 1280px)");
+    expect(css).not.toContain("@media (min-width: 1024px)");
+    expect(source).toContain(
+      "grid auto-rows-fr grid-cols-2 min-[1200px]:grid-cols-4",
+    );
+    expect(source).toContain("grid grid-cols-1 md:grid-cols-2");
+    expect(source).toContain("hidden -translate-x-1/2 translate-y-1/2 z-50 md:block");
+    expect(source).not.toContain("grid auto-rows-fr grid-cols-2 lg:grid-cols-4");
+    expect(source).not.toContain("grid grid-cols-1 lg:grid-cols-2");
+  });
+
+  it("lets project technology icons wrap without squeezing the project link", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+
+    expect(html).toContain(
+      "mt-4 flex flex-wrap items-end justify-between gap-3 pt-3 border-t",
+    );
+    expect(html).toContain(
+      "flex min-w-0 flex-1 flex-wrap items-center gap-x-2.5 gap-y-2",
+    );
+    expect(html).toContain(
+      "group/link flex shrink-0 items-center gap-1 whitespace-nowrap text-[11px]",
+    );
+    expect(html).toContain("Ver proyecto");
+    expect(html).not.toContain("mt-4 flex items-center justify-between pt-3 border-t");
   });
 
   it("keeps experience detail guide lines aligned with the page grid", () => {
