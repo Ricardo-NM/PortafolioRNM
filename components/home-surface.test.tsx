@@ -142,16 +142,16 @@ describe("HomeSurface", () => {
     expect(html).toContain("lg:gap-x-0");
     expect(html).toContain("lg:pr-5");
     expect(html).toContain(
-      "grid grid-cols-4 items-center gap-1.5 md:gap-2 lg:hidden",
+      "grid grid-cols-2 items-center gap-2 sm:grid-cols-4 lg:hidden",
     );
     expect(html).toContain(
-      "h-8 w-full min-w-0 gap-1.5 border-[#d4d4d8] bg-transparent px-2 text-[10px] font-semibold leading-none text-[#52525c]",
+      "h-9 w-full min-w-0 gap-1.5 border-[#d4d4d8] bg-transparent px-2.5 text-[11px] font-semibold leading-none text-[#52525c]",
     );
     expect(html).toContain("transition-colors duration-300 ease-in-out");
     expect(html).toContain(
       "hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff]",
     );
-    expect(html).toContain("md:h-9 md:px-2.5 md:text-[11px]");
+    expect(html).toContain("px-2.5 text-[11px]");
     expect(html).toContain("lg:w-auto lg:gap-2 lg:px-3");
     expect(html).toContain("[&amp;_svg]:shrink-0");
     expect(html).toContain("[&amp;_span]:leading-none");
@@ -160,7 +160,7 @@ describe("HomeSurface", () => {
       "dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b]",
     );
     expect(html).toContain(
-      "h-8 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2 text-[10px] font-semibold leading-none text-[#d4d4d8]",
+      "h-9 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2.5 text-[11px] font-semibold leading-none text-[#d4d4d8]",
     );
     expect(html).toContain('stroke-width="2.5"');
     expect(html).toContain(
@@ -437,7 +437,7 @@ describe("HomeSurface", () => {
     expect(html).toContain("skills-guide-dot");
     expect(html).toContain("projects-skills-intersection-dot");
     expect(html).toContain(
-      "projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block",
+      "projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 lg:block",
     );
     expect(html).toContain('aria-labelledby="skills-title"');
     expect(html).not.toContain("Frontend");
@@ -638,6 +638,22 @@ describe("HomeSurface", () => {
     expect(source).not.toContain(
       'className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 gap-y-2 py-3',
     );
+  });
+
+  it("keeps the mobile-style reading layout through narrow tablets", () => {
+    const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
+    const source = readFileSync(
+      join(process.cwd(), "components", "home-surface.tsx"),
+      "utf8",
+    );
+
+    expect(css).toContain("@media (min-width: 1024px)");
+    expect(css).not.toContain("@media (min-width: 768px)");
+    expect(source).toContain("grid auto-rows-fr grid-cols-2 lg:grid-cols-4");
+    expect(source).toContain("grid grid-cols-1 lg:grid-cols-2");
+    expect(source).toContain("hidden -translate-x-1/2 translate-y-1/2 z-50 lg:block");
+    expect(source).not.toContain("grid auto-rows-fr grid-cols-2 md:grid-cols-4");
+    expect(source).not.toContain("grid grid-cols-1 md:grid-cols-2");
   });
 
   it("keeps experience detail guide lines aligned with the page grid", () => {

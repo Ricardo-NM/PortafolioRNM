@@ -157,7 +157,7 @@ a {
   min-height: var(--profile-height);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   :root {
     --content-gutter: 30%;
     --content-width: 40%;

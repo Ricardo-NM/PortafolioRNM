@@ -18,9 +18,9 @@ import experienceOne from "@/assets/images/experienceOne.png";
 import experienceSecond from "@/assets/images/experienceSecond.png";
 import linkedInProfile from "@/assets/images/profileL.jpg";
 import profilePicture from "@/assets/images/profilePicture.jpeg";
-import projectO from "@/assets/images/projectO.jpg";
-import projectS from "@/assets/images/projectS.jpg";
-import projectT from "@/assets/images/projectT.jpg";
+import projectO from "@/assets/images/projectO.svg";
+import projectS from "@/assets/images/projectS.svg";
+import projectT from "@/assets/images/projectT.svg";
 import { Blueprint } from "@/components/blueprint";
 import { ContactDrawer } from "@/components/contact-drawer";
 import { ThemeBanner } from "@/components/theme-banner";
@@ -50,10 +50,10 @@ const profileSummary = [
 ];
 
 const profileActionButtonClass =
-  "h-8 w-full min-w-0 gap-1.5 border-[#d4d4d8] bg-transparent px-2 text-[10px] font-semibold leading-none text-[#52525c] transition-colors duration-300 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#3f3f46] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0 [&_span]:leading-none";
+  "h-9 w-full min-w-0 gap-1.5 border-[#d4d4d8] bg-transparent px-2.5 text-[11px] font-semibold leading-none text-[#52525c] transition-colors duration-300 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#3f3f46] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0 [&_span]:leading-none";
 
 const profileContactButtonClass =
-  "h-8 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2 text-[10px] font-semibold leading-none text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-[#000] md:h-9 md:px-2.5 md:text-[11px] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0";
+  "h-9 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2.5 text-[11px] font-semibold leading-none text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-[#000] lg:w-auto lg:gap-2 lg:px-3 [&_svg]:shrink-0";
 
 const experiences = [
   {
@@ -504,51 +504,51 @@ function ExperienceSection() {
                       <ContentGuideLine position="top" />
                       <ContentGuideLine
                         position="middle"
-                        className="md:hidden"
+                        className="lg:hidden"
                         centerDot
                         lineClassName="stats-row-guide-line"
                         dotClassName="stats-row-guide-dot"
                       />
 
-                      <div className="grid auto-rows-fr grid-cols-2 md:grid-cols-4">
+                      <div className="grid auto-rows-fr grid-cols-2 lg:grid-cols-4">
                         {experience.stats.map((stat, statIndex) => (
                           <div
                             key={`${experience.id}-${stat.label}`}
-                            className="relative flex min-h-14 flex-col items-center justify-center px-3 py-3 text-center md:px-4"
+                            className="relative flex min-h-14 flex-col items-center justify-center px-3 py-3 text-center lg:px-4"
                           >
                             {statIndex % 2 === 0 ? (
                               <span
                                 aria-hidden="true"
-                                className="stats-column-guide blueprint-mask-y pointer-events-none absolute top-0 right-0 h-full w-[2px] translate-x-1/2 text-foreground opacity-[0.18] md:hidden"
+                                className="stats-column-guide blueprint-mask-y pointer-events-none absolute top-0 right-0 h-full w-[2px] translate-x-1/2 text-foreground opacity-[0.18] lg:hidden"
                               />
                             ) : null}
                             {statIndex % 2 === 0 ? (
                               <>
                                 <span
                                   aria-hidden="true"
-                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 md:hidden"
+                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 lg:hidden"
                                 />
                                 <span
                                   aria-hidden="true"
-                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2 md:hidden"
+                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2 lg:hidden"
                                 />
                               </>
                             ) : null}
                             {statIndex < experience.stats.length - 1 ? (
                               <span
                                 aria-hidden="true"
-                                className="stats-column-guide blueprint-mask-y pointer-events-none absolute top-0 right-0 hidden h-full w-[2px] translate-x-1/2 text-foreground opacity-[0.18] md:block"
+                                className="stats-column-guide blueprint-mask-y pointer-events-none absolute top-0 right-0 hidden h-full w-[2px] translate-x-1/2 text-foreground opacity-[0.18] lg:block"
                               />
                             ) : null}
                             {statIndex < experience.stats.length - 1 ? (
                               <>
                                 <span
                                   aria-hidden="true"
-                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute top-0 right-0 hidden translate-x-1/2 -translate-y-1/2 md:block"
+                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute top-0 right-0 hidden translate-x-1/2 -translate-y-1/2 lg:block"
                                 />
                                 <span
                                   aria-hidden="true"
-                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute right-0 bottom-0 hidden translate-x-1/2 translate-y-1/2 md:block"
+                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute right-0 bottom-0 hidden translate-x-1/2 translate-y-1/2 lg:block"
                                 />
                               </>
                             ) : null}
@@ -918,21 +918,21 @@ function ProjectsSection() {
         <ViewportGuideLine position="bottom" scope="projects" />
         <span
           aria-hidden="true"
-          className="projects-guide-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block"
+          className="projects-guide-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 lg:block"
         />
       </div>
 
       <div className="relative -mx-3">
         <span
           aria-hidden="true"
-          className="blueprint-mask-y pointer-events-none absolute top-0 left-1/2 hidden h-full w-[2px] -translate-x-1/2 text-foreground opacity-[0.18] z-20 md:block"
+          className="blueprint-mask-y pointer-events-none absolute top-0 left-1/2 hidden h-full w-[2px] -translate-x-1/2 text-foreground opacity-[0.18] z-20 lg:block"
         />
         <span
           aria-hidden="true"
-          className="projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block"
+          className="projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 lg:block"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2">
           {projectsData.map((project, index) => {
             const isMobileLast = index === projectsData.length - 1;
             const isDesktopRight = index % 2 === 1;
@@ -995,7 +995,7 @@ function ProjectsSection() {
                 {!isMobileLast && (
                   <div
                     aria-hidden="true"
-                    className="col-span-1 md:hidden relative h-0 w-full"
+                    className="col-span-1 lg:hidden relative h-0 w-full"
                   >
                     <div className="experience-detail-local-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]" />
                     <span className="experience-detail-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2" />
@@ -1006,7 +1006,7 @@ function ProjectsSection() {
                 {isDesktopRight && !isDesktopLastRow && (
                   <div
                     aria-hidden="true"
-                    className="col-span-2 hidden md:block relative h-0 w-full"
+                    className="col-span-2 hidden lg:block relative h-0 w-full"
                   >
                     <div className="experience-detail-local-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]" />
                     <span className="experience-detail-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2" />
@@ -1375,7 +1375,7 @@ export function HomeSurface() {
               </div>
             </div>
 
-            <div className="col-span-full grid grid-cols-4 items-center gap-1.5 md:gap-2 lg:hidden">
+            <div className="col-span-full grid grid-cols-2 items-center gap-2 sm:grid-cols-4 lg:hidden">
               <ContactDrawer className={profileContactButtonClass} />
 
               <Button asChild className={profileActionButtonClass}>
