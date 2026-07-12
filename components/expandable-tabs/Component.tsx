@@ -29,6 +29,8 @@ interface ExpandableTabsProps {
   activeColor?: string;
   defaultSelected?: number | null;
   selectedIndex?: number | null;
+  trailingAction?: React.ReactNode;
+  trailingActionVisible?: boolean;
   onChange?: (index: number | null) => void;
   onTabSelect?: (
     tab: Tab,
@@ -63,12 +65,19 @@ const transition: Transition = {
   duration: 0.6,
 };
 
+const trailingActionTransition: Transition = {
+  duration: 0.32,
+  ease: [0.22, 1, 0.36, 1],
+};
+
 export function ExpandableTabs({
   tabs,
   className,
   activeColor = "text-primary",
   defaultSelected = null,
   selectedIndex,
+  trailingAction,
+  trailingActionVisible = Boolean(trailingAction),
   onChange,
   onTabSelect,
 }: ExpandableTabsProps) {
@@ -102,7 +111,7 @@ export function ExpandableTabs({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-2 rounded-2xl border bg-background p-1 shadow-sm",
+        "flex flex-wrap items-center rounded-2xl border bg-background p-1 shadow-sm",
         className,
       )}
     >
@@ -112,6 +121,8 @@ export function ExpandableTabs({
         }
 
         const Icon = tab.icon;
+        const isLastTabItem = index === tabs.length - 1;
+
         return (
           <motion.a
             key={tab.title}
@@ -127,6 +138,7 @@ export function ExpandableTabs({
             transition={transition}
             className={cn(
               "relative flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300",
+              isLastTabItem ? "mr-0" : "mr-2",
               selected === index
                 ? cn("bg-muted", activeColor)
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -150,6 +162,32 @@ export function ExpandableTabs({
           </motion.a>
         );
       })}
+      {trailingAction && (
+        <motion.div
+          aria-hidden={!trailingActionVisible}
+          initial={false}
+          animate={{
+            width: trailingActionVisible ? 44 : 0,
+          }}
+          transition={trailingActionTransition}
+          className={cn(
+            "flex h-9 shrink-0 overflow-hidden pl-2 will-change-[width]",
+            trailingActionVisible ? "pointer-events-auto" : "pointer-events-none",
+          )}
+        >
+          <motion.div
+            initial={false}
+            animate={{
+              opacity: trailingActionVisible ? 1 : 0,
+              x: trailingActionVisible ? 0 : -12,
+            }}
+            transition={trailingActionTransition}
+            className="flex h-9 w-9 shrink-0 will-change-[transform,opacity]"
+          >
+            {trailingAction}
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

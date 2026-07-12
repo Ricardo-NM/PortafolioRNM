@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { ExpandableTabs } from "@/components/expandable-tabs/Component";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const portfolioTabs = [
   {
@@ -43,6 +44,7 @@ const portfolioTabs = [
 
 export function PortfolioExpandableTabs() {
   const [activeTabIndex, setActiveTabIndex] = React.useState(0);
+  const [showThemeTab, setShowThemeTab] = React.useState(false);
 
   React.useEffect(() => {
     const sectionEntries = portfolioTabs
@@ -114,6 +116,59 @@ export function PortfolioExpandableTabs() {
     };
   }, []);
 
+  React.useEffect(() => {
+    const banner = document.querySelector<HTMLElement>(".theme-banner-frame");
+
+    if (!banner) {
+      return;
+    }
+
+    const themeBanner = banner;
+    let frameId = 0;
+    let isThemeTabVisible = false;
+
+    function syncThemeTabVisibility() {
+      const bannerBottom = themeBanner.getBoundingClientRect().bottom;
+      const shouldShow = bannerBottom <= -8;
+      const shouldHide = bannerBottom > 16;
+
+      if (shouldShow && !isThemeTabVisible) {
+        isThemeTabVisible = true;
+        setShowThemeTab(true);
+        return;
+      }
+
+      if (shouldHide && isThemeTabVisible) {
+        isThemeTabVisible = false;
+        setShowThemeTab(false);
+      }
+    }
+
+    function scheduleThemeTabSync() {
+      if (frameId) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        frameId = 0;
+        syncThemeTabVisibility();
+      });
+    }
+
+    syncThemeTabVisibility();
+    window.addEventListener("scroll", scheduleThemeTabSync, { passive: true });
+    window.addEventListener("resize", scheduleThemeTabSync);
+
+    return () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+
+      window.removeEventListener("scroll", scheduleThemeTabSync);
+      window.removeEventListener("resize", scheduleThemeTabSync);
+    };
+  }, []);
+
   return (
     <nav
       aria-label="Navegación principal del portafolio"
@@ -124,6 +179,14 @@ export function PortfolioExpandableTabs() {
         selectedIndex={activeTabIndex}
         activeColor="text-[#18181b] dark:text-[#f4f4f5]"
         className="w-auto max-w-full justify-center border-[#e4e4e7] bg-[#fff]/90 shadow-[0_18px_50px_rgba(24,24,27,0.18)] backdrop-blur-xl supports-[backdrop-filter]:bg-[#fff]/70 dark:border-[#27272a] dark:bg-[#09090b]/90 dark:shadow-[0_18px_60px_rgba(0,0,0,0.55)] dark:supports-[backdrop-filter]:bg-[#09090b]/70"
+        trailingActionVisible={showThemeTab}
+        trailingAction={
+          <ThemeToggle
+            appearance="tab"
+            iconSize={20}
+            className="shrink-0"
+          />
+        }
         onTabSelect={(tab, index) => {
           setActiveTabIndex(index);
           document.getElementById(tab.sectionId ?? "")?.scrollIntoView({
