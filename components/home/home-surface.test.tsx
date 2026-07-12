@@ -448,6 +448,7 @@ describe("HomeSurface", () => {
       join(process.cwd(), "components", "focus-rail", "focus-rail.tsx"),
       "utf8",
     );
+    const normalizedFocusRailSource = focusRailSource.replaceAll("\r\n", "\n");
 
     expect(source).toContain(
       'import { FocusRail, type FocusRailItem } from "@/components/focus-rail/focus-rail"',
@@ -477,7 +478,9 @@ describe("HomeSurface", () => {
     expect(html).toContain("https://cdn.simpleicons.org/react/71717a");
     expect(html).toContain("https://cdn.simpleicons.org/react/000");
     expect(html).toContain("https://cdn.simpleicons.org/react/fff");
-    expect(focusRailSource).toContain('dark: {\n    base: "a1a1aa",\n    hover: "fff"');
+    expect(normalizedFocusRailSource).toContain(
+      'dark: {\n    base: "a1a1aa",\n    hover: "fff"',
+    );
     expect(focusRailSource).not.toContain("dark:hover:bg-[#fff]");
     expect(focusRailSource).not.toContain("shadow-[inset_0_0_0_1px");
     expect(focusRailSource).not.toContain("hover:shadow-[");
