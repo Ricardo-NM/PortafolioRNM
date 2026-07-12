@@ -1,10 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState, Fragment } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  useEffect,
+  useRef,
+  useState,
+  Fragment,
+  type ReactNode,
+} from "react";
+import { motion } from "framer-motion";
+import type { MotionProps } from "framer-motion";
 import Image from "next/image";
 import {
-  ChevronDown,
   FileUser,
   Github,
   Linkedin,
@@ -22,6 +28,7 @@ import projectO from "@/assets/images/projectO.svg";
 import projectS from "@/assets/images/projectS.svg";
 import projectT from "@/assets/images/projectT.svg";
 import { Blueprint } from "@/components/blueprint";
+import { AnimatedTabs } from "@/components/animated-tabs/Component";
 import { ContactDrawer } from "@/components/contact-drawer";
 import { PortfolioExpandableTabs } from "@/components/expandable-tabs/Usage";
 import { ThemeBanner } from "@/components/theme-banner";
@@ -59,7 +66,7 @@ const profileContactButtonClass =
 const experiences = [
   {
     id: "kpuga",
-    company: "KPUGA | Consultoria en comercio exterior",
+    company: "KPUGA",
     role: "Desarrollador Full Stack",
     date: "Enero 2026 - Junio 2026",
     mode: "Hibrido",
@@ -121,17 +128,6 @@ const experiences = [
   },
 ];
 
-export function getNextExperienceTransition(
-  activeId: string | null,
-  requestedId: string,
-) {
-  if (activeId === requestedId) {
-    return { activeId: requestedId, pendingId: null };
-  }
-
-  return { activeId: requestedId, pendingId: null };
-}
-
 export function getNextAutoSkillIndex(
   currentIndex: number | null,
   totalItems: number,
@@ -183,6 +179,50 @@ function ViewportGuideLine({
   );
 }
 
+const experienceContentInitial = {
+  opacity: 0,
+  scale: 0.96,
+  x: -10,
+  filter: "blur(8px)",
+};
+
+const experienceContentAnimate = {
+  opacity: 1,
+  scale: 1,
+  x: 0,
+  filter: "blur(0px)",
+};
+
+const experienceContentTransition = {
+  duration: 0.32,
+  ease: "circInOut",
+  type: "spring",
+} satisfies MotionProps["transition"];
+
+const experienceGuideFadeTransition = {
+  duration: 0.14,
+  ease: "easeOut",
+} satisfies MotionProps["transition"];
+
+function ExperienceMotionBlock({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <motion.div
+      className={`experience-content-motion ${className}`}
+      initial={experienceContentInitial}
+      animate={experienceContentAnimate}
+      transition={experienceContentTransition}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 function ContentGuideLine({
   position,
   className = "",
@@ -204,9 +244,12 @@ function ContentGuideLine({
         : "bottom-0";
 
   return (
-    <div
+    <motion.div
       aria-hidden="true"
       className={`pointer-events-none absolute left-0 z-50 h-0 w-full ${verticalPosition} ${className}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={experienceGuideFadeTransition}
     >
       <div
         className={`${lineClassName} blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]`}
@@ -222,22 +265,7 @@ function ContentGuideLine({
       <span
         className={`${dotClassName} blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2`}
       />
-    </div>
-  );
-}
-
-function ItemGuideLine({ position }: { position: "top" | "bottom" }) {
-  const verticalPosition = position === "top" ? "top-0" : "bottom-0";
-
-  return (
-    <div
-      aria-hidden="true"
-      className={`pointer-events-none absolute -left-3 z-50 h-0 w-[calc(100%+1.5rem)] ${verticalPosition}`}
-    >
-      <div className="experience-item-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]" />
-      <span className="experience-item-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2" />
-      <span className="experience-item-guide-dot blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2" />
-    </div>
+    </motion.div>
   );
 }
 
@@ -368,20 +396,164 @@ function LinkedInPreviewCard() {
   );
 }
 
-function ExperienceSection() {
-  const [openExperienceId, setOpenExperienceId] = useState<string | null>(
-    experiences[0]?.id ?? null,
+function ExperienceTabLabel({
+  experience,
+}: {
+  experience: (typeof experiences)[number];
+}) {
+  return (
+    <span className="flex min-w-0 items-center justify-center gap-2">
+      <span className="experience-tab-logo grid h-6 w-6 shrink-0 place-items-center rounded-md border border-[#e4e4e7] bg-[#fff] p-0.5 shadow-[0_1px_4px_rgba(24,24,27,0.1)] dark:border-[#27272a] dark:shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+        <Image
+          src={experience.image}
+          alt=""
+          sizes="24px"
+          className="h-full w-full object-contain"
+        />
+      </span>
+      <span className="truncate">{experience.company}</span>
+    </span>
   );
+}
 
-  function handleExperienceToggle(experienceId: string) {
-    const nextTransition = getNextExperienceTransition(
-      openExperienceId,
-      experienceId,
-    );
+function ExperienceDetails({
+  experience,
+}: {
+  experience: (typeof experiences)[number];
+}) {
+  return (
+    <article className="experience-tab-panel relative">
+      <div className="experience-detail-heading-grid grid grid-cols-[minmax(0,1fr)_max-content] gap-x-4 gap-y-1 pt-3 pb-3">
+        <ExperienceMotionBlock className="flex min-w-0 items-start gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-lg border border-[#e4e4e7] bg-[#fff] shrink-0 p-1 shadow-[0_1px_4px_rgba(24,24,27,0.1)] dark:border-[#27272a] dark:shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+            <Image
+              src={experience.image}
+              alt=""
+              sizes="40px"
+              className="h-full w-full object-contain"
+            />
+          </div>
 
-    setOpenExperienceId(nextTransition.activeId);
-  }
+          <div className="min-w-0">
+            <h3 className="text-sm font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5] sm:text-[15px]">
+              {experience.company}
+            </h3>
+            <p className="mt-0.5 text-xs font-medium leading-tight text-[#52525c] dark:text-[#a1a1aa] sm:mt-1 sm:text-sm">
+              {experience.role}
+            </p>
+          </div>
+        </ExperienceMotionBlock>
 
+        <ExperienceMotionBlock className="min-w-0 text-right">
+          <p className="text-xs font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5] sm:text-[13px]">
+            {experience.date}
+          </p>
+          <p className="mt-1 text-xs font-medium leading-none text-[#71717a] dark:text-[#a1a1aa] sm:mt-2">
+            {experience.mode}
+          </p>
+        </ExperienceMotionBlock>
+      </div>
+
+      <div className="experience-detail-stat-row relative -mx-3 px-3">
+        <ContentGuideLine position="top" />
+        <ContentGuideLine
+          position="middle"
+          className="min-[1200px]:hidden"
+          centerDot
+          lineClassName="stats-row-guide-line"
+          dotClassName="stats-row-guide-dot"
+        />
+
+        <div className="grid auto-rows-fr grid-cols-2 min-[1200px]:grid-cols-4">
+          {experience.stats.map((stat, statIndex) => (
+            <div
+              key={`${experience.id}-${stat.label}`}
+              className="relative flex min-h-14 flex-col items-center justify-center px-3 py-3 text-center min-[1200px]:px-4"
+            >
+              {statIndex % 2 === 0 ? (
+                <span
+                  aria-hidden="true"
+                  className="stats-column-guide blueprint-mask-y pointer-events-none absolute top-0 right-0 h-full w-[2px] translate-x-1/2 text-foreground opacity-[0.18] min-[1200px]:hidden"
+                />
+              ) : null}
+              {statIndex % 2 === 0 ? (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="stats-column-guide-dot blueprint-dot pointer-events-none absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 min-[1200px]:hidden"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="stats-column-guide-dot blueprint-dot pointer-events-none absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2 min-[1200px]:hidden"
+                  />
+                </>
+              ) : null}
+              {statIndex < experience.stats.length - 1 ? (
+                <span
+                  aria-hidden="true"
+                  className="stats-column-guide blueprint-mask-y pointer-events-none absolute top-0 right-0 hidden h-full w-[2px] translate-x-1/2 text-foreground opacity-[0.18] min-[1200px]:block"
+                />
+              ) : null}
+              {statIndex < experience.stats.length - 1 ? (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="stats-column-guide-dot blueprint-dot pointer-events-none absolute top-0 right-0 hidden translate-x-1/2 -translate-y-1/2 min-[1200px]:block"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="stats-column-guide-dot blueprint-dot pointer-events-none absolute right-0 bottom-0 hidden translate-x-1/2 translate-y-1/2 min-[1200px]:block"
+                  />
+                </>
+              ) : null}
+              <ExperienceMotionBlock>
+                <p className="text-base font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]">
+                  {stat.value}
+                </p>
+                <p className="mt-2 text-[10px] font-bold uppercase leading-none text-[#71717a] dark:text-[#71717a]">
+                  {stat.label}
+                </p>
+              </ExperienceMotionBlock>
+            </div>
+          ))}
+        </div>
+
+        <ContentGuideLine position="bottom" />
+      </div>
+
+      <div className="experience-detail-bullet-row relative -mx-3 px-3">
+        <ExperienceMotionBlock>
+          <ul className="list-disc space-y-2 py-4 pl-4 text-justify text-[13px] font-medium leading-5 text-[#52525c] dark:text-[#a1a1aa]">
+            {experience.bullets.map((bullet) => (
+              <li key={bullet}>{bullet}</li>
+            ))}
+          </ul>
+        </ExperienceMotionBlock>
+
+        <ContentGuideLine position="bottom" />
+      </div>
+
+      <ExperienceMotionBlock className="flex flex-wrap gap-2 pt-3 pb-1">
+        {experience.badges.map((badge) => (
+          <span
+            key={`${experience.id}-${badge}`}
+            className="rounded border border-[#e4e4e7] bg-[#f4f4f5] px-2 py-1 text-[11px] font-medium leading-none text-[#52525c] dark:border-[#27272a] dark:bg-[#18181b] dark:text-[#d4d4d8]"
+          >
+            {badge}
+          </span>
+        ))}
+      </ExperienceMotionBlock>
+    </article>
+  );
+}
+
+const experienceTabs = experiences.map((experience) => ({
+  id: experience.id,
+  label: <ExperienceTabLabel experience={experience} />,
+  content: <ExperienceDetails experience={experience} />,
+}));
+
+function ExperienceSection() {
   return (
     <section
       id="experiencia"
@@ -401,177 +573,12 @@ function ExperienceSection() {
         <ViewportGuideLine position="bottom" scope="experience" />
       </div>
 
-      <div>
-        {experiences.map((experience, experienceIndex) => {
-          const isOpen = openExperienceId === experience.id;
-          const detailsId = `${experience.id}-details`;
-          const isLastExperience = experienceIndex === experiences.length - 1;
-
-          return (
-            <article
-              key={experience.company}
-              className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 gap-y-0 py-3 min-[1200px]:grid-cols-[40px_minmax(0,1fr)_max-content_20px] min-[1200px]:items-start min-[1200px]:gap-x-4"
-            >
-              <div className="row-span-2 grid h-10 w-10 place-items-center rounded-lg border border-[#e4e4e7] bg-[#fff] p-1 shadow-[0_1px_4px_rgba(24,24,27,0.1)] dark:border-[#27272a] dark:shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
-                <Image
-                  src={experience.image}
-                  alt=""
-                  sizes="40px"
-                  className="h-full w-full object-contain"
-                />
-              </div>
-
-              <div className="min-w-0">
-                <h3 className="text-sm font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5] sm:text-[15px]">
-                  {experience.company}
-                </h3>
-                <p className="mt-0.5 text-xs font-medium leading-tight text-[#52525c] dark:text-[#a1a1aa] sm:mt-1 sm:text-sm">
-                  {experience.role}
-                </p>
-              </div>
-
-              <div className="col-start-2 mt-2 flex min-w-0 items-start justify-between gap-3 sm:mt-0 min-[1200px]:contents">
-                <div className="text-left min-[1200px]:col-start-3 min-[1200px]:row-start-1 min-[1200px]:min-w-40 min-[1200px]:text-right">
-                  <p className="text-xs font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5] sm:text-[13px]">
-                    {experience.date}
-                  </p>
-                  <p className="mt-1 text-xs font-medium leading-none text-[#71717a] dark:text-[#a1a1aa] sm:mt-2">
-                    {experience.mode}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  aria-controls={detailsId}
-                  aria-expanded={isOpen}
-                  aria-label={`${isOpen ? "Contraer" : "Expandir"} experiencia en ${experience.company}`}
-                  onClick={() => handleExperienceToggle(experience.id)}
-                  className="grid h-5 w-5 shrink-0 cursor-pointer place-items-center rounded-sm text-[#52525c] transition-colors duration-200 hover:bg-transparent hover:text-[#18181b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#18181b]/25 dark:text-[#d4d4d8] dark:hover:text-[#fff] dark:focus-visible:ring-[#fff]/25 min-[1200px]:col-start-4 min-[1200px]:row-start-1"
-                >
-                  <motion.span
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    className="grid place-items-center"
-                    transition={{ duration: 0.22, ease: "easeOut" }}
-                  >
-                    <ChevronDown
-                      size={13}
-                      strokeWidth={2.1}
-                      aria-hidden="true"
-                    />
-                  </motion.span>
-                </button>
-              </div>
-
-              <AnimatePresence
-                initial={false}
-              >
-                {isOpen ? (
-                  <motion.div
-                    key={detailsId}
-                    id={detailsId}
-                    className="col-span-full -mx-3 overflow-hidden px-3"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{
-                      height: { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
-                      opacity: { duration: 0.22, ease: "easeOut" },
-                    }}
-                  >
-                    <div className="experience-detail-stat-row relative -mx-3 mt-3 px-3">
-                      <ContentGuideLine position="top" />
-                      <ContentGuideLine
-                        position="middle"
-                        className="min-[1200px]:hidden"
-                        centerDot
-                        lineClassName="stats-row-guide-line"
-                        dotClassName="stats-row-guide-dot"
-                      />
-
-                      <div className="grid auto-rows-fr grid-cols-2 min-[1200px]:grid-cols-4">
-                        {experience.stats.map((stat, statIndex) => (
-                          <div
-                            key={`${experience.id}-${stat.label}`}
-                            className="relative flex min-h-14 flex-col items-center justify-center px-3 py-3 text-center min-[1200px]:px-4"
-                          >
-                            {statIndex % 2 === 0 ? (
-                              <span
-                                aria-hidden="true"
-                                className="stats-column-guide blueprint-mask-y pointer-events-none absolute top-0 right-0 h-full w-[2px] translate-x-1/2 text-foreground opacity-[0.18] min-[1200px]:hidden"
-                              />
-                            ) : null}
-                            {statIndex % 2 === 0 ? (
-                              <>
-                                <span
-                                  aria-hidden="true"
-                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 min-[1200px]:hidden"
-                                />
-                                <span
-                                  aria-hidden="true"
-                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2 min-[1200px]:hidden"
-                                />
-                              </>
-                            ) : null}
-                            {statIndex < experience.stats.length - 1 ? (
-                              <span
-                                aria-hidden="true"
-                                className="stats-column-guide blueprint-mask-y pointer-events-none absolute top-0 right-0 hidden h-full w-[2px] translate-x-1/2 text-foreground opacity-[0.18] min-[1200px]:block"
-                              />
-                            ) : null}
-                            {statIndex < experience.stats.length - 1 ? (
-                              <>
-                                <span
-                                  aria-hidden="true"
-                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute top-0 right-0 hidden translate-x-1/2 -translate-y-1/2 min-[1200px]:block"
-                                />
-                                <span
-                                  aria-hidden="true"
-                                  className="stats-column-guide-dot blueprint-dot pointer-events-none absolute right-0 bottom-0 hidden translate-x-1/2 translate-y-1/2 min-[1200px]:block"
-                                />
-                              </>
-                            ) : null}
-                            <p className="text-base font-bold leading-none text-[#18181b] dark:text-[#f4f4f5]">
-                              {stat.value}
-                            </p>
-                            <p className="mt-2 text-[10px] font-bold uppercase leading-none text-[#71717a] dark:text-[#71717a]">
-                              {stat.label}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-
-                      <ContentGuideLine position="bottom" />
-                    </div>
-
-                    <div className="experience-detail-bullet-row relative -mx-3 px-3">
-                      <ul className="list-disc space-y-2 py-4 pl-4 text-justify text-[13px] font-medium leading-5 text-[#52525c] dark:text-[#a1a1aa]">
-                        {experience.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-
-                      <ContentGuideLine position="bottom" />
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 pt-3 pb-1">
-                      {experience.badges.map((badge) => (
-                        <span
-                          key={`${experience.id}-${badge}`}
-                          className="rounded border border-[#e4e4e7] bg-[#f4f4f5] px-2 py-1 text-[11px] font-medium leading-none text-[#52525c] dark:border-[#27272a] dark:bg-[#18181b] dark:text-[#d4d4d8]"
-                        >
-                          {badge}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
-
-              {!isLastExperience ? <ItemGuideLine position="bottom" /> : null}
-            </article>
-          );
-        })}
-      </div>
+      <AnimatedTabs
+        tabs={experienceTabs}
+        defaultTab={experiences[0]?.id}
+        panelAnimation="fade"
+        className="py-3"
+      />
     </section>
   );
 }

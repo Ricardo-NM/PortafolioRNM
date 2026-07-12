@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   getNextAutoSkillIndex,
-  getNextExperienceTransition,
   HomeSurface,
 } from "@/components/home-surface";
 import {
@@ -267,7 +266,12 @@ describe("HomeSurface", () => {
         'id="experiencia"',
         'data-section-id="experiencia"',
       ],
-      ["Proyectos", "#proyectos", 'id="proyectos"', 'data-section-id="proyectos"'],
+      [
+        "Proyectos",
+        "#proyectos",
+        'id="proyectos"',
+        'data-section-id="proyectos"',
+      ],
       [
         "Habilidades",
         "#habilidades",
@@ -320,9 +324,7 @@ describe("HomeSurface", () => {
       text.indexOf("Perfil profesional"),
     );
     expect(text).toContain("ArdabyTec");
-    expect(text).toContain("Mayo 2025 - Diciembre 2025");
-    expect(text).toContain("Presencial");
-    expect(text).toContain("KPUGA | Consultoria en comercio exterior");
+    expect(text).toContain("KPUGA");
     expect(text).toContain("Enero 2026 - Junio 2026");
     expect(text).toContain("Hibrido");
 
@@ -347,24 +349,28 @@ describe("HomeSurface", () => {
     expect(html).not.toContain("h-[3px] w-[3px]");
     expect(html).toContain("top-0");
     expect(html).toContain("bottom-0");
-    expect(html).toContain("py-3");
-    expect(html).toContain("gap-x-3 gap-y-0 py-3");
-    expect(html).toContain("col-start-2 mt-2 flex");
-    expect(html).toContain("sm:mt-0");
+    expect(html).toContain('role="tablist"');
+    expect(html).toContain('role="tab"');
+    expect(html).toContain('aria-selected="true"');
+    expect(html).toContain('aria-controls="kpuga-panel"');
+    expect(html).toContain('id="kpuga-tab"');
+    expect(html).toContain('id="kpuga-panel"');
+    expect(html).toContain("experience-tab-logo");
+    expect(html).toContain("experience-tab-panel");
+    expect(html).toContain("experience-detail-heading-grid");
+    expect(html).toContain("grid-cols-[minmax(0,1fr)_max-content]");
+    expect(html).toContain("justify-center");
+    expect(html).toContain("experience-detail-heading-grid grid grid-cols-[minmax(0,1fr)_max-content] gap-x-4 gap-y-1 pt-3 pb-3");
+    expect(html).toContain("experience-detail-stat-row relative -mx-3 px-3");
+    expect(html).not.toContain("experience-detail-stat-row relative -mx-3 mt-3 px-3");
     expect(html).not.toContain("gap-y-2 py-5");
-    expect(html).toContain(
-      "min-[1200px]:grid-cols-[40px_minmax(0,1fr)_max-content_20px]",
-    );
-    expect(html).toContain("min-[1200px]:contents");
-    expect(html).toContain("min-[1200px]:col-start-3 min-[1200px]:row-start-1");
-    expect(html).toContain("min-[1200px]:col-start-4 min-[1200px]:row-start-1");
-    expect(html).toContain("min-[1200px]:text-right");
-    expect(html).not.toContain("sm:grid-cols-[40px_minmax(0,1fr)_max-content]");
+    expect(html).not.toContain("min-[1200px]:contents");
+    expect(html).not.toContain("min-[1200px]:col-start-4 min-[1200px]:row-start-1");
     expect(html).toContain("mt-0.5 text-xs font-medium");
     expect(html).toContain("sm:mt-1 sm:text-sm");
     expect(html).toContain("mt-1 text-xs font-medium leading-none");
     expect(html).toContain("sm:mt-2");
-    expect(html).toContain('aria-label="Expandir experiencia en ArdabyTec"');
+    expect(html).not.toContain('aria-label="Expandir experiencia en ArdabyTec"');
     expect(html).toContain(
       "grid h-10 w-10 place-items-center rounded-lg border border-[#e4e4e7] bg-[#fff]",
     );
@@ -372,12 +378,11 @@ describe("HomeSurface", () => {
     expect(html).toContain("dark:border-[#27272a]");
     expect(html).toContain("dark:text-[#f4f4f5]");
     expect(html).toContain("dark:text-[#a1a1aa]");
-    expect(html).toContain("h-5 w-5");
-    expect(html).toContain("hover:bg-transparent");
+    expect(html).not.toContain("h-5 w-5");
     expect(html).not.toContain(
       "h-8 w-8 shrink-0 cursor-pointer place-items-center rounded-md border border-transparent",
     );
-    expect(html).toContain("lucide-chevron-down");
+    expect(html).not.toContain("lucide-chevron-down");
   });
 
   it("renders project technologies with theme-aware Simple Icons URLs", () => {
@@ -592,7 +597,7 @@ describe("HomeSurface", () => {
     expect(html).toContain("github-activity-legend ml-auto");
     expect(html).toContain("bg-[#18181b] dark:bg-[#f4f4f5]");
     expect(html).toContain("bg-[#52525c] dark:bg-[#d4d4d8]");
-    expect(html).toContain("aria-label=\"Calendario de contribuciones\"");
+    expect(html).toContain('aria-label="Calendario de contribuciones"');
     expect(html).toContain("github-activity-frame rounded-md border");
     expect(html).toContain("github-activity-scroll overflow-x-auto");
     expect(html).toContain("github-activity-grid min-w-[686px] w-full");
@@ -600,15 +605,11 @@ describe("HomeSurface", () => {
     expect(html.indexOf("github-activity-summary-row")).toBeGreaterThan(
       html.indexOf("github-activity-scroll overflow-x-auto"),
     );
-    expect(html.lastIndexOf(">Jul<")).toBeGreaterThan(
-      html.indexOf(">Jun<"),
-    );
+    expect(html.lastIndexOf(">Jul<")).toBeGreaterThan(html.indexOf(">Jun<"));
     expect(html).toContain(
       "grid w-full gap-[3px] overflow-visible text-[11px]",
     );
-    expect(html).toContain(
-      "whitespace-nowrap last:justify-self-end",
-    );
+    expect(html).toContain("whitespace-nowrap last:justify-self-end");
     expect(html).toContain(
       "grid w-full auto-cols-[minmax(10px,1fr)] grid-flow-col grid-rows-7",
     );
@@ -651,62 +652,51 @@ describe("HomeSurface", () => {
     expect(getNextAutoSkillIndex(2, 5, () => 0.8)).toBe(4);
   });
 
-  it("keeps one experience accordion panel open at all times", () => {
-    expect(getNextExperienceTransition(null, "kpuga")).toEqual({
-      activeId: "kpuga",
-      pendingId: null,
-    });
-    expect(getNextExperienceTransition("kpuga", "kpuga")).toEqual({
-      activeId: "kpuga",
-      pendingId: null,
-    });
-    expect(getNextExperienceTransition("kpuga", "ardabytec")).toEqual({
-      activeId: "ardabytec",
-      pendingId: null,
-    });
-  });
-
-  it("starts with the first experience accordion panel open", () => {
+  it("starts with the first experience tab selected", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
     const text = html.replace(/<[^>]+>/g, "");
 
-    expect(html).toContain('id="kpuga-details"');
-    expect(html).toContain('aria-expanded="true"');
-    expect(html).toContain('aria-expanded="false"');
+    expect(html).toContain('id="kpuga-panel"');
+    expect(html).toContain('aria-labelledby="kpuga-tab"');
+    expect(html).toContain('aria-selected="true"');
     expect(html).not.toContain("grid auto-rows-fr grid-cols-2 md:grid-cols-4");
     expect(text).toContain("+15");
     expect(text).toContain("USUARIOS");
     expect(text).toContain("VPS LINUX");
   });
 
-  it("clips the animated experience details while collapsing", () => {
+  it("uses the animated tabs component for experience instead of a collapsible carousel", () => {
     const source = readFileSync(
       join(process.cwd(), "components", "home-surface.tsx"),
       "utf8",
     );
+    const animatedTabsSource = readFileSync(
+      join(process.cwd(), "components", "animated-tabs", "Component.tsx"),
+      "utf8",
+    );
+    const usageSource = readFileSync(
+      join(process.cwd(), "components", "animated-tabs", "Usage.tsx"),
+      "utf8",
+    );
 
     expect(source).toContain(
+      'import { AnimatedTabs } from "@/components/animated-tabs/Component"',
+    );
+    expect(source).toContain("<AnimatedTabs");
+    expect(source).toContain("experienceTabs");
+    expect(source).not.toContain("openExperienceId");
+    expect(source).not.toContain("handleExperienceToggle");
+    expect(source).not.toContain("ChevronDown");
+    expect(animatedTabsSource).toContain("label: React.ReactNode");
+    expect(animatedTabsSource).toContain('panelAnimation?: "content" | "fade"');
+    expect(animatedTabsSource).toContain("panelAnimation === \"fade\"");
+    expect(animatedTabsSource).toContain('role="tablist"');
+    expect(animatedTabsSource).toContain('role="tabpanel"');
+    expect(usageSource).toContain(
+      'import { AnimatedTabs } from "@/components/animated-tabs/Component"',
+    );
+    expect(source).not.toContain(
       'className="col-span-full -mx-3 overflow-hidden px-3"',
-    );
-    expect(source).not.toContain(
-      'className="col-span-full -mx-3 overflow-visible px-3"',
-    );
-  });
-
-  it("keeps mobile experience spacing out of the animated grid row gap", () => {
-    const source = readFileSync(
-      join(process.cwd(), "components", "home-surface.tsx"),
-      "utf8",
-    );
-
-    expect(source).toContain(
-      'className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 gap-y-0 py-3',
-    );
-    expect(source).toContain(
-      'className="col-start-2 mt-2 flex min-w-0 items-start justify-between gap-3 sm:mt-0',
-    );
-    expect(source).not.toContain(
-      'className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 gap-y-2 py-3',
     );
   });
 
@@ -718,9 +708,7 @@ describe("HomeSurface", () => {
     );
 
     expect(css).toContain("@media (min-width: 768px)");
-    expect(css).toContain(
-      "@media (min-width: 1200px) and (max-width: 1439px)",
-    );
+    expect(css).toContain("@media (min-width: 1200px) and (max-width: 1439px)");
     expect(css).toContain("--content-width: 76%");
     expect(css).toContain("@media (min-width: 1440px)");
     expect(css).not.toContain("@media (min-width: 1280px)");
@@ -729,8 +717,12 @@ describe("HomeSurface", () => {
       "grid auto-rows-fr grid-cols-2 min-[1200px]:grid-cols-4",
     );
     expect(source).toContain("grid grid-cols-1 md:grid-cols-2");
-    expect(source).toContain("hidden -translate-x-1/2 translate-y-1/2 z-50 md:block");
-    expect(source).not.toContain("grid auto-rows-fr grid-cols-2 lg:grid-cols-4");
+    expect(source).toContain(
+      "hidden -translate-x-1/2 translate-y-1/2 z-50 md:block",
+    );
+    expect(source).not.toContain(
+      "grid auto-rows-fr grid-cols-2 lg:grid-cols-4",
+    );
     expect(source).not.toContain("grid grid-cols-1 lg:grid-cols-2");
   });
 
@@ -747,34 +739,34 @@ describe("HomeSurface", () => {
       "group/link flex shrink-0 items-center gap-1 whitespace-nowrap text-[11px]",
     );
     expect(html).toContain("Ver proyecto");
-    expect(html).not.toContain("mt-4 flex items-center justify-between pt-3 border-t");
+    expect(html).not.toContain(
+      "mt-4 flex items-center justify-between pt-3 border-t",
+    );
   });
 
   it("keeps experience detail guide lines aligned with the page grid", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
+    const source = readFileSync(
+      join(process.cwd(), "components", "home-surface.tsx"),
+      "utf8",
+    );
 
     expect(html).toContain("experience-detail-stat-row");
     expect(html).toContain("experience-detail-bullet-row");
-    expect(html).toContain("experience-item-guide-line");
-    expect(html).toContain("experience-item-guide-dot");
-    expect(html).toContain(
-      "experience-item-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full",
-    );
-    expect(html).toContain(
-      "pointer-events-none absolute -left-3 z-50 h-0 w-[calc(100%+1.5rem)]",
-    );
-    expect(html).toContain(
-      "experience-item-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2",
-    );
-    expect(html).toContain(
-      "experience-item-guide-dot blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2",
-    );
-    expect(html).not.toContain(
-      "experience-detail-guide-line blueprint-mask-x pointer-events-none absolute left-0",
-    );
+    expect(html).toContain("experience-detail-local-guide-line");
+    expect(html).toContain("experience-detail-guide-dot");
+    expect(html).toContain("stats-row-guide-line");
+    expect(html).toContain("stats-column-guide");
+    expect(html).not.toContain("experience-item-guide-line");
+    expect(html).not.toContain("experience-item-guide-dot");
     expect(html).not.toContain("bg-foreground/45");
     expect(html).not.toContain("border-r border-dotted");
     expect(html).not.toContain("odd:border-r");
+    expect(source).toContain('panelAnimation="fade"');
+    expect(source).toContain("ExperienceMotionBlock");
+    expect(source).toContain("experienceGuideFadeTransition");
+    expect(source).toContain("experience-content-motion");
+    expect(source).not.toContain("experience-detail-stat-row relative -mx-3 px-3\" as={motion.div}");
   });
 
   it("uses one shared blueprint dot and line style across guide systems", () => {
