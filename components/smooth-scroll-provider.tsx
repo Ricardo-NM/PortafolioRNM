@@ -16,6 +16,7 @@ type SmoothScrollToDetail = {
 };
 
 const reduceMotionQuery = "(prefers-reduced-motion: reduce)";
+const touchViewportQuery = "(pointer: coarse)";
 const scrollToEventName = "portfolio:smooth-scroll-to";
 
 function getAnchorTarget(detail: SmoothScrollToDetail) {
@@ -48,8 +49,9 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
 
   useEffect(() => {
     const reduceMotion = window.matchMedia(reduceMotionQuery);
+    const touchViewport = window.matchMedia(touchViewportQuery);
 
-    if (reduceMotion.matches) {
+    if (reduceMotion.matches || touchViewport.matches) {
       return;
     }
 

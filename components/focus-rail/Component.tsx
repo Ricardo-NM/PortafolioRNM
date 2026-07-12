@@ -11,6 +11,7 @@ import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export type FocusRailItem = {
@@ -71,6 +72,9 @@ const TAP_SPRING: Transition = {
   damping: 18,
   mass: 1,
 };
+
+const projectActionButtonClass =
+  "h-9 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2.5 text-[11px] font-semibold leading-none text-[#d4d4d8] hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] dark:border-[#fff] dark:bg-[#fff] dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-[#000] min-[1440px]:w-auto min-[1440px]:gap-2 min-[1440px]:px-3 [&_svg]:shrink-0";
 
 const techIconColorByTheme = {
   light: {
@@ -243,7 +247,7 @@ export function FocusRail({
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <Image
           alt=""
-          className="scale-110 object-cover opacity-[0.08] blur-3xl saturate-150 dark:opacity-[0.16]"
+          className="hidden scale-110 object-cover opacity-[0.08] blur-3xl saturate-150 dark:opacity-[0.16] sm:block"
           fill
           sizes="(min-width: 768px) 68vw, 100vw"
           src={activeItem.imageSrc}
@@ -260,14 +264,17 @@ export function FocusRail({
             const scale = isCenter ? 1 : sideScale;
             const rotateY = isMobileRail ? 0 : offset * -20;
             const opacity = isCenter ? 1 : Math.max(0.24, 1 - distance * 0.34);
-            const blur = isCenter ? 0 : distance * (isMobileRail ? 1.4 : 3);
-            const brightness = isCenter ? 1 : 0.72;
+            const shouldUseHeavyEffects = !isMobileRail;
+            const blur = shouldUseHeavyEffects ? distance * 3 : 0;
+            const brightness = shouldUseHeavyEffects ? (isCenter ? 1 : 0.72) : 1;
 
             return (
               <motion.button
                 aria-label={`Ver ${item.title}`}
                 animate={{
-                  filter: `blur(${blur}px) brightness(${brightness})`,
+                  filter: shouldUseHeavyEffects
+                    ? `blur(${blur}px) brightness(${brightness})`
+                    : "none",
                   opacity,
                   rotateY,
                   scale,
@@ -295,7 +302,7 @@ export function FocusRail({
                 }}
                 onDragEnd={isCenter ? handleCardDragEnd : undefined}
                 style={{
-                  willChange: "transform, opacity, filter",
+                  willChange: "transform, opacity",
                 }}
                 transition={{
                   filter: BASE_SPRING,
@@ -317,7 +324,7 @@ export function FocusRail({
                   sizes="(min-width: 640px) 360px, 250px"
                   src={item.imageSrc}
                 />
-                {!isCenter ? (
+                {!isCenter && shouldUseHeavyEffects ? (
                   <span className="pointer-events-none absolute inset-0 backdrop-blur-[2px]" />
                 ) : null}
               </motion.button>
@@ -370,14 +377,12 @@ export function FocusRail({
                 key={activeItem.id}
                 transition={{ duration: 0.28, delay: 0.05 }}
               >
-                <Link
-                  className="group/link inline-flex h-11 items-center gap-2 rounded-full bg-[#18181b] px-5 text-sm font-semibold leading-none text-[#fff] transition duration-500 hover:bg-[#000] active:scale-95 dark:bg-[#fff] dark:text-[#18181b] dark:hover:bg-[#f4f4f5]"
-                  href={activeItem.href}
-                  target="_blank"
-                >
-                  Ver proyecto
-                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
-                </Link>
+                <Button asChild className={projectActionButtonClass}>
+                  <Link href={activeItem.href} target="_blank">
+                    Ver proyecto
+                    <ArrowUpRight size={13} strokeWidth={2.5} aria-hidden="true" />
+                  </Link>
+                </Button>
               </motion.div>
             ) : null}
           </AnimatePresence>

@@ -321,7 +321,7 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
               ref={drawerOverlayRef}
               aria-labelledby="contact-drawer-title"
               aria-modal="true"
-              className="fixed inset-0 z-100 flex justify-end overflow-hidden bg-white backdrop-blur-none dark:bg-black sm:bg-white/35 sm:backdrop-blur-md sm:dark:bg-black/55"
+              className="fixed inset-0 z-[200] flex justify-end overflow-hidden bg-white backdrop-blur-none dark:bg-black sm:bg-white/35 sm:backdrop-blur-md sm:dark:bg-black/55"
               role="dialog"
             >
               <button

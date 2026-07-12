@@ -848,7 +848,7 @@ function ProjectsSection() {
       </div>
 
       <div className="relative -mx-3">
-        <div data-scroll-reveal>
+        <div className="project-focus-rail-shell">
           <FocusRail items={projectRailItems} autoPlay={false} loop={true} />
         </div>
       </div>

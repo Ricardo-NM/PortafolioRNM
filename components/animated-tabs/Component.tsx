@@ -2,6 +2,7 @@
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface Tab {
@@ -126,7 +127,7 @@ const AnimatedTabs = ({
   useEffect(() => {
     const panel = panelRef.current;
 
-    if (!panel) {
+    if (!panel || panelAnimation === "fade") {
       return;
     }
 
@@ -137,15 +138,15 @@ const AnimatedTabs = ({
     gsap.fromTo(
       panel,
       {
-        autoAlpha: panelAnimation === "fade" ? 0 : 0.2,
-        x: panelAnimation === "fade" ? 0 : -8,
-        scale: panelAnimation === "fade" ? 1 : 0.985,
+        autoAlpha: 0.2,
+        x: -8,
+        scale: 0.985,
       },
       {
         autoAlpha: 1,
         x: 0,
         scale: 1,
-        duration: reduceMotion ? 0 : panelAnimation === "fade" ? 0.18 : 0.34,
+        duration: reduceMotion ? 0 : 0.34,
         ease: "power3.out",
         overwrite: "auto",
         clearProps: "transform,opacity,visibility",
@@ -193,15 +194,32 @@ const AnimatedTabs = ({
       </div>
 
       <div className="min-h-60 rounded-lg border border-[#e4e4e7] bg-transparent px-3 pb-3 text-[#18181b] dark:border-[#27272a] dark:text-[#f4f4f5]">
-        <div
-          ref={panelRef}
-          key={activeTabData.id}
-          id={`${activeTabData.id}-panel`}
-          role="tabpanel"
-          aria-labelledby={`${activeTabData.id}-tab`}
-        >
-          {activeTabData.content}
-        </div>
+        {panelAnimation === "fade" ? (
+          <AnimatePresence mode="wait">
+            <motion.div
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+              initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+              key={activeTabData.id}
+              id={`${activeTabData.id}-panel`}
+              role="tabpanel"
+              aria-labelledby={`${activeTabData.id}-tab`}
+              transition={{ duration: 0.3 }}
+            >
+              {activeTabData.content}
+            </motion.div>
+          </AnimatePresence>
+        ) : (
+          <div
+            ref={panelRef}
+            key={activeTabData.id}
+            id={`${activeTabData.id}-panel`}
+            role="tabpanel"
+            aria-labelledby={`${activeTabData.id}-tab`}
+          >
+            {activeTabData.content}
+          </div>
+        )}
       </div>
     </div>
   );

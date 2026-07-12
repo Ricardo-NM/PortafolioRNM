@@ -247,6 +247,16 @@ describe("HomeSurface", () => {
     expect(html).toContain("Seguidores");
   });
 
+  it("opens the contact drawer above the fixed navbar layer", () => {
+    const source = readFileSync(
+      join(process.cwd(), "components", "contact-drawer.tsx"),
+      "utf8",
+    );
+
+    expect(source).toContain("fixed inset-0 z-[200]");
+    expect(source).not.toContain("fixed inset-0 z-100");
+  });
+
   it("renders expandable tabs for the main portfolio sections", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
 
@@ -313,6 +323,26 @@ describe("HomeSurface", () => {
     expect(usageSource).toContain("lockedTabIndexRef");
     expect(usageSource).toContain("onComplete: unlockActiveSync");
     expect(usageSource).not.toContain("IntersectionObserver");
+  });
+
+  it("uses native smooth scrolling on touch viewports to avoid mobile forced reflow", () => {
+    const source = readFileSync(
+      join(process.cwd(), "components", "smooth-scroll-provider.tsx"),
+      "utf8",
+    );
+
+    expect(source).toContain('const touchViewportQuery = "(pointer: coarse)"');
+    expect(source).toContain("const touchViewport = window.matchMedia(touchViewportQuery)");
+    expect(source).toContain("if (reduceMotion.matches || touchViewport.matches)");
+    expect(source).toContain("smoothWheel: true");
+    expect(source).toContain("ScrollTrigger.update()");
+  });
+
+  it("does not preload the non-critical mono font variant", () => {
+    const source = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
+
+    expect(source).toContain("const geistMono = Geist_Mono({");
+    expect(source).toContain("preload: false");
   });
 
   it("renders the experience section below the profile summary", () => {
@@ -434,7 +464,6 @@ describe("HomeSurface", () => {
     expect(html).toContain("https://cdn.simpleicons.org/react/000");
     expect(html).toContain("https://cdn.simpleicons.org/react/fff");
     expect(focusRailSource).toContain('dark: {\n    base: "a1a1aa",\n    hover: "fff"');
-    expect(focusRailSource).not.toContain("hover:bg-[#18181b]");
     expect(focusRailSource).not.toContain("dark:hover:bg-[#fff]");
     expect(focusRailSource).not.toContain("shadow-[inset_0_0_0_1px");
     expect(focusRailSource).not.toContain("hover:shadow-[");
@@ -496,6 +525,10 @@ describe("HomeSurface", () => {
     expect(source).not.toContain("dark:bg-[#09090b] sm:w-[250px]");
     expect(source).toContain("object-contain");
     expect(source).toContain("touch-pan-y");
+    expect(homeSource).not.toContain("<div data-scroll-reveal>\n          <FocusRail");
+    expect(homeSource).toContain(
+      '<div className="project-focus-rail-shell">',
+    );
   });
 
   it("keeps side Focus rail cards clickable with stable animated positions and full dark overlays", () => {
@@ -508,12 +541,16 @@ describe("HomeSurface", () => {
     expect(source).toContain("key={item.id}");
     expect(source).not.toContain("key={`${item.id}-${absoluteIndex}`}");
     expect(source).toContain("pointer-events-none absolute inset-0");
-    expect(source).toContain("const brightness = isCenter ? 1 : 0.72");
     expect(source).toContain("backdrop-blur-[2px]");
     expect(source).toContain("isMobileRail");
     expect(source).toContain("const xOffset = offset * (isMobileRail ? 210 : 320)");
     expect(source).toContain("const sideScale = isMobileRail ? 0.92 : 0.84");
     expect(source).toContain("const rotateY = isMobileRail ? 0 : offset * -20");
+    expect(source).toContain("const shouldUseHeavyEffects = !isMobileRail");
+    expect(source).toContain("const blur = shouldUseHeavyEffects ? distance * 3 : 0");
+    expect(source).toContain("const brightness = shouldUseHeavyEffects ? (isCenter ? 1 : 0.72) : 1");
+    expect(source).toContain('filter: shouldUseHeavyEffects');
+    expect(source).toContain(': "none"');
     expect(source).toContain("onClick={() =>");
     expect(source).toContain("setActive((current) => current + offset)");
   });
@@ -542,6 +579,10 @@ describe("HomeSurface", () => {
       'exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}',
     );
     expect(source).toContain("project-action-motion");
+    expect(source).toContain("projectActionButtonClass");
+    expect(source).toContain("h-9 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2.5 text-[11px] font-semibold leading-none text-[#d4d4d8]");
+    expect(source).toContain("<Button asChild className={projectActionButtonClass}>");
+    expect(source).not.toContain("rounded-full bg-[#18181b] px-5 text-sm");
   });
 
   it("uses spring rail motion while dragging the active card and snapping on release", () => {
@@ -565,8 +606,9 @@ describe("HomeSurface", () => {
     expect(source).toContain("visibleRailItems");
     expect(source).toContain("React.useMemo");
     expect(source).toContain("useMediaQuery");
-    expect(source).toContain('willChange: "transform, opacity, filter"');
-    expect(source).toContain("const blur = isCenter ? 0 : distance * (isMobileRail ? 1.4 : 3)");
+    expect(source).toContain('willChange: "transform, opacity"');
+    expect(source).not.toContain('willChange: "transform, opacity, filter"');
+    expect(source).not.toContain("const blur = isCenter ? 0 : distance * (isMobileRail ? 1.4 : 3)");
     expect(source).toContain("loading={isCenter ? \"eager\" : \"lazy\"}");
     expect(source).toContain("draggable={false}");
   });
@@ -775,8 +817,15 @@ describe("HomeSurface", () => {
     expect(source).not.toContain("handleExperienceToggle");
     expect(source).not.toContain("ChevronDown");
     expect(animatedTabsSource).toContain("label: React.ReactNode");
+    expect(animatedTabsSource).toContain("AnimatePresence");
+    expect(animatedTabsSource).toContain("motion");
     expect(animatedTabsSource).toContain('panelAnimation?: "content" | "fade"');
     expect(animatedTabsSource).toContain('panelAnimation === "fade"');
+    expect(animatedTabsSource).toContain('<AnimatePresence mode="wait">');
+    expect(animatedTabsSource).toContain('initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}');
+    expect(animatedTabsSource).toContain('animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}');
+    expect(animatedTabsSource).toContain('exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}');
+    expect(animatedTabsSource).toContain("transition={{ duration: 0.3 }}");
     expect(animatedTabsSource).toContain('role="tablist"');
     expect(animatedTabsSource).toContain('role="tabpanel"');
     expect(usageSource).toContain(
