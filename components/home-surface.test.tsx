@@ -3,10 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
-import {
-  getNextAutoSkillIndex,
-  HomeSurface,
-} from "@/components/home-surface";
+import { getNextAutoSkillIndex, HomeSurface } from "@/components/home-surface";
 import {
   contactFormConfig,
   hasContactDraft,
@@ -363,17 +360,25 @@ describe("HomeSurface", () => {
     expect(html).toContain("experience-detail-heading-grid");
     expect(html).toContain("grid-cols-[minmax(0,1fr)_max-content]");
     expect(html).toContain("justify-center");
-    expect(html).toContain("experience-detail-heading-grid grid grid-cols-[minmax(0,1fr)_max-content] gap-x-4 gap-y-1 pt-3 pb-3");
+    expect(html).toContain(
+      "experience-detail-heading-grid grid grid-cols-[minmax(0,1fr)_max-content] gap-x-4 gap-y-1 pt-3 pb-3",
+    );
     expect(html).toContain("experience-detail-stat-row relative -mx-3 px-3");
-    expect(html).not.toContain("experience-detail-stat-row relative -mx-3 mt-3 px-3");
+    expect(html).not.toContain(
+      "experience-detail-stat-row relative -mx-3 mt-3 px-3",
+    );
     expect(html).not.toContain("gap-y-2 py-5");
     expect(html).not.toContain("min-[1200px]:contents");
-    expect(html).not.toContain("min-[1200px]:col-start-4 min-[1200px]:row-start-1");
+    expect(html).not.toContain(
+      "min-[1200px]:col-start-4 min-[1200px]:row-start-1",
+    );
     expect(html).toContain("mt-0.5 text-xs font-medium");
     expect(html).toContain("sm:mt-1 sm:text-sm");
     expect(html).toContain("mt-1 text-xs font-medium leading-none");
     expect(html).toContain("sm:mt-2");
-    expect(html).not.toContain('aria-label="Expandir experiencia en ArdabyTec"');
+    expect(html).not.toContain(
+      'aria-label="Expandir experiencia en ArdabyTec"',
+    );
     expect(html).toContain(
       "grid h-10 w-10 place-items-center rounded-lg border border-[#e4e4e7] bg-[#fff]",
     );
@@ -388,102 +393,64 @@ describe("HomeSurface", () => {
     expect(html).not.toContain("lucide-chevron-down");
   });
 
-  it("renders project technologies with theme-aware Simple Icons URLs", () => {
+  it("renders projects with the Focus rail carousel", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
     const text = html.replace(/<[^>]+>/g, "");
+    const source = readFileSync(
+      join(process.cwd(), "components", "home-surface.tsx"),
+      "utf8",
+    );
+    const focusRailSource = readFileSync(
+      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      "utf8",
+    );
 
+    expect(source).toContain(
+      'import { FocusRail, type FocusRailItem } from "@/components/focus-rail/Component"',
+    );
+    expect(source).toContain("const projectRailItems: FocusRailItem[]");
+    expect(html).toContain('data-project-focus-rail="true"');
+    expect(html).toContain('aria-label="Carrusel de proyectos"');
+    expect(text).toContain("Gestión operativa – Comercio exterior");
+    expect(html).toContain('aria-label="Ver Totis® | Gestión de bienes"');
+    expect(html).toContain('aria-label="Ver Saldo Claro"');
+    expect(text).toContain("Sistema privado orientado a centralizar procesos");
+    expect(source).toContain("Sistema web orientado a la gestión");
+    expect(source).toContain("Aplicación móvil para centralizar deudas");
+    expect(html).toContain('href="https://ricardo-nm.github.io/K-PUGA-Docs/"');
+    expect(source).toContain(
+      'link: "https://ricardo-nm.github.io/totis-gdb-docs/"',
+    );
+    expect(source).toContain(
+      'link: "https://github.com/Ricardo-NM/SaldoClaro"',
+    );
+    expect(html).toContain("Ver proyecto");
     expect(text).toContain("React");
     expect(text).toContain("Tailwind CSS");
-    expect(text).toContain("Node.js");
-    expect(text).toContain("MySQL");
-    expect(text).toContain("VPS Linux");
-    expect(text).toContain("NGINX");
-    expect(text).toContain("PM2");
-    expect(text).toContain("C#");
-    expect(text).toContain(".NET");
-    expect(text).toContain("IIS");
-    expect(text).toContain("Active Directory");
-    expect(text).toContain("Expo");
-    expect(text).toContain("React Native");
-    expect(text).toContain("NestJS");
-    expect(text).toContain("Prisma");
-    expect(text).toContain("PostgreSQL");
-    expect(text).toContain("Docker");
-
+    expect(source).toContain("React Native");
+    expect(source).toContain("Docker");
+    expect(html).toContain("project-tech-icon-layer");
     expect(html).toContain("https://cdn.simpleicons.org/react/71717a");
-    expect(html).toContain("https://cdn.simpleicons.org/react/18181b");
-    expect(html).toContain("https://cdn.simpleicons.org/react/a1a1aa");
+    expect(html).toContain("https://cdn.simpleicons.org/react/000");
     expect(html).toContain("https://cdn.simpleicons.org/react/fff");
-    expect(html).toContain("tech-icon-layer");
-    expect(html).toContain("dark:group-hover/tooltip:opacity-100");
-    expect(html).toContain("group-hover/tooltip:opacity-100");
-    expect(html).not.toContain("lucide-globe");
-    expect(html).not.toContain("lucide-database");
-  });
-
-  it("inverts project card colors and technology icon variants on card hover", () => {
-    const html = renderToStaticMarkup(<HomeSurface />);
-
-    expect(html).toContain("group/card");
-    expect(html).toContain("hover:border-[#27272a]");
-    expect(html).toContain("hover:bg-[#18181b]");
-    expect(html).toContain("group-hover/card:text-[#f4f4f5]");
-    expect(html).toContain("group-hover/card:text-[#a1a1aa]");
-    expect(html).toContain("hover:border-[#27272a]");
-    expect(html).toContain("dark:hover:border-[#e4e4e7]");
-    expect(html).toContain("dark:hover:bg-[#fff]");
-    expect(html).toContain("dark:group-hover/card:text-[#18181b]");
-    expect(html).toContain("dark:group-hover/card:text-[#52525c]");
-    expect(html).toContain("dark:hover:border-[#e4e4e7]");
-    expect(html).toContain("group-hover/card:opacity-0");
-    expect(html).toContain("group-hover/card:opacity-100");
-    expect(html).toContain("dark:group-hover/card:opacity-0");
-    expect(html).toContain("dark:group-hover/card:opacity-100");
-  });
-
-  it("inverts project card colors and technology icon variants while pressed", () => {
-    const html = renderToStaticMarkup(<HomeSurface />);
-
-    expect(html).toContain("active:border-[#27272a]");
-    expect(html).toContain("active:bg-[#18181b]");
-    expect(html).toContain("group-active/card:text-[#f4f4f5]");
-    expect(html).toContain("group-active/card:text-[#a1a1aa]");
-    expect(html).toContain("dark:active:border-[#e4e4e7]");
-    expect(html).toContain("dark:active:bg-[#fff]");
-    expect(html).toContain("dark:group-active/card:text-[#18181b]");
-    expect(html).toContain("dark:group-active/card:text-[#52525c]");
-    expect(html).toContain("group-active/card:opacity-0");
-    expect(html).toContain("group-active/card:opacity-100");
-    expect(html).toContain("dark:group-active/card:opacity-0");
-    expect(html).toContain("dark:group-active/card:opacity-100");
-  });
-
-  it("keeps project image borders by default and hides them on card hover", () => {
-    const html = renderToStaticMarkup(<HomeSurface />);
-
-    expect(html).toContain("group-hover/card:bg-[#27272a]/30");
-    expect(html).toContain("dark:group-hover/card:bg-[#f4f4f5]/50");
-    expect(html).toContain(
-      "rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 transition-colors duration-300 group-hover/card:!border-transparent",
+    expect(focusRailSource).toContain('dark: {\n    base: "a1a1aa",\n    hover: "fff"');
+    expect(focusRailSource).not.toContain("hover:bg-[#18181b]");
+    expect(focusRailSource).not.toContain("dark:hover:bg-[#fff]");
+    expect(focusRailSource).not.toContain("shadow-[inset_0_0_0_1px");
+    expect(focusRailSource).not.toContain("hover:shadow-[");
+    expect(focusRailSource).not.toContain("border border-[#e4e4e7]");
+    expect(focusRailSource).toContain("bg-transparent");
+    expect(focusRailSource).toContain(
+      'darkHover: getSimpleIconUrl(iconSlug, "dark", "hover")',
     );
-    expect(html).toContain(
-      "dark:border-[#27272a] dark:bg-[#27272a]/30 dark:group-hover/card:!border-transparent",
-    );
-    expect(html).toContain(
-      "aspect-[4/3] overflow-hidden border-[#e4e4e7] transition-colors duration-300 group-hover/card:!border-transparent",
-    );
-    expect(html).toContain(
-      "dark:border-[#3f3f46] dark:group-hover/card:!border-transparent",
-    );
-    expect(html).not.toContain(
-      "aspect-[4/3] overflow-hidden dark:border-[#3f3f46]",
-    );
-    expect(html).not.toContain(
-      "bg-[#f4f4f5]/50 transition-colors duration-300 group-hover/card:border-[#27272a]",
-    );
-    expect(html).not.toContain(
-      "aspect-[4/3] overflow-hidden border-[#e4e4e7] transition-colors duration-300 group-hover/card:border-[#3f3f46]",
-    );
+    expect(source).toContain("tech: project.tech");
+    expect(focusRailSource).not.toContain("activeItem.meta");
+    expect(focusRailSource).not.toContain("{activeIndex + 1} / {count}");
+    expect(focusRailSource).not.toContain("Explore");
+    expect(focusRailSource).not.toContain("Proyecto anterior");
+    expect(focusRailSource).not.toContain("Proyecto siguiente");
+    expect(focusRailSource).not.toContain("ChevronLeft");
+    expect(focusRailSource).not.toContain("ChevronRight");
   });
 
   it("keeps project cards free of hover glow while preserving image zoom", () => {
@@ -491,18 +458,127 @@ describe("HomeSurface", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
 
     expect(html).not.toContain("project-card");
+    expect(html).not.toContain("group/card");
     expect(css).not.toContain("project-border-glow");
     expect(css).not.toContain(".project-card::before");
     expect(css).not.toContain(".project-card::after");
     expect(css).not.toContain("drop-shadow");
-    expect(html).toContain("group-hover/card:scale-[1.025]");
-    expect(html).toContain("transition-transform duration-300 ease-out");
+    expect(html).toContain("project-focus-rail-card");
+    expect(html).toContain("transition-shadow duration-300");
+  });
+
+  it("keeps Focus rail navigation off the page scroll and frames SVGs at 4/3 without card backgrounds", () => {
+    const source = readFileSync(
+      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      "utf8",
+    );
+    const homeSource = readFileSync(
+      join(process.cwd(), "components", "home-surface.tsx"),
+      "utf8",
+    );
+
+    expect(homeSource).not.toContain(
+      "blueprint-mask-y pointer-events-none absolute top-0 left-1/2 hidden h-full w-[2px]",
+    );
+    expect(source).not.toContain("onWheel=");
+    expect(source).not.toContain("handleWheel");
+    expect(source).not.toContain("lastWheelTime");
+    expect(source).toContain("onKeyDown={handleKeyDown}");
+    expect(source).toContain(
+      "onDragEnd={isCenter ? handleCardDragEnd : undefined}",
+    );
+    expect(source).toContain('drag={isCenter ? "x" : false}');
+    expect(source).toContain("setActive((current) => current + offset)");
+    expect(source).toContain("aspect-[4/3]");
+    expect(source).not.toContain("aspect-[3/4]");
+    expect(source).not.toContain("border bg-[#fff]");
+    expect(source).not.toContain("shadow-[0_18px_70px");
+    expect(source).not.toContain("dark:bg-[#09090b] sm:w-[250px]");
+    expect(source).toContain("object-contain");
+    expect(source).toContain("touch-pan-y");
+  });
+
+  it("keeps side Focus rail cards clickable with stable animated positions and full dark overlays", () => {
+    const source = readFileSync(
+      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      "utf8",
+    );
+
+    expect(source).toContain("count <= 3 ? [-1, 0, 1] : [-2, -1, 0, 1, 2]");
+    expect(source).toContain("key={item.id}");
+    expect(source).not.toContain("key={`${item.id}-${absoluteIndex}`}");
+    expect(source).toContain("pointer-events-none absolute inset-0");
+    expect(source).toContain("const brightness = isCenter ? 1 : 0.72");
+    expect(source).toContain("backdrop-blur-[2px]");
+    expect(source).toContain("isMobileRail");
+    expect(source).toContain("const xOffset = offset * (isMobileRail ? 210 : 320)");
+    expect(source).toContain("const sideScale = isMobileRail ? 0.92 : 0.84");
+    expect(source).toContain("const rotateY = isMobileRail ? 0 : offset * -20");
+    expect(source).toContain("onClick={() =>");
+    expect(source).toContain("setActive((current) => current + offset)");
+  });
+
+  it("makes active Focus rail cards draggable and animates project copy on change", () => {
+    const source = readFileSync(
+      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      "utf8",
+    );
+
+    expect(source).toContain("framer-motion");
+    expect(source).toContain("AnimatePresence");
+    expect(source).toContain("type PanInfo");
+    expect(source).toContain("BASE_SPRING");
+    expect(source).toContain("TAP_SPRING");
+    expect(source).toContain("handleCardDragEnd");
+    expect(source).toContain("cursor-grab active:cursor-grabbing");
+    expect(source).toContain("cursor-pointer");
+    expect(source).toContain("data-active={isCenter}");
+    expect(source).toContain("project-copy-motion");
+    expect(source).toContain("key={activeItem.id}");
+    expect(source).toContain(
+      'initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}',
+    );
+    expect(source).toContain(
+      'exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}',
+    );
+    expect(source).toContain("project-action-motion");
+  });
+
+  it("uses spring rail motion while dragging the active card and snapping on release", () => {
+    const source = readFileSync(
+      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      "utf8",
+    );
+
+    expect(source).not.toContain("dragOffset");
+    expect(source).not.toContain("handleCardPointerMove");
+    expect(source).not.toContain("isDraggingRef");
+    expect(source).toContain("const swipeConfidenceThreshold = 10000");
+    expect(source).toContain("swipePower(offset.x, velocity.x)");
+    expect(source).toContain("dragConstraints={{ left: 0, right: 0 }}");
+    expect(source).toContain("dragElastic={0.2}");
+    expect(source).toContain("dragMomentum={false}");
+    expect(source).toContain("dragSnapToOrigin");
+    expect(source).toContain("scale: TAP_SPRING");
+    expect(source).toContain("x: BASE_SPRING");
+    expect(source).toContain("z: BASE_SPRING");
+    expect(source).toContain("visibleRailItems");
+    expect(source).toContain("React.useMemo");
+    expect(source).toContain("useMediaQuery");
+    expect(source).toContain('willChange: "transform, opacity, filter"');
+    expect(source).toContain("const blur = isCenter ? 0 : distance * (isMobileRail ? 1.4 : 3)");
+    expect(source).toContain("loading={isCenter ? \"eager\" : \"lazy\"}");
+    expect(source).toContain("draggable={false}");
   });
 
   it("renders projects and skills section headers with full viewport guide lines", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
     const text = html.replace(/<[^>]+>/g, "");
     const skillsText = text.slice(text.indexOf("Habilidades"));
+    const source = readFileSync(
+      join(process.cwd(), "components", "home-surface.tsx"),
+      "utf8",
+    );
 
     expect(text.indexOf("Proyectos")).toBeGreaterThan(
       text.indexOf("Experiencia"),
@@ -513,10 +589,10 @@ describe("HomeSurface", () => {
     expect(html).toContain("projects-guide-line");
     expect(html).toContain("skills-guide-line");
     expect(html).toContain("skills-guide-dot");
-    expect(html).toContain("projects-skills-intersection-dot");
-    expect(html).toContain(
-      "projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block",
+    expect(html).not.toContain(
+      "projects-guide-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2",
     );
+    expect(html).not.toContain("projects-skills-intersection-dot");
     expect(html).toContain('aria-labelledby="skills-title"');
     expect(html).not.toContain("Frontend");
     expect(html).not.toContain("Backend");
@@ -549,6 +625,14 @@ describe("HomeSurface", () => {
     expect(html).toContain("skill-icon-layer");
     expect(html).toContain("data-auto-active");
     expect(html).toContain("data-auto-skills");
+    expect(source).toContain("skillsContainerRef");
+    expect(source).toContain("IntersectionObserver");
+    expect(source).toContain('window.addEventListener("scroll", handleWindowScroll, { passive: true })');
+    expect(source).toContain("scrollTimeoutRef");
+    expect(source).toContain("isSkillsInViewRef");
+    expect(source).toContain("isWindowScrollingRef");
+    expect(source).toContain("data-skill-item");
+    expect(source).not.toContain("data-scroll-reveal\n          >\n            <SkillIcon");
     expect(html).toContain("data-[auto-active=true]:border-[#18181b]");
     expect(html).toContain("dark:data-[auto-active=true]:border-[#fff]");
     expect(html).toContain("group-data-[auto-active=true]/skill:opacity-0");
@@ -692,7 +776,7 @@ describe("HomeSurface", () => {
     expect(source).not.toContain("ChevronDown");
     expect(animatedTabsSource).toContain("label: React.ReactNode");
     expect(animatedTabsSource).toContain('panelAnimation?: "content" | "fade"');
-    expect(animatedTabsSource).toContain("panelAnimation === \"fade\"");
+    expect(animatedTabsSource).toContain('panelAnimation === "fade"');
     expect(animatedTabsSource).toContain('role="tablist"');
     expect(animatedTabsSource).toContain('role="tabpanel"');
     expect(usageSource).toContain(
@@ -719,8 +803,8 @@ describe("HomeSurface", () => {
     expect(source).toContain(
       "grid auto-rows-fr grid-cols-2 min-[1200px]:grid-cols-4",
     );
-    expect(source).toContain("grid grid-cols-1 md:grid-cols-2");
-    expect(source).toContain(
+    expect(source).not.toContain("grid grid-cols-1 md:grid-cols-2");
+    expect(source).not.toContain(
       "hidden -translate-x-1/2 translate-y-1/2 z-50 md:block",
     );
     expect(source).not.toContain(
@@ -729,22 +813,23 @@ describe("HomeSurface", () => {
     expect(source).not.toContain("grid grid-cols-1 lg:grid-cols-2");
   });
 
-  it("lets project technology icons wrap without squeezing the project link", () => {
+  it("uses project SVG images in the Focus rail without old project tech tooltips", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
+    const source = readFileSync(
+      join(process.cwd(), "components", "home-surface.tsx"),
+      "utf8",
+    );
 
+    expect(source).toContain("imageSrc: project.image.src");
     expect(html).toContain(
-      "mt-4 flex flex-wrap items-end justify-between gap-3 pt-3 border-t",
+      'aria-label="Gestión operativa – Comercio exterior"',
     );
-    expect(html).toContain(
-      "flex min-w-0 flex-1 flex-wrap items-center gap-x-2.5 gap-y-2",
-    );
-    expect(html).toContain(
-      "group/link flex shrink-0 items-center gap-1 whitespace-nowrap text-[11px]",
-    );
+    expect(html).toContain('aria-label="Totis® | Gestión de bienes"');
+    expect(html).toContain('aria-label="Saldo Claro"');
     expect(html).toContain("Ver proyecto");
-    expect(html).not.toContain(
-      "mt-4 flex items-center justify-between pt-3 border-t",
-    );
+    expect(html).toContain("project-tech-icon-layer");
+    expect(html).not.toContain("group/tooltip");
+    expect(source).toContain("React Native");
   });
 
   it("keeps experience detail guide lines aligned with the page grid", () => {
@@ -770,7 +855,9 @@ describe("HomeSurface", () => {
     expect(source).toContain("experience-content-motion");
     expect(source).not.toContain("framer-motion");
     expect(source).not.toContain("motion.div");
-    expect(source).not.toContain("experience-detail-stat-row relative -mx-3 px-3\" as={motion.div}");
+    expect(source).not.toContain(
+      'experience-detail-stat-row relative -mx-3 px-3" as={motion.div}',
+    );
   });
 
   it("uses one shared blueprint dot and line style across guide systems", () => {

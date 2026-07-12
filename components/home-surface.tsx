@@ -1,10 +1,10 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
-  Fragment,
   type ReactNode,
 } from "react";
 import Image from "next/image";
@@ -14,7 +14,6 @@ import {
   Linkedin,
   MapPin,
   Star,
-  ArrowUpRight,
 } from "lucide-react";
 
 import linkedInBanner from "@/assets/images/bannerL.png";
@@ -29,6 +28,7 @@ import { Blueprint } from "@/components/blueprint";
 import { AnimatedTabs } from "@/components/animated-tabs/Component";
 import { ContactDrawer } from "@/components/contact-drawer";
 import { PortfolioExpandableTabs } from "@/components/expandable-tabs/Usage";
+import { FocusRail, type FocusRailItem } from "@/components/focus-rail/Component";
 import { ThemeBanner } from "@/components/theme-banner";
 import { Button } from "@/components/ui/button";
 
@@ -607,6 +607,15 @@ const projectsData = [
   },
 ];
 
+const projectRailItems: FocusRailItem[] = projectsData.map((project) => ({
+  id: project.id,
+  title: project.name,
+  description: project.description,
+  imageSrc: project.image.src,
+  href: project.link,
+  tech: project.tech,
+}));
+
 const skillsData = [
   { name: "JavaScript", iconSlug: "javascript" },
   { name: "TypeScript", iconSlug: "typescript" },
@@ -818,40 +827,6 @@ function getSimpleIconUrl(
   return `https://cdn.simpleicons.org/${iconSlug}/${techIconColorByTheme[theme][state]}`;
 }
 
-function TechIcon({ iconSlug, name }: { iconSlug: string; name: string }) {
-  const iconUrls = {
-    lightBase: getSimpleIconUrl(iconSlug, "light", "base"),
-    lightHover: getSimpleIconUrl(iconSlug, "light", "hover"),
-    darkBase: getSimpleIconUrl(iconSlug, "dark", "base"),
-    darkHover: getSimpleIconUrl(iconSlug, "dark", "hover"),
-  };
-
-  return (
-    <span
-      aria-hidden="true"
-      className="relative block h-3.5 w-3.5 overflow-hidden"
-    >
-      <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-100 transition-opacity duration-300 group-hover/card:opacity-0 group-active/card:opacity-0 group-hover/tooltip:opacity-0 dark:opacity-0 dark:group-hover/card:opacity-100 dark:group-active/card:opacity-100 dark:group-hover/tooltip:opacity-0"
-        style={{ backgroundImage: `url(${iconUrls.lightBase})` }}
-      />
-      <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/tooltip:opacity-100 group-hover/card:group-hover/tooltip:opacity-0 group-active/card:group-hover/tooltip:opacity-0 dark:opacity-0 dark:group-hover/tooltip:opacity-0 dark:group-hover/card:group-hover/tooltip:opacity-100 dark:group-active/card:group-hover/tooltip:opacity-100"
-        style={{ backgroundImage: `url(${iconUrls.lightHover})` }}
-      />
-      <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 group-active/card:opacity-100 group-hover/tooltip:opacity-0 dark:opacity-100 dark:group-hover/card:opacity-0 dark:group-active/card:opacity-0 dark:group-hover/tooltip:opacity-0"
-        style={{ backgroundImage: `url(${iconUrls.darkBase})` }}
-      />
-      <span
-        className="tech-icon-layer absolute inset-0 bg-contain bg-center bg-no-repeat opacity-0 transition-opacity duration-300 group-hover/card:group-hover/tooltip:opacity-100 group-active/card:group-hover/tooltip:opacity-100 dark:group-hover/tooltip:opacity-100 dark:group-hover/card:group-hover/tooltip:opacity-0 dark:group-active/card:group-hover/tooltip:opacity-0"
-        style={{ backgroundImage: `url(${iconUrls.darkHover})` }}
-      />
-      <span className="sr-only">{name}</span>
-    </span>
-  );
-}
-
 function ProjectsSection() {
   return (
     <section
@@ -869,112 +844,12 @@ function ProjectsSection() {
         >
           Proyectos
         </h2>
-
         <ViewportGuideLine position="bottom" scope="projects" />
-        <span
-          aria-hidden="true"
-          className="projects-guide-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block"
-        />
       </div>
 
       <div className="relative -mx-3">
-        <span
-          aria-hidden="true"
-          className="blueprint-mask-y pointer-events-none absolute top-0 left-1/2 hidden h-full w-[2px] -translate-x-1/2 text-foreground opacity-[0.18] z-20 md:block"
-        />
-        <span
-          aria-hidden="true"
-          className="projects-skills-intersection-dot blueprint-dot pointer-events-none absolute bottom-0 left-1/2 hidden -translate-x-1/2 translate-y-1/2 z-50 md:block"
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2">
-          {projectsData.map((project, index) => {
-            const isMobileLast = index === projectsData.length - 1;
-            const isDesktopRight = index % 2 === 1;
-            const isDesktopLastRow =
-              index >=
-              projectsData.length - (projectsData.length % 2 === 0 ? 2 : 1);
-
-            return (
-              <Fragment key={project.id}>
-                <div
-                  className="relative flex px-4 py-4 sm:px-6 sm:py-6"
-                  data-scroll-reveal
-                >
-                  <article className="group/card relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 transition-all duration-300 hover:border-[#27272a] hover:bg-[#18181b] active:border-[#27272a] active:bg-[#18181b] dark:border-[#27272a] dark:bg-[#18181b] dark:hover:border-[#e4e4e7] dark:hover:bg-[#fff] dark:active:border-[#e4e4e7] dark:active:bg-[#fff]">
-                    <div className="relative mb-4 w-full overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 transition-colors duration-300 group-hover/card:!border-transparent group-hover/card:bg-[#27272a]/30 group-active/card:!border-transparent group-active/card:bg-[#27272a]/30 dark:border-[#27272a] dark:bg-[#27272a]/30 dark:group-hover/card:!border-transparent dark:group-hover/card:bg-[#f4f4f5]/50 dark:group-active/card:!border-transparent dark:group-active/card:bg-[#f4f4f5]/50">
-                      <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7] transition-colors duration-300 group-hover/card:!border-transparent group-active/card:!border-transparent dark:border-[#3f3f46] dark:group-hover/card:!border-transparent dark:group-active/card:!border-transparent">
-                        <Image
-                          src={project.image}
-                          alt={project.name}
-                          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover/card:scale-[1.025] group-active/card:scale-[1.025]"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col flex-grow gap-2">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-[15px] font-bold leading-tight text-[#18181b] transition-colors duration-300 group-hover/card:text-[#f4f4f5] group-active/card:text-[#f4f4f5] dark:text-[#f4f4f5] dark:group-hover/card:text-[#18181b] dark:group-active/card:text-[#18181b]">
-                          {project.name}
-                        </h3>
-                      </div>
-                      <p className="text-left text-[13px] font-medium leading-relaxed text-[#52525c] transition-colors duration-300 group-hover/card:text-[#a1a1aa] group-active/card:text-[#a1a1aa] dark:text-[#a1a1aa] dark:group-hover/card:text-[#52525c] dark:group-active/card:text-[#52525c]">
-                        {project.description}
-                      </p>
-                    </div>
-
-                    <div className="mt-4 flex flex-wrap items-end justify-between gap-3 pt-3 border-t border-[#e4e4e7] transition-colors duration-300 group-hover/card:border-[#27272a] group-active/card:border-[#27272a] dark:border-[#27272a] dark:group-hover/card:border-[#e4e4e7] dark:group-active/card:border-[#e4e4e7]">
-                      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2.5 gap-y-2">
-                        {project.tech.map((t) => (
-                          <div
-                            key={t.name}
-                            className="group/tooltip relative flex items-center justify-center"
-                          >
-                            <TechIcon iconSlug={t.iconSlug} name={t.name} />
-
-                            <span className=" pointer-events-none  absolute -top-6 left-1/2 z-10 -translate-x-1/2 translate-y-2 whitespace-nowrap rounded bg-[#18181b] px-2 py-0.5 text-[10px] font-medium text-white transition-all duration-300 ease-out group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 opacity-0 dark:bg-white dark:text-[#18181b]">
-                              {t.name}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        className="group/link flex shrink-0 items-center gap-1 whitespace-nowrap text-[11px] font-semibold tracking-wider text-[#a1a1aa] transition-colors duration-300 hover:text-[#18181b] group-hover/card:text-[#71717a] group-hover/card:hover:text-[#fff] group-active/card:text-[#71717a] dark:text-[#71717a] dark:hover:text-[#fff] dark:group-hover/card:text-[#a1a1aa] dark:group-hover/card:hover:text-[#18181b] dark:group-active/card:text-[#a1a1aa]"
-                      >
-                        Ver proyecto
-                        <ArrowUpRight className="h-3.5 w-3.5" />
-                      </a>
-                    </div>
-                  </article>
-                </div>
-
-                {!isMobileLast && (
-                  <div
-                    aria-hidden="true"
-                    className="col-span-1 md:hidden relative h-0 w-full"
-                  >
-                    <div className="experience-detail-local-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]" />
-                    <span className="experience-detail-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2" />
-                    <span className="experience-detail-guide-dot blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2" />
-                  </div>
-                )}
-
-                {isDesktopRight && !isDesktopLastRow && (
-                  <div
-                    aria-hidden="true"
-                    className="col-span-2 hidden md:block relative h-0 w-full"
-                  >
-                    <div className="experience-detail-local-guide-line blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]" />
-                    <span className="experience-detail-guide-dot blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2" />
-                    <span className="experience-detail-guide-dot blueprint-dot absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" />
-                    <span className="experience-detail-guide-dot blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2" />
-                  </div>
-                )}
-              </Fragment>
-            );
-          })}
+        <div data-scroll-reveal>
+          <FocusRail items={projectRailItems} autoPlay={false} loop={true} />
         </div>
       </div>
     </section>
@@ -1019,7 +894,25 @@ function SkillsSection() {
   const [autoActiveSkillIndex, setAutoActiveSkillIndex] = useState<
     number | null
   >(null);
-  const [isAutoSkillPaused, setIsAutoSkillPaused] = useState(false);
+  const [isAutoSkillPaused, setIsAutoSkillPaused] = useState(true);
+  const skillsContainerRef = useRef<HTMLDivElement | null>(null);
+  const scrollTimeoutRef = useRef<number | null>(null);
+  const isSkillsInViewRef = useRef(false);
+  const isWindowScrollingRef = useRef(false);
+  const isSkillInteractionPausedRef = useRef(false);
+
+  const syncAutoSkillPause = useCallback(() => {
+    const shouldPause =
+      !isSkillsInViewRef.current ||
+      isWindowScrollingRef.current ||
+      isSkillInteractionPausedRef.current;
+
+    setIsAutoSkillPaused(shouldPause);
+
+    if (shouldPause) {
+      setAutoActiveSkillIndex(null);
+    }
+  }, []);
 
   useEffect(() => {
     if (isAutoSkillPaused) {
@@ -1039,13 +932,62 @@ function SkillsSection() {
     return () => window.clearInterval(intervalId);
   }, [isAutoSkillPaused]);
 
+  useEffect(() => {
+    const skillsElement = skillsContainerRef.current;
+
+    if (!skillsElement || typeof IntersectionObserver === "undefined") {
+      isSkillsInViewRef.current = true;
+      syncAutoSkillPause();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isSkillsInViewRef.current = entry.isIntersecting;
+        syncAutoSkillPause();
+      },
+      { threshold: 0.15 },
+    );
+
+    observer.observe(skillsElement);
+
+    return () => observer.disconnect();
+  }, [syncAutoSkillPause]);
+
+  useEffect(() => {
+    function handleWindowScroll() {
+      isWindowScrollingRef.current = true;
+      syncAutoSkillPause();
+
+      if (scrollTimeoutRef.current !== null) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+
+      scrollTimeoutRef.current = window.setTimeout(() => {
+        isWindowScrollingRef.current = false;
+        syncAutoSkillPause();
+      }, 180);
+    }
+
+    window.addEventListener("scroll", handleWindowScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleWindowScroll);
+
+      if (scrollTimeoutRef.current !== null) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [syncAutoSkillPause]);
+
   function pauseAutoSkillHover() {
-    setIsAutoSkillPaused(true);
-    setAutoActiveSkillIndex(null);
+    isSkillInteractionPausedRef.current = true;
+    syncAutoSkillPause();
   }
 
   function resumeAutoSkillHover() {
-    setIsAutoSkillPaused(false);
+    isSkillInteractionPausedRef.current = false;
+    syncAutoSkillPause();
   }
 
   return (
@@ -1071,6 +1013,7 @@ function SkillsSection() {
       <div
         className="flex flex-wrap gap-2 py-4"
         data-auto-skills="true"
+        ref={skillsContainerRef}
         onBlur={resumeAutoSkillHover}
         onFocus={pauseAutoSkillHover}
         onPointerEnter={pauseAutoSkillHover}
@@ -1081,7 +1024,7 @@ function SkillsSection() {
             key={skill.name}
             className="group/skill flex h-8 flex-auto basis-auto items-center justify-center gap-2 rounded-md border border-[#d4d4d8] bg-transparent px-3 text-[12px] font-medium leading-none text-[#52525c] transition-colors duration-700 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] data-[auto-active=true]:border-[#18181b] data-[auto-active=true]:bg-[#18181b] data-[auto-active=true]:text-[#fff] dark:border-[#3f3f46] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b] dark:data-[auto-active=true]:border-[#fff] dark:data-[auto-active=true]:bg-[#fff] dark:data-[auto-active=true]:text-[#18181b]"
             data-auto-active={autoActiveSkillIndex === index}
-            data-scroll-reveal
+            data-skill-item
           >
             <SkillIcon iconSlug={skill.iconSlug} name={skill.name} />
             <span className="min-w-0 truncate">{skill.name}</span>
