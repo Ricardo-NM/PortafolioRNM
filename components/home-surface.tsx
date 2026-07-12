@@ -23,6 +23,7 @@ import projectS from "@/assets/images/projectS.svg";
 import projectT from "@/assets/images/projectT.svg";
 import { Blueprint } from "@/components/blueprint";
 import { ContactDrawer } from "@/components/contact-drawer";
+import { PortfolioExpandableTabs } from "@/components/expandable-tabs/Usage";
 import { ThemeBanner } from "@/components/theme-banner";
 import { Button } from "@/components/ui/button";
 
@@ -125,11 +126,7 @@ export function getNextExperienceTransition(
   requestedId: string,
 ) {
   if (activeId === requestedId) {
-    return { activeId: null, pendingId: null };
-  }
-
-  if (activeId) {
-    return { activeId: null, pendingId: requestedId };
+    return { activeId: requestedId, pendingId: null };
   }
 
   return { activeId: requestedId, pendingId: null };
@@ -372,41 +369,24 @@ function LinkedInPreviewCard() {
 }
 
 function ExperienceSection() {
-  const [openExperienceId, setOpenExperienceId] = useState<string | null>(null);
-  const [pendingExperienceId, setPendingExperienceId] = useState<string | null>(
-    null,
+  const [openExperienceId, setOpenExperienceId] = useState<string | null>(
+    experiences[0]?.id ?? null,
   );
 
   function handleExperienceToggle(experienceId: string) {
-    if (pendingExperienceId) {
-      setPendingExperienceId(
-        pendingExperienceId === experienceId ? null : experienceId,
-      );
-      return;
-    }
-
     const nextTransition = getNextExperienceTransition(
       openExperienceId,
       experienceId,
     );
 
     setOpenExperienceId(nextTransition.activeId);
-    setPendingExperienceId(nextTransition.pendingId);
-  }
-
-  function handleDetailsExitComplete() {
-    if (!pendingExperienceId) {
-      return;
-    }
-
-    setOpenExperienceId(pendingExperienceId);
-    setPendingExperienceId(null);
   }
 
   return (
     <section
+      id="experiencia"
       aria-labelledby="experience-title"
-      className="relative bg-background px-3"
+      className="relative scroll-mt-24 bg-background px-3"
     >
       <div className="experience-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="experience" />
@@ -484,8 +464,6 @@ function ExperienceSection() {
 
               <AnimatePresence
                 initial={false}
-                mode="wait"
-                onExitComplete={handleDetailsExitComplete}
               >
                 {isOpen ? (
                   <motion.div
@@ -902,8 +880,9 @@ function TechIcon({ iconSlug, name }: { iconSlug: string; name: string }) {
 function ProjectsSection() {
   return (
     <section
+      id="proyectos"
       aria-labelledby="projects-title"
-      className="relative bg-background px-3"
+      className="relative scroll-mt-24 bg-background px-3"
     >
       <div className="projects-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="projects" />
@@ -1092,8 +1071,9 @@ function SkillsSection() {
 
   return (
     <section
+      id="habilidades"
       aria-labelledby="skills-title"
-      className="relative bg-background px-3"
+      className="relative scroll-mt-24 bg-background px-3"
     >
       <div className="skills-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="skills" />
@@ -1312,7 +1292,10 @@ function GitHubActivitySection() {
 
 export function HomeSurface() {
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-background text-foreground">
+    <main
+      id="inicio"
+      className="relative min-h-dvh scroll-mt-24 overflow-hidden bg-background text-foreground"
+    >
       <Blueprint />
 
       <header className="content-column relative">
@@ -1341,7 +1324,12 @@ export function HomeSurface() {
           <ViewportGuideLine position="bottom" scope="profile" />
         </div>
 
+        <div className="fixed top-4 left-1/2 z-[120] w-full max-w-[min(100%-1rem,42rem)] -translate-x-1/2 px-2">
+          <PortfolioExpandableTabs />
+        </div>
+
         <section
+          id="acerca-de-mi"
           aria-labelledby="profile-summary-title"
           className="relative bg-background px-3 py-3"
         >

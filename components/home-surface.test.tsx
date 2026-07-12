@@ -251,6 +251,66 @@ describe("HomeSurface", () => {
     expect(html).toContain("Seguidores");
   });
 
+  it("renders expandable tabs for the main portfolio sections", () => {
+    const html = renderToStaticMarkup(<HomeSurface />);
+
+    expect(html).toContain('aria-label="Navegación principal del portafolio"');
+    expect(html).toContain(
+      "fixed top-4 left-1/2 z-[120] w-full max-w-[min(100%-1rem,42rem)] -translate-x-1/2 px-2",
+    );
+
+    const expectedTabs = [
+      ["Inicio", "#inicio", 'id="inicio"', 'data-section-id="inicio"'],
+      [
+        "Experiencia",
+        "#experiencia",
+        'id="experiencia"',
+        'data-section-id="experiencia"',
+      ],
+      ["Proyectos", "#proyectos", 'id="proyectos"', 'data-section-id="proyectos"'],
+      [
+        "Habilidades",
+        "#habilidades",
+        'id="habilidades"',
+        'data-section-id="habilidades"',
+      ],
+    ];
+
+    for (const [label, href, targetId, sectionId] of expectedTabs) {
+      expect(html).toContain(`href="${href}"`);
+      expect(html).toContain(`aria-label="Ir a ${label}"`);
+      expect(html).toContain(targetId);
+      expect(html).toContain(sectionId);
+    }
+
+    expect(html).toContain('aria-current="page"');
+    expect(html).toContain("lucide-house");
+    expect(html).toContain("lucide-briefcase-business");
+    expect(html).toContain("lucide-folder-kanban");
+    expect(html).toContain("lucide-code-xml");
+    expect(html).not.toContain('href="#acerca-de-mi"');
+    expect(html).not.toContain('aria-label="Ir a Acerca de mí"');
+    expect(html).not.toContain("lucide-user-round");
+  });
+
+  it("keeps expandable tab state persistent and synchronized with scrolling", () => {
+    const componentSource = readFileSync(
+      join(process.cwd(), "components/expandable-tabs/Component.tsx"),
+      "utf8",
+    );
+    const usageSource = readFileSync(
+      join(process.cwd(), "components/expandable-tabs/Usage.tsx"),
+      "utf8",
+    );
+
+    expect(componentSource).not.toContain("pointerdown");
+    expect(componentSource).not.toContain("setSelected(null)");
+    expect(componentSource).toContain("selectedIndex");
+    expect(componentSource).toContain("aria-current");
+    expect(usageSource).toContain('behavior: "smooth"');
+    expect(usageSource).toContain("IntersectionObserver");
+  });
+
   it("renders the experience section below the profile summary", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
     const text = html.replace(/<[^>]+>/g, "");
@@ -504,7 +564,7 @@ describe("HomeSurface", () => {
     const text = html.replace(/<[^>]+>/g, "");
 
     expect(text.indexOf("Actividad de GitHub")).toBeGreaterThan(
-      text.indexOf("Habilidades y TecnologÃ­as"),
+      text.indexOf("Habilidades y Tecnologías"),
     );
     expect(html).toContain('aria-labelledby="github-activity-title"');
     expect(html).toContain("github-activity-guide-line");
@@ -591,32 +651,32 @@ describe("HomeSurface", () => {
     expect(getNextAutoSkillIndex(2, 5, () => 0.8)).toBe(4);
   });
 
-  it("queues experience accordion changes so one panel closes before the next opens", () => {
+  it("keeps one experience accordion panel open at all times", () => {
     expect(getNextExperienceTransition(null, "kpuga")).toEqual({
       activeId: "kpuga",
       pendingId: null,
     });
     expect(getNextExperienceTransition("kpuga", "kpuga")).toEqual({
-      activeId: null,
+      activeId: "kpuga",
       pendingId: null,
     });
     expect(getNextExperienceTransition("kpuga", "ardabytec")).toEqual({
-      activeId: null,
-      pendingId: "ardabytec",
+      activeId: "ardabytec",
+      pendingId: null,
     });
   });
 
-  it("starts with the experience accordion closed", () => {
+  it("starts with the first experience accordion panel open", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
     const text = html.replace(/<[^>]+>/g, "");
 
-    expect(html).not.toContain('id="kpuga-details"');
-    expect(html).not.toContain('aria-expanded="true"');
+    expect(html).toContain('id="kpuga-details"');
+    expect(html).toContain('aria-expanded="true"');
     expect(html).toContain('aria-expanded="false"');
     expect(html).not.toContain("grid auto-rows-fr grid-cols-2 md:grid-cols-4");
-    expect(text).not.toContain("+15");
-    expect(text).not.toContain("USUARIOS");
-    expect(text).not.toContain("VPS LINUX");
+    expect(text).toContain("+15");
+    expect(text).toContain("USUARIOS");
+    expect(text).toContain("VPS LINUX");
   });
 
   it("clips the animated experience details while collapsing", () => {
@@ -693,8 +753,8 @@ describe("HomeSurface", () => {
   it("keeps experience detail guide lines aligned with the page grid", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
 
-    expect(html).not.toContain("experience-detail-stat-row");
-    expect(html).not.toContain("experience-detail-bullet-row");
+    expect(html).toContain("experience-detail-stat-row");
+    expect(html).toContain("experience-detail-bullet-row");
     expect(html).toContain("experience-item-guide-line");
     expect(html).toContain("experience-item-guide-dot");
     expect(html).toContain(
