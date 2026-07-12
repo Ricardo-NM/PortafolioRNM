@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ricardo NM | Porfolio",
+  title: "Ricardo NM | Portafolio",
   description: "Plataforma web tecnica y editorial.",
   icons: {
     icon: [{ url: "/assets/images/favicon.svg", type: "image/svg+xml" }],
