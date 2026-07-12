@@ -11,6 +11,8 @@ import {
 import { ExpandableTabs } from "@/components/expandable-tabs/Component";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+const smoothScrollToEventName = "portfolio:smooth-scroll-to";
+
 const portfolioTabs = [
   {
     title: "Inicio",
@@ -45,6 +47,27 @@ const portfolioTabs = [
 export function PortfolioExpandableTabs() {
   const [activeTabIndex, setActiveTabIndex] = React.useState(0);
   const [showThemeTab, setShowThemeTab] = React.useState(false);
+  const activeTabIndexRef = React.useRef(activeTabIndex);
+  const lockedTabIndexRef = React.useRef<number | null>(null);
+  const unlockTimerRef = React.useRef<number | null>(null);
+  const fallbackTimerRef = React.useRef<number | null>(null);
+  const scrollRequestIdRef = React.useRef(0);
+
+  React.useEffect(() => {
+    activeTabIndexRef.current = activeTabIndex;
+  }, [activeTabIndex]);
+
+  React.useEffect(() => {
+    return () => {
+      if (unlockTimerRef.current) {
+        window.clearTimeout(unlockTimerRef.current);
+      }
+
+      if (fallbackTimerRef.current) {
+        window.clearTimeout(fallbackTimerRef.current);
+      }
+    };
+  }, []);
 
   React.useEffect(() => {
     const sectionEntries = portfolioTabs
@@ -61,7 +84,13 @@ export function PortfolioExpandableTabs() {
       return;
     }
 
+    let frameId = 0;
+
     function syncActiveSection() {
+      if (lockedTabIndexRef.current !== null) {
+        return;
+      }
+
       const viewportAnchor = window.innerHeight * 0.28;
       const closestEntry = sectionEntries.reduce((closest, entry) => {
         const distance = Math.abs(
@@ -76,43 +105,35 @@ export function PortfolioExpandableTabs() {
         distance: Number.POSITIVE_INFINITY,
       });
 
-      setActiveTabIndex(closestEntry.index);
+      if (closestEntry.index !== activeTabIndexRef.current) {
+        setActiveTabIndex(closestEntry.index);
+      }
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort(
-            (a, b) =>
-              Math.abs(a.boundingClientRect.top) -
-              Math.abs(b.boundingClientRect.top),
-          );
+    function scheduleActiveSectionSync() {
+      if (frameId) {
+        return;
+      }
 
-        const activeEntry = visibleEntries[0];
-        const activeIndex = sectionEntries.find(
-          (entry) => entry.element === activeEntry?.target,
-        )?.index;
+      frameId = window.requestAnimationFrame(() => {
+        frameId = 0;
+        syncActiveSection();
+      });
+    }
 
-        if (typeof activeIndex === "number") {
-          setActiveTabIndex(activeIndex);
-        }
-      },
-      {
-        rootMargin: "-18% 0px -58% 0px",
-        threshold: [0, 0.2, 0.6],
-      },
-    );
-
-    sectionEntries.forEach((entry) => observer.observe(entry.element));
     syncActiveSection();
-    window.addEventListener("scroll", syncActiveSection, { passive: true });
-    window.addEventListener("resize", syncActiveSection);
+    window.addEventListener("scroll", scheduleActiveSectionSync, {
+      passive: true,
+    });
+    window.addEventListener("resize", scheduleActiveSectionSync);
 
     return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", syncActiveSection);
-      window.removeEventListener("resize", syncActiveSection);
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+
+      window.removeEventListener("scroll", scheduleActiveSectionSync);
+      window.removeEventListener("resize", scheduleActiveSectionSync);
     };
   }, []);
 
@@ -178,7 +199,7 @@ export function PortfolioExpandableTabs() {
         tabs={portfolioTabs}
         selectedIndex={activeTabIndex}
         activeColor="text-[#18181b] dark:text-[#f4f4f5]"
-        className="w-auto max-w-full justify-center border-[#e4e4e7] bg-[#fff]/90 shadow-[0_18px_50px_rgba(24,24,27,0.18)] backdrop-blur-xl supports-[backdrop-filter]:bg-[#fff]/70 dark:border-[#27272a] dark:bg-[#09090b]/90 dark:shadow-[0_18px_60px_rgba(0,0,0,0.55)] dark:supports-[backdrop-filter]:bg-[#09090b]/70"
+        className="w-[min(100%,24rem)] max-w-full justify-center border-[#e4e4e7] bg-[#fff]/90 shadow-[0_18px_50px_rgba(24,24,27,0.18)] backdrop-blur-xl supports-[backdrop-filter]:bg-[#fff]/70 dark:border-[#27272a] dark:bg-[#09090b]/90 dark:shadow-[0_18px_60px_rgba(0,0,0,0.55)] dark:supports-[backdrop-filter]:bg-[#09090b]/70"
         trailingActionVisible={showThemeTab}
         trailingAction={
           <ThemeToggle
@@ -188,11 +209,84 @@ export function PortfolioExpandableTabs() {
           />
         }
         onTabSelect={(tab, index) => {
+          const targetElement = document.getElementById(tab.sectionId ?? "");
+          const scrollRequestId = scrollRequestIdRef.current + 1;
+          scrollRequestIdRef.current = scrollRequestId;
+
+          lockedTabIndexRef.current = index;
+          activeTabIndexRef.current = index;
           setActiveTabIndex(index);
-          document.getElementById(tab.sectionId ?? "")?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
+
+          const unlockActiveSync = () => {
+            if (scrollRequestIdRef.current !== scrollRequestId) {
+              return;
+            }
+
+            if (unlockTimerRef.current) {
+              window.clearTimeout(unlockTimerRef.current);
+            }
+
+            unlockTimerRef.current = window.setTimeout(() => {
+              lockedTabIndexRef.current = null;
+              activeTabIndexRef.current = index;
+              setActiveTabIndex(index);
+            }, 80);
+          };
+
+          if (unlockTimerRef.current) {
+            window.clearTimeout(unlockTimerRef.current);
+          }
+
+          if (fallbackTimerRef.current) {
+            window.clearTimeout(fallbackTimerRef.current);
+          }
+
+          unlockTimerRef.current = window.setTimeout(unlockActiveSync, 1400);
+
+          const smoothScrollEvent = new CustomEvent(smoothScrollToEventName, {
+            cancelable: true,
+            detail: {
+              targetId: tab.sectionId,
+              onComplete: unlockActiveSync,
+            },
           });
+
+          const wasHandled = !window.dispatchEvent(smoothScrollEvent);
+
+          const scrollWithNativeFallback = () => {
+            if (scrollRequestIdRef.current !== scrollRequestId) {
+              return;
+            }
+
+            targetElement?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+            unlockTimerRef.current = window.setTimeout(unlockActiveSync, 900);
+          };
+
+          if (!wasHandled) {
+            scrollWithNativeFallback();
+          } else if (targetElement) {
+            const initialDistance = Math.abs(
+              targetElement.getBoundingClientRect().top,
+            );
+
+            fallbackTimerRef.current = window.setTimeout(() => {
+              if (scrollRequestIdRef.current !== scrollRequestId) {
+                return;
+              }
+
+              const currentDistance = Math.abs(
+                targetElement.getBoundingClientRect().top,
+              );
+              const scrollDidStart = currentDistance < initialDistance - 8;
+
+              if (!scrollDidStart && currentDistance > 24) {
+                scrollWithNativeFallback();
+              }
+            }, 140);
+          }
 
           if (tab.href) {
             window.history.replaceState(null, "", tab.href);

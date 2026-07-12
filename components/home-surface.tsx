@@ -7,8 +7,6 @@ import {
   Fragment,
   type ReactNode,
 } from "react";
-import { motion } from "framer-motion";
-import type { MotionProps } from "framer-motion";
 import Image from "next/image";
 import {
   FileUser,
@@ -179,31 +177,6 @@ function ViewportGuideLine({
   );
 }
 
-const experienceContentInitial = {
-  opacity: 0,
-  scale: 0.96,
-  x: -10,
-  filter: "blur(8px)",
-};
-
-const experienceContentAnimate = {
-  opacity: 1,
-  scale: 1,
-  x: 0,
-  filter: "blur(0px)",
-};
-
-const experienceContentTransition = {
-  duration: 0.32,
-  ease: "circInOut",
-  type: "spring",
-} satisfies MotionProps["transition"];
-
-const experienceGuideFadeTransition = {
-  duration: 0.14,
-  ease: "easeOut",
-} satisfies MotionProps["transition"];
-
 function ExperienceMotionBlock({
   children,
   className = "",
@@ -212,14 +185,11 @@ function ExperienceMotionBlock({
   className?: string;
 }) {
   return (
-    <motion.div
+    <div
       className={`experience-content-motion ${className}`}
-      initial={experienceContentInitial}
-      animate={experienceContentAnimate}
-      transition={experienceContentTransition}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -244,12 +214,9 @@ function ContentGuideLine({
         : "bottom-0";
 
   return (
-    <motion.div
+    <div
       aria-hidden="true"
       className={`pointer-events-none absolute left-0 z-50 h-0 w-full ${verticalPosition} ${className}`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={experienceGuideFadeTransition}
     >
       <div
         className={`${lineClassName} blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]`}
@@ -265,7 +232,7 @@ function ContentGuideLine({
       <span
         className={`${dotClassName} blueprint-dot absolute right-0 top-0 translate-x-1/2 -translate-y-1/2`}
       />
-    </motion.div>
+    </div>
   );
 }
 
@@ -559,6 +526,7 @@ function ExperienceSection() {
       id="experiencia"
       aria-labelledby="experience-title"
       className="relative scroll-mt-24 bg-background px-3"
+      data-scroll-section
     >
       <div className="experience-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="experience" />
@@ -890,6 +858,7 @@ function ProjectsSection() {
       id="proyectos"
       aria-labelledby="projects-title"
       className="relative scroll-mt-24 bg-background px-3"
+      data-scroll-section
     >
       <div className="projects-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="projects" />
@@ -928,7 +897,10 @@ function ProjectsSection() {
 
             return (
               <Fragment key={project.id}>
-                <div className="relative flex px-4 py-4 sm:px-6 sm:py-6">
+                <div
+                  className="relative flex px-4 py-4 sm:px-6 sm:py-6"
+                  data-scroll-reveal
+                >
                   <article className="group/card relative flex flex-col w-full rounded-xl border border-[#e4e4e7] bg-[#fff] p-4 transition-all duration-300 hover:border-[#27272a] hover:bg-[#18181b] active:border-[#27272a] active:bg-[#18181b] dark:border-[#27272a] dark:bg-[#18181b] dark:hover:border-[#e4e4e7] dark:hover:bg-[#fff] dark:active:border-[#e4e4e7] dark:active:bg-[#fff]">
                     <div className="relative mb-4 w-full overflow-hidden rounded-lg border border-[#e4e4e7] bg-[#f4f4f5]/50 transition-colors duration-300 group-hover/card:!border-transparent group-hover/card:bg-[#27272a]/30 group-active/card:!border-transparent group-active/card:bg-[#27272a]/30 dark:border-[#27272a] dark:bg-[#27272a]/30 dark:group-hover/card:!border-transparent dark:group-hover/card:bg-[#f4f4f5]/50 dark:group-active/card:!border-transparent dark:group-active/card:bg-[#f4f4f5]/50">
                       <div className="relative w-full aspect-[4/3] overflow-hidden border-[#e4e4e7] transition-colors duration-300 group-hover/card:!border-transparent group-active/card:!border-transparent dark:border-[#3f3f46] dark:group-hover/card:!border-transparent dark:group-active/card:!border-transparent">
@@ -1081,6 +1053,7 @@ function SkillsSection() {
       id="habilidades"
       aria-labelledby="skills-title"
       className="relative scroll-mt-24 bg-background px-3"
+      data-scroll-section
     >
       <div className="skills-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="skills" />
@@ -1108,6 +1081,7 @@ function SkillsSection() {
             key={skill.name}
             className="group/skill flex h-8 flex-auto basis-auto items-center justify-center gap-2 rounded-md border border-[#d4d4d8] bg-transparent px-3 text-[12px] font-medium leading-none text-[#52525c] transition-colors duration-700 ease-in-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-[#fff] data-[auto-active=true]:border-[#18181b] data-[auto-active=true]:bg-[#18181b] data-[auto-active=true]:text-[#fff] dark:border-[#3f3f46] dark:text-[#a1a1aa] dark:hover:border-[#fff] dark:hover:bg-[#fff] dark:hover:text-[#18181b] dark:data-[auto-active=true]:border-[#fff] dark:data-[auto-active=true]:bg-[#fff] dark:data-[auto-active=true]:text-[#18181b]"
             data-auto-active={autoActiveSkillIndex === index}
+            data-scroll-reveal
           >
             <SkillIcon iconSlug={skill.iconSlug} name={skill.name} />
             <span className="min-w-0 truncate">{skill.name}</span>
@@ -1189,6 +1163,7 @@ function GitHubActivitySection() {
     <section
       aria-labelledby="github-activity-title"
       className="relative bg-background px-3"
+      data-scroll-section
     >
       <div className="github-activity-section-title-row relative flex h-12 items-center">
         <ViewportGuideLine position="top" scope="github-activity" />
@@ -1339,6 +1314,7 @@ export function HomeSurface() {
           id="acerca-de-mi"
           aria-labelledby="profile-summary-title"
           className="relative bg-background px-3 py-3"
+          data-scroll-reveal
         >
           <h2 id="profile-summary-title" className="sr-only">
             Perfil profesional

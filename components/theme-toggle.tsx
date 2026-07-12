@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { gsap } from "gsap";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
@@ -30,6 +30,7 @@ export function ThemeToggle({
   appearance = "banner",
 }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();
+  const iconRef = React.useRef<HTMLSpanElement | null>(null);
   const mounted = React.useSyncExternalStore(
     subscribe,
     getClientSnapshot,
@@ -37,6 +38,20 @@ export function ThemeToggle({
   );
 
   const isDark = mounted ? resolvedTheme === "dark" : true;
+
+  React.useEffect(() => {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    gsap.to(iconRef.current, {
+      rotate: isDark ? 0 : 90,
+      scale: 1,
+      duration: reduceMotion ? 0 : 0.18,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  }, [isDark]);
 
   return (
     <Button
@@ -50,23 +65,22 @@ export function ThemeToggle({
       aria-label={isDark ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
       onClick={() => setTheme(getNextTheme(resolvedTheme))}
     >
-      <motion.span
+      <span
+        ref={iconRef}
         aria-hidden="true"
         className={cn(
           "inline-flex items-center justify-center",
           appearance === "tab" &&
             "text-[#18181b] opacity-100 dark:text-[#f4f4f5]",
         )}
-        animate={{ rotate: isDark ? 0 : 90, scale: 1 }}
-        initial={false}
-        transition={{ duration: 0.18, ease: "easeOut" }}
+        style={{ rotate: isDark ? "0deg" : "90deg" }}
       >
         {isDark ? (
           <Moon size={iconSize} strokeWidth={1.75} />
         ) : (
           <Sun size={iconSize} strokeWidth={1.75} />
         )}
-      </motion.span>
+      </span>
     </Button>
   );
 }

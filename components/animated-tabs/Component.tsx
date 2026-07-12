@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import type { MotionProps } from "framer-motion";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
 
 interface Tab {
@@ -17,29 +16,6 @@ interface AnimatedTabsProps {
   className?: string;
   panelAnimation?: "content" | "fade";
 }
-
-const fadePanelMotion = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.16, ease: "easeOut" },
-} satisfies Pick<MotionProps, "initial" | "animate" | "exit" | "transition">;
-
-const contentPanelMotion = {
-  initial: {
-    opacity: 0,
-    scale: 0.95,
-    x: -10,
-    filter: "blur(10px)",
-  },
-  animate: { opacity: 1, scale: 1, x: 0, filter: "blur(0px)" },
-  exit: { opacity: 0, scale: 0.95, x: -10, filter: "blur(10px)" },
-  transition: {
-    duration: 0.5,
-    ease: "circInOut",
-    type: "spring",
-  },
-} satisfies Pick<MotionProps, "initial" | "animate" | "exit" | "transition">;
 
 const defaultTabs: Tab[] = [
   {
@@ -117,21 +93,85 @@ const AnimatedTabs = ({
   const initialTab = defaultTab ?? tabs[0]?.id ?? "";
   const [activeTab, setActiveTab] = useState<string>(initialTab);
   const activeTabData = tabs.find((tab) => tab.id === activeTab) ?? tabs[0];
-  const panelMotion =
-    panelAnimation === "fade" ? fadePanelMotion : contentPanelMotion;
+  const tablistRef = useRef<HTMLDivElement | null>(null);
+  const indicatorRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
 
-  if (!tabs?.length) return null;
+  useLayoutEffect(() => {
+    const tablist = tablistRef.current;
+    const indicator = indicatorRef.current;
+    const selectedTab = tablist?.querySelector<HTMLElement>(
+      `[data-tab-id="${activeTab}"]`,
+    );
+
+    if (!tablist || !indicator || !selectedTab) {
+      return;
+    }
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    gsap.to(indicator, {
+      x: selectedTab.offsetLeft,
+      y: selectedTab.offsetTop,
+      width: selectedTab.offsetWidth,
+      height: selectedTab.offsetHeight,
+      duration: reduceMotion ? 0 : 0.38,
+      ease: "power3.out",
+      overwrite: "auto",
+    });
+  }, [activeTab, tabs]);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+
+    if (!panel) {
+      return;
+    }
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    gsap.fromTo(
+      panel,
+      {
+        autoAlpha: panelAnimation === "fade" ? 0 : 0.2,
+        x: panelAnimation === "fade" ? 0 : -8,
+        scale: panelAnimation === "fade" ? 1 : 0.985,
+      },
+      {
+        autoAlpha: 1,
+        x: 0,
+        scale: 1,
+        duration: reduceMotion ? 0 : panelAnimation === "fade" ? 0.18 : 0.34,
+        ease: "power3.out",
+        overwrite: "auto",
+        clearProps: "transform,opacity,visibility",
+      },
+    );
+  }, [activeTabData?.id, panelAnimation]);
+
+  if (!tabs?.length || !activeTabData) return null;
 
   return (
     <div className={cn("flex w-full flex-col gap-y-2", className)}>
       <div
+        ref={tablistRef}
         role="tablist"
-        className="flex flex-wrap gap-2 rounded-lg border border-[#e4e4e7] bg-[#fff]/80 p-1 shadow-[0_1px_8px_rgba(24,24,27,0.06)] backdrop-blur-sm dark:border-[#27272a] dark:bg-[#09090b]/80"
+        className="relative flex flex-wrap gap-2 rounded-lg border border-[#e4e4e7] bg-[#fff]/80 p-1 shadow-[0_1px_8px_rgba(24,24,27,0.06)] backdrop-blur-sm dark:border-[#27272a] dark:bg-[#09090b]/80"
       >
+        <div
+          ref={indicatorRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-0 rounded-md border border-[#d4d4d8] bg-[#f4f4f5] shadow-[0_1px_8px_rgba(24,24,27,0.08)] dark:border-[#3f3f46] dark:bg-[#18181b]"
+        />
         {tabs.map((tab) => (
           <button
             key={tab.id}
             id={`${tab.id}-tab`}
+            data-tab-id={tab.id}
             type="button"
             role="tab"
             aria-selected={activeTab === tab.id}
@@ -145,13 +185,6 @@ const AnimatedTabs = ({
                 : "hover:bg-[#f4f4f5] hover:text-[#18181b] dark:hover:bg-[#18181b] dark:hover:text-[#f4f4f5]",
             )}
           >
-            {activeTab === tab.id && (
-              <motion.div
-                layoutId="active-tab"
-                className="absolute inset-0 rounded-md border border-[#d4d4d8] bg-[#f4f4f5] shadow-[0_1px_8px_rgba(24,24,27,0.08)] dark:border-[#3f3f46] dark:bg-[#18181b]"
-                transition={{ type: "spring", duration: 0.6 }}
-              />
-            )}
             <span className="relative z-10 flex w-full justify-center">
               {tab.label}
             </span>
@@ -160,20 +193,15 @@ const AnimatedTabs = ({
       </div>
 
       <div className="min-h-60 rounded-lg border border-[#e4e4e7] bg-transparent px-3 pb-3 text-[#18181b] dark:border-[#27272a] dark:text-[#f4f4f5]">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={activeTabData.id}
-            id={`${activeTabData.id}-panel`}
-            role="tabpanel"
-            aria-labelledby={`${activeTabData.id}-tab`}
-            initial={panelMotion.initial}
-            animate={panelMotion.animate}
-            exit={panelMotion.exit}
-            transition={panelMotion.transition}
-          >
-            {activeTabData.content}
-          </motion.div>
-        </AnimatePresence>
+        <div
+          ref={panelRef}
+          key={activeTabData.id}
+          id={`${activeTabData.id}-panel`}
+          role="tabpanel"
+          aria-labelledby={`${activeTabData.id}-tab`}
+        >
+          {activeTabData.content}
+        </div>
       </div>
     </div>
   );

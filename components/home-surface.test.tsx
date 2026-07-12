@@ -312,7 +312,10 @@ describe("HomeSurface", () => {
     expect(componentSource).toContain("selectedIndex");
     expect(componentSource).toContain("aria-current");
     expect(usageSource).toContain('behavior: "smooth"');
-    expect(usageSource).toContain("IntersectionObserver");
+    expect(usageSource).toContain("requestAnimationFrame");
+    expect(usageSource).toContain("lockedTabIndexRef");
+    expect(usageSource).toContain("onComplete: unlockActiveSync");
+    expect(usageSource).not.toContain("IntersectionObserver");
   });
 
   it("renders the experience section below the profile summary", () => {
@@ -764,8 +767,9 @@ describe("HomeSurface", () => {
     expect(html).not.toContain("odd:border-r");
     expect(source).toContain('panelAnimation="fade"');
     expect(source).toContain("ExperienceMotionBlock");
-    expect(source).toContain("experienceGuideFadeTransition");
     expect(source).toContain("experience-content-motion");
+    expect(source).not.toContain("framer-motion");
+    expect(source).not.toContain("motion.div");
     expect(source).not.toContain("experience-detail-stat-row relative -mx-3 px-3\" as={motion.div}");
   });
 

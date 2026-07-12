@@ -1,10 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import type { Transition } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
+import { gsap } from "gsap";
 
 interface Tab {
   title: string;
@@ -39,37 +38,6 @@ interface ExpandableTabsProps {
   ) => void;
 }
 
-const buttonVariants = {
-  initial: {
-    gap: 0,
-    paddingLeft: ".5rem",
-    paddingRight: ".5rem",
-  },
-  animate: (isSelected: boolean) => ({
-    gap: isSelected ? ".5rem" : 0,
-    paddingLeft: isSelected ? "1rem" : ".5rem",
-    paddingRight: isSelected ? "1rem" : ".5rem",
-  }),
-};
-
-const spanVariants = {
-  initial: { width: 0, opacity: 0 },
-  animate: { width: "auto", opacity: 1 },
-  exit: { width: 0, opacity: 0 },
-};
-
-const transition: Transition = {
-  delay: 0.1,
-  type: "spring",
-  bounce: 0,
-  duration: 0.6,
-};
-
-const trailingActionTransition: Transition = {
-  duration: 0.32,
-  ease: [0.22, 1, 0.36, 1],
-};
-
 export function ExpandableTabs({
   tabs,
   className,
@@ -86,6 +54,57 @@ export function ExpandableTabs({
   );
   const selected = selectedIndex ?? internalSelected;
   const isControlled = selectedIndex !== undefined;
+  const [settledSelected, setSettledSelected] = React.useState(selected);
+  const labelRefs = React.useRef(new Map<number, HTMLSpanElement>());
+  const hasAnimatedLabels = React.useRef(false);
+
+  React.useLayoutEffect(() => {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const shouldSettleImmediately = !hasAnimatedLabels.current || reduceMotion;
+    const timeline = gsap.timeline({
+      onComplete: () => setSettledSelected(selected),
+    });
+
+    labelRefs.current.forEach((label, index) => {
+      const isSelected = selected === index;
+      const isNewSelection = isSelected && settledSelected !== selected;
+      const targetWidth = isSelected ? label.scrollWidth : 0;
+
+      gsap.killTweensOf(label);
+
+      if (shouldSettleImmediately) {
+        gsap.set(label, {
+          width: targetWidth,
+          opacity: isSelected ? 1 : 0,
+        });
+        return;
+      }
+
+      if (isNewSelection) {
+        gsap.set(label, { width: 0, opacity: 0 });
+      }
+
+      timeline.to(
+        label,
+        {
+          width: targetWidth,
+          opacity: isSelected ? 1 : 0,
+          duration: 0.42,
+          ease: "power3.out",
+          overwrite: "auto",
+        },
+        0,
+      );
+    });
+
+    hasAnimatedLabels.current = true;
+
+    if (shouldSettleImmediately && settledSelected !== selected) {
+      setSettledSelected(selected);
+    }
+  }, [selected, settledSelected, tabs]);
 
   const handleSelect = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -122,71 +141,65 @@ export function ExpandableTabs({
 
         const Icon = tab.icon;
         const isLastTabItem = index === tabs.length - 1;
+        const shouldRenderLabel =
+          selected === index || settledSelected === index;
 
         return (
-          <motion.a
+          <a
             key={tab.title}
             href={tab.href}
             aria-label={tab.ariaLabel ?? tab.title}
             aria-current={selected === index ? "page" : undefined}
             data-section-id={tab.sectionId}
-            variants={buttonVariants}
-            initial={false}
-            animate="animate"
-            custom={selected === index}
             onClick={(event) => handleSelect(event, index, tab)}
-            transition={transition}
             className={cn(
-              "relative flex items-center rounded-xl px-4 py-2 text-sm font-medium transition-colors duration-300",
+              "relative flex min-h-9 shrink-0 items-center rounded-xl py-2 text-sm font-medium transition-[background-color,color,gap,padding] duration-300 ease-out",
               isLastTabItem ? "mr-0" : "mr-2",
               selected === index
-                ? cn("bg-muted", activeColor)
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ? cn("gap-2 bg-muted px-4", activeColor)
+                : "gap-0 px-2 text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
             <Icon size={20} />
-            <AnimatePresence initial={false}>
-              {selected === index && (
-                <motion.span
-                  variants={spanVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={transition}
-                  className="overflow-hidden"
-                >
-                  {tab.title}
-                </motion.span>
+            <span
+              ref={(element) => {
+                if (element) {
+                  labelRefs.current.set(index, element);
+                  return;
+                }
+
+                labelRefs.current.delete(index);
+              }}
+              aria-hidden="true"
+              className={cn(
+                "inline-block overflow-hidden whitespace-nowrap",
+                shouldRenderLabel ? "max-w-32 opacity-100" : "max-w-0 opacity-0",
               )}
-            </AnimatePresence>
-          </motion.a>
+            >
+              {shouldRenderLabel ? tab.title : null}
+            </span>
+          </a>
         );
       })}
       {trailingAction && (
-        <motion.div
+        <div
           aria-hidden={!trailingActionVisible}
-          initial={false}
-          animate={{
-            width: trailingActionVisible ? 44 : 0,
-          }}
-          transition={trailingActionTransition}
           className={cn(
-            "flex h-9 shrink-0 overflow-hidden pl-2 will-change-[width]",
+            "flex h-9 w-11 shrink-0 overflow-hidden pl-2",
             trailingActionVisible ? "pointer-events-auto" : "pointer-events-none",
           )}
         >
-          <motion.div
-            initial={false}
-            animate={{
-              opacity: trailingActionVisible ? 1 : 0,
-              x: trailingActionVisible ? 0 : -12,
-            }}
-            transition={trailingActionTransition}
-            className="flex h-9 w-9 shrink-0 will-change-[transform,opacity]"
+          <div
+            className={cn(
+              "flex h-9 w-9 shrink-0 transition-all duration-300 ease-out",
+              trailingActionVisible
+                ? "translate-x-0 opacity-100"
+                : "-translate-x-3 opacity-0",
+            )}
           >
             {trailingAction}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
     </div>
   );

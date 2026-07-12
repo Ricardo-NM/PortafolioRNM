@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { gsap } from "gsap";
 import { useTheme } from "next-themes";
 import * as React from "react";
 import bannerDark from "@/assets/images/bannerDark.png";
@@ -13,6 +13,8 @@ const getServerSnapshot = () => false;
 
 export function ThemeBanner() {
   const { resolvedTheme } = useTheme();
+  const lightLayerRef = React.useRef<HTMLDivElement | null>(null);
+  const darkLayerRef = React.useRef<HTMLDivElement | null>(null);
   const mounted = React.useSyncExternalStore(
     subscribe,
     getClientSnapshot,
@@ -20,24 +22,46 @@ export function ThemeBanner() {
   );
   const isDark = mounted ? resolvedTheme === "dark" : true;
 
+  React.useEffect(() => {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    gsap.to(lightLayerRef.current, {
+      autoAlpha: isDark ? 0 : 1,
+      duration: reduceMotion ? 0 : 0.28,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+
+    gsap.to(darkLayerRef.current, {
+      autoAlpha: isDark ? 1 : 0,
+      duration: reduceMotion ? 0 : 0.28,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  }, [isDark]);
+
   return (
     <div className="theme-banner-frame relative overflow-hidden bg-background">
-      <motion.div
+      <div
+        ref={lightLayerRef}
         aria-hidden="true"
         className="theme-banner-layer"
-        style={{ backgroundImage: `url(${bannerLight.src})` }}
-        animate={{ opacity: isDark ? 0 : 1 }}
-        initial={false}
-        transition={{ duration: 0.32, ease: "easeOut" }}
+        style={{
+          backgroundImage: `url(${bannerLight.src})`,
+          opacity: isDark ? 0 : 1,
+        }}
       />
 
-      <motion.div
+      <div
+        ref={darkLayerRef}
         aria-hidden="true"
         className="theme-banner-layer"
-        style={{ backgroundImage: `url(${bannerDark.src})` }}
-        animate={{ opacity: isDark ? 1 : 0 }}
-        initial={false}
-        transition={{ duration: 0.32, ease: "easeOut" }}
+        style={{
+          backgroundImage: `url(${bannerDark.src})`,
+          opacity: isDark ? 1 : 0,
+        }}
       />
 
       <div className="theme-banner-scrim bg-background/10" />
