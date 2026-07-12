@@ -318,6 +318,9 @@ describe("HomeSurface", () => {
     expect(componentSource).not.toContain("setSelected(null)");
     expect(componentSource).toContain("selectedIndex");
     expect(componentSource).toContain("aria-current");
+    expect(componentSource).toContain("settledSelectedRef");
+    expect(componentSource).toContain("settledSelectedRef.current = selected");
+    expect(componentSource).not.toContain("[selected, settledSelected, tabs]");
     expect(usageSource).toContain('behavior: "smooth"');
     expect(usageSource).toContain("requestAnimationFrame");
     expect(usageSource).toContain("lockedTabIndexRef");
@@ -325,7 +328,7 @@ describe("HomeSurface", () => {
     expect(usageSource).not.toContain("IntersectionObserver");
   });
 
-  it("uses native smooth scrolling on touch viewports to avoid mobile forced reflow", () => {
+  it("keeps reveal-up animations on touch viewports without enabling Lenis", () => {
     const source = readFileSync(
       join(process.cwd(), "components", "smooth-scroll-provider.tsx"),
       "utf8",
@@ -333,9 +336,14 @@ describe("HomeSurface", () => {
 
     expect(source).toContain('const touchViewportQuery = "(pointer: coarse)"');
     expect(source).toContain("const touchViewport = window.matchMedia(touchViewportQuery)");
-    expect(source).toContain("if (reduceMotion.matches || touchViewport.matches)");
+    expect(source).toContain("if (reduceMotion.matches)");
+    expect(source).toContain("const shouldUseLenis = !touchViewport.matches");
+    expect(source).toContain("if (shouldUseLenis)");
+    expect(source).not.toContain("if (reduceMotion.matches || touchViewport.matches)");
     expect(source).toContain("smoothWheel: true");
     expect(source).toContain("ScrollTrigger.update()");
+    expect(source).toContain("ScrollTrigger.batch(sectionTargets");
+    expect(source).toContain("ScrollTrigger.refresh()");
   });
 
   it("does not preload the non-critical mono font variant", () => {

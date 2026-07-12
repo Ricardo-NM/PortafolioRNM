@@ -51,31 +51,36 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
     const reduceMotion = window.matchMedia(reduceMotionQuery);
     const touchViewport = window.matchMedia(touchViewportQuery);
 
-    if (reduceMotion.matches || touchViewport.matches) {
+    if (reduceMotion.matches) {
       return;
     }
+    const shouldUseLenis = !touchViewport.matches;
 
     gsap.registerPlugin(ScrollTrigger);
-
-    const lenis = new Lenis({
-      duration: 0.92,
-      easing: (time) => Math.min(1, 1.001 - 2 ** (-10 * time)),
-      lerp: 0.085,
-      smoothWheel: true,
-      syncTouch: true,
-      touchMultiplier: 1.08,
-      wheelMultiplier: 0.92,
-      gestureOrientation: "vertical",
-      prevent: shouldPreventLenis,
-      autoRaf: false,
-    });
-
+    let lenis: Lenis | null = null;
+    let tickLenis: ((time: number) => void) | null = null;
     const updateScrollTrigger = () => ScrollTrigger.update();
-    const tickLenis = (time: number) => lenis.raf(time * 1000);
 
-    lenis.on("scroll", updateScrollTrigger);
-    gsap.ticker.add(tickLenis);
-    gsap.ticker.lagSmoothing(0);
+    if (shouldUseLenis) {
+      lenis = new Lenis({
+        duration: 0.92,
+        easing: (time) => Math.min(1, 1.001 - 2 ** (-10 * time)),
+        lerp: 0.085,
+        smoothWheel: true,
+        syncTouch: true,
+        touchMultiplier: 1.08,
+        wheelMultiplier: 0.92,
+        gestureOrientation: "vertical",
+        prevent: shouldPreventLenis,
+        autoRaf: false,
+      });
+
+      tickLenis = (time: number) => lenis?.raf(time * 1000);
+
+      lenis.on("scroll", updateScrollTrigger);
+      gsap.ticker.add(tickLenis);
+      gsap.ticker.lagSmoothing(0);
+    }
 
     const context = gsap.context(() => {
       const sectionTargets = gsap.utils.toArray<HTMLElement>(
@@ -167,7 +172,7 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
     }, scopeRef);
 
     const refreshFrame = window.requestAnimationFrame(() => {
-      lenis.resize();
+      lenis?.resize();
       ScrollTrigger.refresh();
     });
 
@@ -180,6 +185,10 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
       }
 
       customEvent.preventDefault();
+      if (!lenis) {
+        return;
+      }
+
       lenis.scrollTo(lenis.scroll, {
         immediate: true,
         force: true,
@@ -200,9 +209,11 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
       window.cancelAnimationFrame(refreshFrame);
       window.removeEventListener(scrollToEventName, handleSmoothScrollTo);
       context.revert();
-      lenis.off("scroll", updateScrollTrigger);
-      gsap.ticker.remove(tickLenis);
-      lenis.destroy();
+      lenis?.off("scroll", updateScrollTrigger);
+      if (tickLenis) {
+        gsap.ticker.remove(tickLenis);
+      }
+      lenis?.destroy();
     };
   }, []);
 

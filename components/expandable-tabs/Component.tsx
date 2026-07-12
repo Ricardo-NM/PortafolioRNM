@@ -55,21 +55,26 @@ export function ExpandableTabs({
   const selected = selectedIndex ?? internalSelected;
   const isControlled = selectedIndex !== undefined;
   const [settledSelected, setSettledSelected] = React.useState(selected);
+  const settledSelectedRef = React.useRef(selected);
   const labelRefs = React.useRef(new Map<number, HTMLSpanElement>());
   const hasAnimatedLabels = React.useRef(false);
 
   React.useLayoutEffect(() => {
+    const previousSettledSelected = settledSelectedRef.current;
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
     const shouldSettleImmediately = !hasAnimatedLabels.current || reduceMotion;
     const timeline = gsap.timeline({
-      onComplete: () => setSettledSelected(selected),
+      onComplete: () => {
+        settledSelectedRef.current = selected;
+        setSettledSelected(selected);
+      },
     });
 
     labelRefs.current.forEach((label, index) => {
       const isSelected = selected === index;
-      const isNewSelection = isSelected && settledSelected !== selected;
+      const isNewSelection = isSelected && previousSettledSelected !== selected;
       const targetWidth = isSelected ? label.scrollWidth : 0;
 
       gsap.killTweensOf(label);
@@ -101,10 +106,11 @@ export function ExpandableTabs({
 
     hasAnimatedLabels.current = true;
 
-    if (shouldSettleImmediately && settledSelected !== selected) {
+    if (shouldSettleImmediately && previousSettledSelected !== selected) {
+      settledSelectedRef.current = selected;
       setSettledSelected(selected);
     }
-  }, [selected, settledSelected, tabs]);
+  }, [selected, tabs]);
 
   const handleSelect = (
     event: React.MouseEvent<HTMLAnchorElement>,
