@@ -1,13 +1,9 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
+import { cvFileName, readCvFile } from "@/lib/server/cv";
 
 export const runtime = "nodejs";
 
-const cvFileName = "CV-Ricardo_Nava_Mayoral.pdf";
-
 export async function GET() {
-  const cvPath = path.join(process.cwd(), "assets", "docs", cvFileName);
-  const file = await readFile(cvPath);
+  const file = await readCvFile();
 
   return new Response(new Uint8Array(file), {
     headers: {

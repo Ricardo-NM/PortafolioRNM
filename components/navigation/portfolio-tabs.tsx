@@ -8,7 +8,7 @@ import {
   House,
 } from "lucide-react";
 
-import { ExpandableTabs } from "@/components/expandable-tabs/Component";
+import { ExpandableTabs } from "@/components/expandable-tabs/expandable-tabs";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const smoothScrollToEventName = "portfolio:smooth-scroll-to";
@@ -44,7 +44,7 @@ const portfolioTabs = [
   },
 ];
 
-export function PortfolioExpandableTabs() {
+export function PortfolioTabs() {
   const [activeTabIndex, setActiveTabIndex] = React.useState(0);
   const [showThemeTab, setShowThemeTab] = React.useState(false);
   const activeTabIndexRef = React.useRef(activeTabIndex);
@@ -296,3 +296,5 @@ export function PortfolioExpandableTabs() {
     </nav>
   );
 }
+
+

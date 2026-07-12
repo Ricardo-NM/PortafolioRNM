@@ -1,5 +1,6 @@
-import { HomeSurface } from "@/components/home-surface";
+import { HomeSurface } from "@/components/home";
 
 export default function HomePage() {
   return <HomeSurface />;
 }
+

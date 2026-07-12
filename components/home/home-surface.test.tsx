@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
-import { getNextAutoSkillIndex, HomeSurface } from "@/components/home-surface";
+import { getNextAutoSkillIndex, HomeSurface } from "@/components/home";
 import {
   contactFormConfig,
   hasContactDraft,
@@ -306,11 +306,11 @@ describe("HomeSurface", () => {
 
   it("keeps expandable tab state persistent and synchronized with scrolling", () => {
     const componentSource = readFileSync(
-      join(process.cwd(), "components/expandable-tabs/Component.tsx"),
+      join(process.cwd(), "components", "expandable-tabs", "expandable-tabs.tsx"),
       "utf8",
     );
     const usageSource = readFileSync(
-      join(process.cwd(), "components/expandable-tabs/Usage.tsx"),
+      join(process.cwd(), "components", "navigation", "portfolio-tabs.tsx"),
       "utf8",
     );
 
@@ -434,17 +434,23 @@ describe("HomeSurface", () => {
   it("renders projects with the Focus rail carousel", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
     const text = html.replace(/<[^>]+>/g, "");
-    const source = readFileSync(
-      join(process.cwd(), "components", "home-surface.tsx"),
-      "utf8",
-    );
+    const source = [
+      readFileSync(
+        join(process.cwd(), "components", "home", "projects-section.tsx"),
+        "utf8",
+      ),
+      readFileSync(
+        join(process.cwd(), "components", "home", "home-data.ts"),
+        "utf8",
+      ),
+    ].join("\n");
     const focusRailSource = readFileSync(
-      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      join(process.cwd(), "components", "focus-rail", "focus-rail.tsx"),
       "utf8",
     );
 
     expect(source).toContain(
-      'import { FocusRail, type FocusRailItem } from "@/components/focus-rail/Component"',
+      'import { FocusRail, type FocusRailItem } from "@/components/focus-rail/focus-rail"',
     );
     expect(source).toContain("const projectRailItems: FocusRailItem[]");
     expect(html).toContain('data-project-focus-rail="true"');
@@ -506,11 +512,11 @@ describe("HomeSurface", () => {
 
   it("keeps Focus rail navigation off the page scroll and frames SVGs at 4/3 without card backgrounds", () => {
     const source = readFileSync(
-      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      join(process.cwd(), "components", "focus-rail", "focus-rail.tsx"),
       "utf8",
     );
     const homeSource = readFileSync(
-      join(process.cwd(), "components", "home-surface.tsx"),
+      join(process.cwd(), "components", "home", "projects-section.tsx"),
       "utf8",
     );
 
@@ -541,7 +547,7 @@ describe("HomeSurface", () => {
 
   it("keeps side Focus rail cards clickable with stable animated positions and full dark overlays", () => {
     const source = readFileSync(
-      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      join(process.cwd(), "components", "focus-rail", "focus-rail.tsx"),
       "utf8",
     );
 
@@ -565,7 +571,7 @@ describe("HomeSurface", () => {
 
   it("makes active Focus rail cards draggable and animates project copy on change", () => {
     const source = readFileSync(
-      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      join(process.cwd(), "components", "focus-rail", "focus-rail.tsx"),
       "utf8",
     );
 
@@ -595,7 +601,7 @@ describe("HomeSurface", () => {
 
   it("uses spring rail motion while dragging the active card and snapping on release", () => {
     const source = readFileSync(
-      join(process.cwd(), "components", "focus-rail", "Component.tsx"),
+      join(process.cwd(), "components", "focus-rail", "focus-rail.tsx"),
       "utf8",
     );
 
@@ -626,7 +632,7 @@ describe("HomeSurface", () => {
     const text = html.replace(/<[^>]+>/g, "");
     const skillsText = text.slice(text.indexOf("Habilidades"));
     const source = readFileSync(
-      join(process.cwd(), "components", "home-surface.tsx"),
+      join(process.cwd(), "components", "home", "skills-section.tsx"),
       "utf8",
     );
 
@@ -764,7 +770,7 @@ describe("HomeSurface", () => {
     );
 
     const source = readFileSync(
-      join(process.cwd(), "components", "home-surface.tsx"),
+      join(process.cwd(), "components", "home", "github-activity-section.tsx"),
       "utf8",
     );
     expect(source).toContain(
@@ -804,20 +810,16 @@ describe("HomeSurface", () => {
 
   it("uses the animated tabs component for experience instead of a collapsible carousel", () => {
     const source = readFileSync(
-      join(process.cwd(), "components", "home-surface.tsx"),
+      join(process.cwd(), "components", "home", "experience-section.tsx"),
       "utf8",
     );
     const animatedTabsSource = readFileSync(
-      join(process.cwd(), "components", "animated-tabs", "Component.tsx"),
-      "utf8",
-    );
-    const usageSource = readFileSync(
-      join(process.cwd(), "components", "animated-tabs", "Usage.tsx"),
+      join(process.cwd(), "components", "animated-tabs", "animated-tabs.tsx"),
       "utf8",
     );
 
     expect(source).toContain(
-      'import { AnimatedTabs } from "@/components/animated-tabs/Component"',
+      'import { AnimatedTabs } from "@/components/animated-tabs/animated-tabs"',
     );
     expect(source).toContain("<AnimatedTabs");
     expect(source).toContain("experienceTabs");
@@ -836,9 +838,6 @@ describe("HomeSurface", () => {
     expect(animatedTabsSource).toContain("transition={{ duration: 0.3 }}");
     expect(animatedTabsSource).toContain('role="tablist"');
     expect(animatedTabsSource).toContain('role="tabpanel"');
-    expect(usageSource).toContain(
-      'import { AnimatedTabs } from "@/components/animated-tabs/Component"',
-    );
     expect(source).not.toContain(
       'className="col-span-full -mx-3 overflow-hidden px-3"',
     );
@@ -847,7 +846,7 @@ describe("HomeSurface", () => {
   it("uses a tablet reading layout through hub-sized viewports before the desktop breakpoint", () => {
     const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
     const source = readFileSync(
-      join(process.cwd(), "components", "home-surface.tsx"),
+      join(process.cwd(), "components", "home", "experience-section.tsx"),
       "utf8",
     );
 
@@ -872,10 +871,16 @@ describe("HomeSurface", () => {
 
   it("uses project SVG images in the Focus rail without old project tech tooltips", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
-    const source = readFileSync(
-      join(process.cwd(), "components", "home-surface.tsx"),
-      "utf8",
-    );
+    const source = [
+      readFileSync(
+        join(process.cwd(), "components", "home", "projects-section.tsx"),
+        "utf8",
+      ),
+      readFileSync(
+        join(process.cwd(), "components", "home", "home-data.ts"),
+        "utf8",
+      ),
+    ].join("\n");
 
     expect(source).toContain("imageSrc: project.image.src");
     expect(html).toContain(
@@ -892,7 +897,7 @@ describe("HomeSurface", () => {
   it("keeps experience detail guide lines aligned with the page grid", () => {
     const html = renderToStaticMarkup(<HomeSurface />);
     const source = readFileSync(
-      join(process.cwd(), "components", "home-surface.tsx"),
+      join(process.cwd(), "components", "home", "experience-section.tsx"),
       "utf8",
     );
 
@@ -945,3 +950,4 @@ describe("HomeSurface", () => {
     expect(css).toContain("display: none");
   });
 });
+
