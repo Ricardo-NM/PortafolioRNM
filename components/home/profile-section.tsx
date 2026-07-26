@@ -6,8 +6,13 @@ import { FileUser, Github, Linkedin, MapPin, Star } from "lucide-react";
 import linkedInBanner from "@/assets/images/bannerL.png";
 import linkedInProfile from "@/assets/images/profileL.jpg";
 import profilePicture from "@/assets/images/profilePicture.jpeg";
+import profileGitHub from "@/assets/images/profileGitHub.png";
 import { ContactDrawer } from "@/components/contact-drawer";
-import { profileActionButtonClass, profileContactButtonClass, profileSummary } from "@/components/home/home-data";
+import {
+  profileActionButtonClass,
+  profileContactButtonClass,
+  profileSummary,
+} from "@/components/home/home-data";
 import { ViewportGuideLine } from "@/components/home/viewport-guide-line";
 import { PortfolioTabs } from "@/components/navigation/portfolio-tabs";
 import { Button } from "@/components/ui/button";
@@ -24,7 +29,7 @@ function GitHubPreviewCard() {
           <div className="flex items-center gap-3">
             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border border-[#e4e4e7] bg-[#f4f4f5] dark:border-[#27272a] dark:bg-[#18181b]">
               <Image
-                src={profilePicture}
+                src={profileGitHub}
                 alt=""
                 sizes="48px"
                 className="h-full w-full object-cover"
@@ -33,7 +38,7 @@ function GitHubPreviewCard() {
 
             <div className="min-w-0">
               <p className="truncate text-sm font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5]">
-                Ricardo Nava Mayoral
+                RICHARD
               </p>
               <p className="mt-1 text-xs font-medium leading-none text-[#71717a] dark:text-[#71717a]">
                 Ricardo-NM
@@ -140,7 +145,7 @@ function LinkedInPreviewCard() {
 export function ProfileSection() {
   return (
     <>
-      <div className="profile-section relative flex flex-col items-center bg-background px-3 pt-0 pb-3 text-center">
+      <div className="profile-section relative flex flex-col items-center bg-background px-3 pt-0 pb-3 text-center z-30">
         <div className="relative z-30 -mt-3 h-[clamp(4.75rem,18vw,5.75rem)] w-[clamp(4.75rem,18vw,5.75rem)] shrink-0 rounded-lg bg-border p-px">
           <Image
             src={profilePicture}

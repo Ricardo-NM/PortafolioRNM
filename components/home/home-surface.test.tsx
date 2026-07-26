@@ -20,6 +20,10 @@ vi.mock("@/assets/images/profilePicture.jpeg", () => ({
   default: { src: "/profilePicture.jpeg", height: 500, width: 500 },
 }));
 
+vi.mock("@/assets/images/profileGitHub.png", () => ({
+  default: { src: "/profileGitHub.png", height: 500, width: 500 },
+}));
+
 vi.mock("@/assets/images/bannerLight.png", () => ({
   default: { src: "/bannerLight.png", height: 781, width: 2014 },
 }));
@@ -306,7 +310,12 @@ describe("HomeSurface", () => {
 
   it("keeps expandable tab state persistent and synchronized with scrolling", () => {
     const componentSource = readFileSync(
-      join(process.cwd(), "components", "expandable-tabs", "expandable-tabs.tsx"),
+      join(
+        process.cwd(),
+        "components",
+        "expandable-tabs",
+        "expandable-tabs.tsx",
+      ),
       "utf8",
     );
     const usageSource = readFileSync(
@@ -335,11 +344,15 @@ describe("HomeSurface", () => {
     );
 
     expect(source).toContain('const touchViewportQuery = "(pointer: coarse)"');
-    expect(source).toContain("const touchViewport = window.matchMedia(touchViewportQuery)");
+    expect(source).toContain(
+      "const touchViewport = window.matchMedia(touchViewportQuery)",
+    );
     expect(source).toContain("if (reduceMotion.matches)");
     expect(source).toContain("const shouldUseLenis = !touchViewport.matches");
     expect(source).toContain("if (shouldUseLenis)");
-    expect(source).not.toContain("if (reduceMotion.matches || touchViewport.matches)");
+    expect(source).not.toContain(
+      "if (reduceMotion.matches || touchViewport.matches)",
+    );
     expect(source).toContain("smoothWheel: true");
     expect(source).toContain("ScrollTrigger.update()");
     expect(source).toContain("ScrollTrigger.batch(sectionTargets");
@@ -347,7 +360,10 @@ describe("HomeSurface", () => {
   });
 
   it("does not preload the non-critical mono font variant", () => {
-    const source = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
+    const source = readFileSync(
+      join(process.cwd(), "app", "layout.tsx"),
+      "utf8",
+    );
 
     expect(source).toContain("const geistMono = Geist_Mono({");
     expect(source).toContain("preload: false");
@@ -458,7 +474,7 @@ describe("HomeSurface", () => {
     expect(html).toContain('aria-label="Carrusel de proyectos"');
     expect(text).toContain("Gestión operativa – Comercio exterior");
     expect(html).toContain('aria-label="Ver Totis® | Gestión de bienes"');
-    expect(html).toContain('aria-label="Ver Saldo Claro"');
+    expect(html).toContain('aria-label="Ver KUENTAS"');
     expect(text).toContain("Sistema privado orientado a centralizar procesos");
     expect(source).toContain("Sistema web orientado a la gestión");
     expect(source).toContain("Aplicación móvil para centralizar deudas");
@@ -466,9 +482,7 @@ describe("HomeSurface", () => {
     expect(source).toContain(
       'link: "https://ricardo-nm.github.io/totis-gdb-docs/"',
     );
-    expect(source).toContain(
-      'link: "https://github.com/Ricardo-NM/SaldoClaro"',
-    );
+    expect(source).toContain('link: "https://github.com/Ricardo-NM/KUENTAS"');
     expect(html).toContain("Ver proyecto");
     expect(text).toContain("React");
     expect(text).toContain("Tailwind CSS");
@@ -542,10 +556,10 @@ describe("HomeSurface", () => {
     expect(source).not.toContain("dark:bg-[#09090b] sm:w-[250px]");
     expect(source).toContain("object-contain");
     expect(source).toContain("touch-pan-y");
-    expect(homeSource).not.toContain("<div data-scroll-reveal>\n          <FocusRail");
-    expect(homeSource).toContain(
-      '<div className="project-focus-rail-shell">',
+    expect(homeSource).not.toContain(
+      "<div data-scroll-reveal>\n          <FocusRail",
     );
+    expect(homeSource).toContain('<div className="project-focus-rail-shell">');
   });
 
   it("keeps side Focus rail cards clickable with stable animated positions and full dark overlays", () => {
@@ -560,13 +574,19 @@ describe("HomeSurface", () => {
     expect(source).toContain("pointer-events-none absolute inset-0");
     expect(source).toContain("backdrop-blur-[2px]");
     expect(source).toContain("isMobileRail");
-    expect(source).toContain("const xOffset = offset * (isMobileRail ? 210 : 320)");
+    expect(source).toContain(
+      "const xOffset = offset * (isMobileRail ? 210 : 320)",
+    );
     expect(source).toContain("const sideScale = isMobileRail ? 0.92 : 0.84");
     expect(source).toContain("const rotateY = isMobileRail ? 0 : offset * -20");
     expect(source).toContain("const shouldUseHeavyEffects = !isMobileRail");
-    expect(source).toContain("const blur = shouldUseHeavyEffects ? distance * 3 : 0");
-    expect(source).toContain("const brightness = shouldUseHeavyEffects ? (isCenter ? 1 : 0.72) : 1");
-    expect(source).toContain('filter: shouldUseHeavyEffects');
+    expect(source).toContain(
+      "const blur = shouldUseHeavyEffects ? distance * 3 : 0",
+    );
+    expect(source).toContain(
+      "const brightness = shouldUseHeavyEffects ? (isCenter ? 1 : 0.72) : 1",
+    );
+    expect(source).toContain("filter: shouldUseHeavyEffects");
     expect(source).toContain(': "none"');
     expect(source).toContain("onClick={() =>");
     expect(source).toContain("setActive((current) => current + offset)");
@@ -597,8 +617,12 @@ describe("HomeSurface", () => {
     );
     expect(source).toContain("project-action-motion");
     expect(source).toContain("projectActionButtonClass");
-    expect(source).toContain("h-9 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2.5 text-[11px] font-semibold leading-none text-[#d4d4d8]");
-    expect(source).toContain("<Button asChild className={projectActionButtonClass}>");
+    expect(source).toContain(
+      "h-9 w-full min-w-0 gap-1.5 border-[#000] bg-[#000] px-2.5 text-[11px] font-semibold leading-none text-[#d4d4d8]",
+    );
+    expect(source).toContain(
+      "<Button asChild className={projectActionButtonClass}>",
+    );
     expect(source).not.toContain("rounded-full bg-[#18181b] px-5 text-sm");
   });
 
@@ -625,8 +649,10 @@ describe("HomeSurface", () => {
     expect(source).toContain("useMediaQuery");
     expect(source).toContain('willChange: "transform, opacity"');
     expect(source).not.toContain('willChange: "transform, opacity, filter"');
-    expect(source).not.toContain("const blur = isCenter ? 0 : distance * (isMobileRail ? 1.4 : 3)");
-    expect(source).toContain("loading={isCenter ? \"eager\" : \"lazy\"}");
+    expect(source).not.toContain(
+      "const blur = isCenter ? 0 : distance * (isMobileRail ? 1.4 : 3)",
+    );
+    expect(source).toContain('loading={isCenter ? "eager" : "lazy"}');
     expect(source).toContain("draggable={false}");
   });
 
@@ -643,7 +669,7 @@ describe("HomeSurface", () => {
       text.indexOf("Experiencia"),
     );
     expect(text.indexOf("Habilidades y Tecnologías")).toBeGreaterThan(
-      text.indexOf("Saldo Claro"),
+      text.indexOf("KUENTAS"),
     );
     expect(html).toContain("projects-guide-line");
     expect(html).toContain("skills-guide-line");
@@ -686,12 +712,16 @@ describe("HomeSurface", () => {
     expect(html).toContain("data-auto-skills");
     expect(source).toContain("skillsContainerRef");
     expect(source).toContain("IntersectionObserver");
-    expect(source).toContain('window.addEventListener("scroll", handleWindowScroll, { passive: true })');
+    expect(source).toContain(
+      'window.addEventListener("scroll", handleWindowScroll, { passive: true })',
+    );
     expect(source).toContain("scrollTimeoutRef");
     expect(source).toContain("isSkillsInViewRef");
     expect(source).toContain("isWindowScrollingRef");
     expect(source).toContain("data-skill-item");
-    expect(source).not.toContain("data-scroll-reveal\n          >\n            <SkillIcon");
+    expect(source).not.toContain(
+      "data-scroll-reveal\n          >\n            <SkillIcon",
+    );
     expect(html).toContain("data-[auto-active=true]:border-[#18181b]");
     expect(html).toContain("dark:data-[auto-active=true]:border-[#fff]");
     expect(html).toContain("group-data-[auto-active=true]/skill:opacity-0");
@@ -835,9 +865,15 @@ describe("HomeSurface", () => {
     expect(animatedTabsSource).toContain('panelAnimation?: "content" | "fade"');
     expect(animatedTabsSource).toContain('panelAnimation === "fade"');
     expect(animatedTabsSource).toContain('<AnimatePresence mode="wait">');
-    expect(animatedTabsSource).toContain('initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}');
-    expect(animatedTabsSource).toContain('animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}');
-    expect(animatedTabsSource).toContain('exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}');
+    expect(animatedTabsSource).toContain(
+      'initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}',
+    );
+    expect(animatedTabsSource).toContain(
+      'animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}',
+    );
+    expect(animatedTabsSource).toContain(
+      'exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}',
+    );
     expect(animatedTabsSource).toContain("transition={{ duration: 0.3 }}");
     expect(animatedTabsSource).toContain('role="tablist"');
     expect(animatedTabsSource).toContain('role="tabpanel"');
@@ -890,7 +926,7 @@ describe("HomeSurface", () => {
       'aria-label="Gestión operativa – Comercio exterior"',
     );
     expect(html).toContain('aria-label="Totis® | Gestión de bienes"');
-    expect(html).toContain('aria-label="Saldo Claro"');
+    expect(html).toContain('aria-label="KUENTAS"');
     expect(html).toContain("Ver proyecto");
     expect(html).toContain("project-tech-icon-layer");
     expect(html).not.toContain("group/tooltip");
@@ -953,4 +989,3 @@ describe("HomeSurface", () => {
     expect(css).toContain("display: none");
   });
 });
-
