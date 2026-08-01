@@ -82,7 +82,7 @@ export function GitHubActivitySection() {
   return (
     <section
       aria-labelledby="github-activity-title"
-      className="relative bg-background px-3"
+      className="relative bg-background px-3 section-deferred"
       data-scroll-section
     >
       <div className="github-activity-section-title-row relative flex h-12 items-center">

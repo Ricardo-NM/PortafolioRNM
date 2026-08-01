@@ -177,7 +177,7 @@ describe("HomeSurface", () => {
       "top-[calc(var(--banner-height)+var(--profile-height))]",
     );
     expect(html).toContain(
-      'aria-labelledby="profile-summary-title" class="relative bg-background px-3 py-3"',
+      'aria-labelledby="profile-summary-title" class="relative z-30 bg-background px-3 py-3"',
     );
     expect(html).toContain('aria-label="Cambiar a tema claro"');
     expect(html).toContain(
@@ -195,8 +195,8 @@ describe("HomeSurface", () => {
     );
     expect(html).toContain('href="https://github.com/Ricardo-NM"');
     expect(html).toContain("group-hover/github-preview:pointer-events-auto");
-    expect(html).toContain("group/github-preview relative z-[80]");
-    expect(html).toContain("left-full z-[90] hidden w-[262px]");
+    expect(html).toContain("group/github-preview relative z-[80] hover:z-[150]");
+    expect(html).toContain("left-full z-[150] hidden w-[262px]");
     expect(html).toContain("origin-left");
     expect(html).toContain("transition-[clip-path,opacity]");
     expect(html).toContain("profile-preview-sweep");
@@ -214,7 +214,7 @@ describe("HomeSurface", () => {
     expect(html).toContain("Full Stack Developer");
     expect(html).toContain("Hidalgo, MX (UTC -06:00)");
     expect(html).toContain(
-      '<strong class="font-bold text-[#18181b] dark:text-[#f4f4f5]">13</strong>',
+      '<strong class="font-bold text-[#18181b] dark:text-[#f4f4f5]">16</strong>',
     );
     expect(html).toContain("Repositorios");
     expect(html).toContain("lucide-star");
@@ -233,7 +233,7 @@ describe("HomeSurface", () => {
       html.indexOf("group/linkedin-preview", desktopActionsStart),
     ).toBeGreaterThan(desktopActionsStart);
     expect(html).toContain("group/linkedin-preview");
-    expect(html).toContain("group/linkedin-preview relative z-[80]");
+    expect(html).toContain("group/linkedin-preview relative z-[80] hover:z-[150]");
     expect(html).toContain("group-hover/linkedin-preview:pointer-events-auto");
     expect(html).toContain("group-hover/linkedin-preview:delay-300");
     expect(html).toContain("group-focus-within/linkedin-preview:delay-300");
@@ -246,9 +246,9 @@ describe("HomeSurface", () => {
     expect(html).toContain("Desarrollador Full Stack");
     expect(html).toContain("Tizayuca, Hidalgo, México");
     expect(html).toContain(
-      '<strong class="font-bold text-[#18181b] dark:text-[#f4f4f5]">3</strong>',
+      '<strong class="font-bold text-[#18181b] dark:text-[#f4f4f5]">31</strong>',
     );
-    expect(html).toContain("Seguidores");
+    expect(html).toContain("Contactos");
   });
 
   it("opens the contact drawer above the fixed navbar layer", () => {
@@ -398,7 +398,7 @@ describe("HomeSurface", () => {
       "experience-guide-dot blueprint-dot absolute top-0 -translate-x-1/2 -translate-y-1/2 left-[var(--content-right)]",
     );
     expect(html).toContain(
-      "absolute left-1/2 z-50 h-0 w-screen -translate-x-1/2",
+      "absolute left-1/2 z-10 h-0 w-screen -translate-x-1/2",
     );
     expect(html).not.toContain("h-[3px] w-[3px]");
     expect(html).toContain("top-0");
@@ -478,15 +478,15 @@ describe("HomeSurface", () => {
     expect(html).toContain('aria-label="Ver Xbox Card Studio"');
     expect(text).toContain("Sistema privado orientado a centralizar procesos");
     expect(source).toContain("Sistema web orientado a la gestión");
-    expect(source).toContain("Xbox Card Studio es una aplicación web interactiva");
+    expect(source).toContain(
+      "Aplicación web interactiva diseñada para la comunidad gamer",
+    );
     expect(html).toContain('href="https://ricardo-nm.github.io/K-PUGA-Docs/"');
     expect(source).toContain(
       'link: "https://ricardo-nm.github.io/totis-gdb-docs/"',
     );
     expect(source).toContain('link: "https://github.com/Ricardo-NM/KUENTAS"');
-    expect(source).toContain(
-      'link: "https://github.com/Ricardo-NM/Xbox-Card-Studio"',
-    );
+    expect(source).toContain('link: "https://xcs.rnm.com.mx/"');
     expect(html).toContain("Ver proyecto");
     expect(text).toContain("React");
     expect(text).toContain("Tailwind CSS");

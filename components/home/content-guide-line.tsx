@@ -21,10 +21,10 @@ export function ContentGuideLine({
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute left-0 z-50 h-0 w-full ${verticalPosition} ${className}`}
+      className={`pointer-events-none absolute left-0 z-10 h-0 w-full ${verticalPosition} ${className}`}
     >
       <div
-        className={`${lineClassName} blueprint-mask-x absolute left-0 top-0 z-20 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]`}
+        className={`${lineClassName} blueprint-mask-x absolute left-0 top-0 z-10 h-[2px] w-full -translate-y-1/2 text-foreground opacity-[0.18]`}
       />
       <span
         className={`${dotClassName} blueprint-dot absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2`}

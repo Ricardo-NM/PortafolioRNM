@@ -99,6 +99,11 @@ body {
   transform: translateZ(0);
 }
 
+.section-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 400px;
+}
+
 button,
 a {
   touch-action: manipulation;

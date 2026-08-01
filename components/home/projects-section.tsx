@@ -15,7 +15,7 @@ export function ProjectsSection() {
     <section
       id="proyectos"
       aria-labelledby="projects-title"
-      className="relative scroll-mt-24 bg-background px-3"
+      className="relative scroll-mt-24 bg-background px-3 section-deferred"
       data-scroll-section
     >
       <div className="projects-section-title-row relative flex h-12 items-center">

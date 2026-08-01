@@ -99,18 +99,7 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
           ease: "power3.out",
           stagger: 0.055,
           overwrite: "auto",
-        });
-      };
-
-      const revealOut = (targets: Element[]) => {
-        gsap.to(targets, {
-          autoAlpha: 0,
-          y: 26,
-          scale: 0.99,
-          duration: 0.32,
-          ease: "power2.out",
-          stagger: 0.035,
-          overwrite: "auto",
+          clearProps: "willChange",
         });
       };
 
@@ -118,32 +107,24 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
         autoAlpha: 0,
         y: 30,
         scale: 0.99,
-        willChange: "transform, opacity",
       });
 
       ScrollTrigger.batch(sectionTargets, {
         start: "top 88%",
-        end: "bottom 12%",
+        once: true,
         onEnter: revealIn,
-        onEnterBack: revealIn,
-        onLeave: revealOut,
-        onLeaveBack: revealOut,
       });
 
       gsap.set(revealTargets, {
         autoAlpha: 0,
         y: 22,
         scale: 0.985,
-        willChange: "transform, opacity",
       });
 
       ScrollTrigger.batch(revealTargets, {
         start: "top 88%",
-        end: "bottom 10%",
+        once: true,
         onEnter: revealIn,
-        onEnterBack: revealIn,
-        onLeave: revealOut,
-        onLeaveBack: revealOut,
       });
 
       gsap.to(".theme-banner-layer", {

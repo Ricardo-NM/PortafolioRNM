@@ -20,7 +20,7 @@ function GitHubPreviewCard() {
   return (
     <aside
       aria-hidden="true"
-      className="pointer-events-none absolute top-1/2 left-full z-[90] hidden w-[262px] origin-left -translate-y-1/2 group-hover/github-preview:pointer-events-auto group-focus-within/github-preview:pointer-events-auto min-[1440px]:block"
+      className="pointer-events-none absolute top-1/2 left-full z-[150] hidden w-[262px] origin-left -translate-y-1/2 group-hover/github-preview:pointer-events-auto group-focus-within/github-preview:pointer-events-auto min-[1440px]:block"
     >
       <div className="profile-preview-sweep relative origin-left opacity-0 transition-[clip-path,opacity] delay-0 duration-300 ease-out [clip-path:polygon(0_50%,0_50%,0_50%,0_50%)] group-hover/github-preview:delay-300 group-hover/github-preview:opacity-100 group-hover/github-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)] group-focus-within/github-preview:delay-300 group-focus-within/github-preview:opacity-100 group-focus-within/github-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]">
         <span className="absolute top-1/2 left-3 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b border-l border-[#e4e4e7] bg-[#fff] dark:border-[#27272a] dark:bg-[#09090b]" />
@@ -60,7 +60,7 @@ function GitHubPreviewCard() {
           <div className="flex items-center justify-between gap-3 text-[13px] leading-none text-[#71717a] dark:text-[#71717a]">
             <p>
               <strong className="font-bold text-[#18181b] dark:text-[#f4f4f5]">
-                13
+                16
               </strong>{" "}
               Repositorios
             </p>
@@ -88,7 +88,7 @@ function LinkedInPreviewCard() {
   return (
     <aside
       aria-hidden="true"
-      className="pointer-events-none absolute top-1/2 left-full z-[90] hidden w-[262px] origin-left -translate-y-1/2 group-hover/linkedin-preview:pointer-events-auto group-focus-within/linkedin-preview:pointer-events-auto min-[1440px]:block"
+      className="pointer-events-none absolute top-1/2 left-full z-[150] hidden w-[262px] origin-left -translate-y-1/2 group-hover/linkedin-preview:pointer-events-auto group-focus-within/linkedin-preview:pointer-events-auto min-[1440px]:block"
     >
       <div className="profile-preview-sweep relative origin-left opacity-0 transition-[clip-path,opacity] delay-0 duration-300 ease-out [clip-path:polygon(0_50%,0_50%,0_50%,0_50%)] group-hover/linkedin-preview:delay-300 group-hover/linkedin-preview:opacity-100 group-hover/linkedin-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)] group-focus-within/linkedin-preview:delay-300 group-focus-within/linkedin-preview:opacity-100 group-focus-within/linkedin-preview:[clip-path:polygon(0_0,100%_0,100%_100%,0_100%)]">
         <span className="absolute top-1/2 left-3 z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b border-l border-[#e4e4e7] bg-[#fff] dark:border-[#27272a] dark:bg-[#09090b]" />
@@ -131,9 +131,9 @@ function LinkedInPreviewCard() {
             <div className="flex justify-start text-[13px] leading-none text-[#71717a] dark:text-[#71717a]">
               <p>
                 <strong className="font-bold text-[#18181b] dark:text-[#f4f4f5]">
-                  3
+                  31
                 </strong>{" "}
-                Seguidores
+                Contactos
               </p>
             </div>
           </div>
@@ -175,7 +175,7 @@ export function ProfileSection() {
       <section
         id="acerca-de-mi"
         aria-labelledby="profile-summary-title"
-        className="relative bg-background px-3 py-3"
+        className="relative z-30 bg-background px-3 py-3"
         data-scroll-reveal
       >
         <h2 id="profile-summary-title" className="sr-only">
@@ -247,7 +247,7 @@ export function ProfileSection() {
           </div>
 
           <div className="hidden flex-col items-end gap-2 min-[1440px]:flex min-[1440px]:min-w-28">
-            <div className="group/github-preview relative z-[80]">
+            <div className="group/github-preview relative z-[80] hover:z-[150] focus-within:z-[150]">
               <Button asChild className={profileActionButtonClass}>
                 <a
                   href="https://github.com/Ricardo-NM"
@@ -262,7 +262,7 @@ export function ProfileSection() {
               <GitHubPreviewCard />
             </div>
 
-            <div className="group/linkedin-preview relative z-[80]">
+            <div className="group/linkedin-preview relative z-[80] hover:z-[150] focus-within:z-[150]">
               <Button asChild className={profileActionButtonClass}>
                 <a
                   href="https://www.linkedin.com/in/ricardo-nava-mayoral/"
