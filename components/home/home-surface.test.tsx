@@ -474,19 +474,22 @@ describe("HomeSurface", () => {
     expect(html).toContain('aria-label="Carrusel de proyectos"');
     expect(text).toContain("Gestión operativa – Comercio exterior");
     expect(html).toContain('aria-label="Ver Totis® | Gestión de bienes"');
-    expect(html).toContain('aria-label="Ver KUENTAS"');
+    expect(source).toContain('name: "KUENTAS"');
+    expect(html).toContain('aria-label="Ver Xbox Card Studio"');
     expect(text).toContain("Sistema privado orientado a centralizar procesos");
     expect(source).toContain("Sistema web orientado a la gestión");
-    expect(source).toContain("Aplicación móvil para centralizar deudas");
+    expect(source).toContain("Xbox Card Studio es una aplicación web interactiva");
     expect(html).toContain('href="https://ricardo-nm.github.io/K-PUGA-Docs/"');
     expect(source).toContain(
       'link: "https://ricardo-nm.github.io/totis-gdb-docs/"',
     );
     expect(source).toContain('link: "https://github.com/Ricardo-NM/KUENTAS"');
+    expect(source).toContain(
+      'link: "https://github.com/Ricardo-NM/Xbox-Card-Studio"',
+    );
     expect(html).toContain("Ver proyecto");
     expect(text).toContain("React");
     expect(text).toContain("Tailwind CSS");
-    expect(source).toContain("React Native");
     expect(source).toContain("Docker");
     expect(html).toContain("project-tech-icon-layer");
     expect(html).toContain("https://cdn.simpleicons.org/react/71717a");
@@ -568,7 +571,7 @@ describe("HomeSurface", () => {
       "utf8",
     );
 
-    expect(source).toContain("count <= 3 ? [-1, 0, 1] : [-2, -1, 0, 1, 2]");
+    expect(source).toContain("count < 5 ? [-1, 0, 1] : [-2, -1, 0, 1, 2]");
     expect(source).toContain("key={item.id}");
     expect(source).not.toContain("key={`${item.id}-${absoluteIndex}`}");
     expect(source).toContain("pointer-events-none absolute inset-0");
@@ -926,11 +929,11 @@ describe("HomeSurface", () => {
       'aria-label="Gestión operativa – Comercio exterior"',
     );
     expect(html).toContain('aria-label="Totis® | Gestión de bienes"');
-    expect(html).toContain('aria-label="KUENTAS"');
+    expect(source).toContain('name: "KUENTAS"');
+    expect(html).toContain('aria-label="Xbox Card Studio"');
     expect(html).toContain("Ver proyecto");
     expect(html).toContain("project-tech-icon-layer");
     expect(html).not.toContain("group/tooltip");
-    expect(source).toContain("React Native");
   });
 
   it("keeps experience detail guide lines aligned with the page grid", () => {

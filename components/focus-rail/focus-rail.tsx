@@ -206,7 +206,7 @@ export function FocusRail({
       return [];
     }
 
-    const visibleOffsets = count <= 3 ? [-1, 0, 1] : [-2, -1, 0, 1, 2];
+    const visibleOffsets = count < 5 ? [-1, 0, 1] : [-2, -1, 0, 1, 2];
 
     return visibleOffsets.flatMap((offset) => {
       const absoluteIndex = active + offset;

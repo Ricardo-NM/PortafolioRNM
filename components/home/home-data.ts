@@ -3,6 +3,7 @@ import experienceSecond from "@/assets/images/experienceSecond.png";
 import projectO from "@/assets/images/projectO.svg";
 import projectS from "@/assets/images/projectS.svg";
 import projectT from "@/assets/images/projectT.svg";
+import projectF from "@/assets/images/projectF.svg";
 export const profileSummary = [
   [
     { text: "Especialista", highlight: true },
@@ -149,6 +150,24 @@ export const projectsData = [
       { name: "PostgreSQL", iconSlug: "postgresql" },
       { name: "Docker", iconSlug: "docker" },
       { name: "ESLint", iconSlug: "eslint" },
+    ],
+  },
+  {
+    id: "xboxCardStudio",
+    name: "Xbox Card Studio",
+    description:
+      "Aplicación web interactiva diseñada para la comunidad gamer que permite generar tarjetas de perfil personalizadas de Xbox Live en formato vertical y en alta resolución, listas para compartir en redes sociales.",
+    image: projectF,
+    link: "https://xcs.rnm.com.mx/",
+    tech: [
+      { name: "React", iconSlug: "react" },
+      { name: "Vite", iconSlug: "vite" },
+      { name: "Tailwind CSS", iconSlug: "tailwindcss" },
+      { name: "Node.js", iconSlug: "nodedotjs" },
+      { name: "Express", iconSlug: "express" },
+      { name: "Axios", iconSlug: "axios" },
+      { name: "NGINX", iconSlug: "nginx" },
+      { name: "PM2", iconSlug: "pm2" },
     ],
   },
 ];
