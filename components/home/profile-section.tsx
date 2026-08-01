@@ -1,7 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
-import { FileUser, Github, Linkedin, MapPin, Star } from "lucide-react";
+import { MapPin, Star } from "lucide-react";
 
 import linkedInBanner from "@/assets/images/bannerL.png";
 import linkedInProfile from "@/assets/images/profileL.jpg";
@@ -16,6 +17,9 @@ import {
 import { ViewportGuideLine } from "@/components/home/viewport-guide-line";
 import { PortfolioTabs } from "@/components/navigation/portfolio-tabs";
 import { Button } from "@/components/ui/button";
+import { GithubIcon, type GithubIconHandle } from "@/components/ui/github";
+import { IdCardIcon, type IdCardIconHandle } from "@/components/ui/id-card";
+import { LinkedinIcon, type LinkedinIconHandle } from "@/components/ui/linkedin";
 function GitHubPreviewCard() {
   return (
     <aside
@@ -142,6 +146,73 @@ function LinkedInPreviewCard() {
     </aside>
   );
 }
+function GithubActionButton({ className }: { className: string }) {
+  const iconRef = useRef<GithubIconHandle>(null);
+
+  return (
+    <Button
+      asChild
+      className={className}
+      onMouseEnter={() => iconRef.current?.startAnimation()}
+      onMouseLeave={() => iconRef.current?.stopAnimation()}
+    >
+      <a
+        href="https://github.com/Ricardo-NM"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <GithubIcon ref={iconRef} size={13} className="shrink-0" />
+        GitHub
+      </a>
+    </Button>
+  );
+}
+
+function LinkedinActionButton({ className }: { className: string }) {
+  const iconRef = useRef<LinkedinIconHandle>(null);
+
+  return (
+    <Button
+      asChild
+      className={className}
+      onMouseEnter={() => iconRef.current?.startAnimation()}
+      onMouseLeave={() => iconRef.current?.stopAnimation()}
+    >
+      <a
+        href="https://www.linkedin.com/in/ricardo-nava-mayoral/"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <LinkedinIcon ref={iconRef} size={13} className="shrink-0" />
+        LinkedIn
+      </a>
+    </Button>
+  );
+}
+
+function CvActionButton({ className }: { className: string }) {
+  const iconRef = useRef<IdCardIconHandle>(null);
+
+  return (
+    <Button
+      asChild
+      className={className}
+      onMouseEnter={() => iconRef.current?.startAnimation()}
+      onMouseLeave={() => iconRef.current?.stopAnimation()}
+    >
+      <a
+        href="/api/cv"
+        download="CV-Ricardo_Nava_Mayoral.pdf"
+        aria-label="Curriculum"
+      >
+        <IdCardIcon ref={iconRef} size={13} className="shrink-0" />
+        <span className="min-[1440px]:hidden">CV</span>
+        <span className="hidden min-[1440px]:inline">Curriculum</span>
+      </a>
+    </Button>
+  );
+}
+
 export function ProfileSection() {
   return (
     <>
@@ -211,83 +282,27 @@ export function ProfileSection() {
           <div className="col-span-full grid grid-cols-2 items-center gap-2 sm:grid-cols-4 min-[1440px]:hidden">
             <ContactDrawer className={profileContactButtonClass} />
 
-            <Button asChild className={profileActionButtonClass}>
-              <a
-                href="https://github.com/Ricardo-NM"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Github size={13} strokeWidth={2.5} aria-hidden="true" />
-                GitHub
-              </a>
-            </Button>
+            <GithubActionButton className={profileActionButtonClass} />
 
-            <Button asChild className={profileActionButtonClass}>
-              <a
-                href="https://www.linkedin.com/in/ricardo-nava-mayoral/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Linkedin size={13} strokeWidth={2.5} aria-hidden="true" />
-                LinkedIn
-              </a>
-            </Button>
+            <LinkedinActionButton className={profileActionButtonClass} />
 
-            <Button asChild className={profileActionButtonClass}>
-              <a
-                href="/api/cv"
-                download="CV-Ricardo_Nava_Mayoral.pdf"
-                aria-label="Curriculum"
-              >
-                <FileUser size={13} strokeWidth={2.5} aria-hidden="true" />
-                <span className="min-[1440px]:hidden">CV</span>
-                <span className="hidden min-[1440px]:inline">Curriculum</span>
-              </a>
-            </Button>
+            <CvActionButton className={profileActionButtonClass} />
           </div>
 
           <div className="hidden flex-col items-end gap-2 min-[1440px]:flex min-[1440px]:min-w-28">
             <div className="group/github-preview relative z-[80] hover:z-[150] focus-within:z-[150]">
-              <Button asChild className={profileActionButtonClass}>
-                <a
-                  href="https://github.com/Ricardo-NM"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Github size={13} strokeWidth={2} aria-hidden="true" />
-                  GitHub
-                </a>
-              </Button>
+              <GithubActionButton className={profileActionButtonClass} />
 
               <GitHubPreviewCard />
             </div>
 
             <div className="group/linkedin-preview relative z-[80] hover:z-[150] focus-within:z-[150]">
-              <Button asChild className={profileActionButtonClass}>
-                <a
-                  href="https://www.linkedin.com/in/ricardo-nava-mayoral/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Linkedin size={13} strokeWidth={2} aria-hidden="true" />
-                  LinkedIn
-                </a>
-              </Button>
+              <LinkedinActionButton className={profileActionButtonClass} />
 
               <LinkedInPreviewCard />
             </div>
 
-            <Button asChild className={profileActionButtonClass}>
-              <a
-                href="/api/cv"
-                download="CV-Ricardo_Nava_Mayoral.pdf"
-                aria-label="Curriculum"
-              >
-                <FileUser size={13} strokeWidth={2} aria-hidden="true" />
-                <span className="min-[1440px]:hidden">CV</span>
-                <span className="hidden min-[1440px]:inline">Curriculum</span>
-              </a>
-            </Button>
+            <CvActionButton className={profileActionButtonClass} />
           </div>
         </div>
       </section>

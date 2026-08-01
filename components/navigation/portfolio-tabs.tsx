@@ -1,43 +1,90 @@
 "use client";
 
 import * as React from "react";
-import {
-  BriefcaseBusiness,
-  CodeXml,
-  FolderKanban,
-  House,
-} from "lucide-react";
-
 import { ExpandableTabs } from "@/components/expandable-tabs/expandable-tabs";
 import { ThemeToggle } from "@/components/theme-toggle";
+import {
+  BriefcaseBusinessIcon,
+  type BriefcaseBusinessIconHandle,
+} from "@/components/ui/briefcase-business";
+import {
+  FolderCodeIcon,
+  type FolderCodeIconHandle,
+} from "@/components/ui/folder-code";
+import { HomeIcon, type HomeIconHandle } from "@/components/ui/home";
+import { LayersIcon, type LayersIconHandle } from "@/components/ui/layers";
 
 const smoothScrollToEventName = "portfolio:smooth-scroll-to";
+
+function AnimatedHomeTabIcon({ size = 20 }: { size?: number }) {
+  const iconRef = React.useRef<HomeIconHandle>(null);
+  return (
+    <HomeIcon
+      ref={iconRef}
+      size={size}
+      onPointerDown={() => iconRef.current?.startAnimation()}
+    />
+  );
+}
+
+function AnimatedBriefcaseTabIcon({ size = 20 }: { size?: number }) {
+  const iconRef = React.useRef<BriefcaseBusinessIconHandle>(null);
+  return (
+    <BriefcaseBusinessIcon
+      ref={iconRef}
+      size={size}
+      onPointerDown={() => iconRef.current?.startAnimation()}
+    />
+  );
+}
+
+function AnimatedFolderCodeTabIcon({ size = 20 }: { size?: number }) {
+  const iconRef = React.useRef<FolderCodeIconHandle>(null);
+  return (
+    <FolderCodeIcon
+      ref={iconRef}
+      size={size}
+      onPointerDown={() => iconRef.current?.startAnimation()}
+    />
+  );
+}
+
+function AnimatedLayersTabIcon({ size = 20 }: { size?: number }) {
+  const iconRef = React.useRef<LayersIconHandle>(null);
+  return (
+    <LayersIcon
+      ref={iconRef}
+      size={size}
+      onPointerDown={() => iconRef.current?.startAnimation()}
+    />
+  );
+}
 
 const portfolioTabs = [
   {
     title: "Inicio",
-    icon: House,
+    icon: AnimatedHomeTabIcon,
     href: "#inicio",
     sectionId: "inicio",
     ariaLabel: "Ir a Inicio",
   },
   {
     title: "Experiencia",
-    icon: BriefcaseBusiness,
+    icon: AnimatedBriefcaseTabIcon,
     href: "#experiencia",
     sectionId: "experiencia",
     ariaLabel: "Ir a Experiencia",
   },
   {
     title: "Proyectos",
-    icon: FolderKanban,
+    icon: AnimatedFolderCodeTabIcon,
     href: "#proyectos",
     sectionId: "proyectos",
     ariaLabel: "Ir a Proyectos",
   },
   {
     title: "Habilidades",
-    icon: CodeXml,
+    icon: AnimatedLayersTabIcon,
     href: "#habilidades",
     sectionId: "habilidades",
     ariaLabel: "Ir a Habilidades",

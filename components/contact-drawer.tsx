@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { AlertTriangle, CircleCheck, Mail, Send, X } from "lucide-react";
+import { AlertTriangle, CircleCheck, X } from "lucide-react";
 import { createPortal } from "react-dom";
 
 import { Button } from "@/components/ui/button";
+import { MailCheckIcon, type MailCheckIconHandle } from "@/components/ui/mail-check";
+import { SendIcon, type SendIconHandle } from "@/components/ui/send";
 import { cn } from "@/lib/utils";
 
 export type ContactFormValues = {
@@ -73,6 +75,8 @@ function useReducedMotion() {
 }
 
 export function ContactDrawer({ className }: ContactDrawerProps) {
+  const mailIconRef = useRef<MailCheckIconHandle>(null);
+  const sendIconRef = useRef<SendIconHandle>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [shouldRenderDrawer, setShouldRenderDrawer] = useState(false);
   const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
@@ -305,13 +309,15 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
         aria-haspopup="dialog"
         aria-label="Abrir formulario de contacto"
         className={className}
+        onMouseEnter={() => mailIconRef.current?.startAnimation()}
+        onMouseLeave={() => mailIconRef.current?.stopAnimation()}
         onClick={() => {
           setShouldRenderDrawer(true);
           setIsOpen(true);
         }}
         type="button"
       >
-        <Mail size={13} strokeWidth={2} aria-hidden="true" />
+        <MailCheckIcon ref={mailIconRef} size={13} className="shrink-0" />
         Contacto
       </Button>
 
@@ -445,9 +451,11 @@ export function ContactDrawer({ className }: ContactDrawerProps) {
                   <Button
                     className="mt-auto h-11 w-full gap-2 border-black bg-black px-4 text-xs font-bold leading-none text-[#d4d4d8] transition-[background-color,border-color,color,opacity,transform] duration-300 ease-out hover:border-[#18181b] hover:bg-[#18181b] hover:text-white disabled:cursor-not-allowed disabled:border-[#18181b]/20 disabled:bg-[#18181b]/15 disabled:text-[#18181b]/40 disabled:opacity-100 dark:border-white dark:bg-white dark:text-[#52525c] dark:hover:border-[#d4d4d8] dark:hover:bg-[#d4d4d8] dark:hover:text-black dark:disabled:border-white/20 dark:disabled:bg-white/15 dark:disabled:text-white/40"
                     disabled={!isFormComplete || submitStatus === "loading"}
+                    onMouseEnter={() => sendIconRef.current?.startAnimation()}
+                    onMouseLeave={() => sendIconRef.current?.stopAnimation()}
                     type="submit"
                   >
-                    <Send size={14} strokeWidth={2.5} aria-hidden="true" />
+                    <SendIcon ref={sendIconRef} size={14} className="shrink-0" />
                     {submitStatus === "loading" ? "Enviando..." : "Enviar"}
                   </Button>
 

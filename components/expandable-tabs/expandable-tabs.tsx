@@ -7,7 +7,7 @@ import { gsap } from "gsap";
 
 interface Tab {
   title: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.ComponentType<{ size?: number; className?: string }>;
   href?: string;
   ariaLabel?: string;
   sectionId?: string;

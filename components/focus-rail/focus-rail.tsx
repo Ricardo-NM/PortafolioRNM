@@ -7,10 +7,10 @@ import {
   type PanInfo,
   type Transition,
 } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { ArrowUpRightIcon, type ArrowUpRightIconHandle } from "@/components/ui/arrow-up-right";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -139,6 +139,7 @@ export function FocusRail({
   interval = 4000,
   className,
 }: FocusRailProps) {
+  const arrowIconRef = React.useRef<ArrowUpRightIconHandle>(null);
   const [active, setActive] = React.useState(initialIndex);
   const [isHovering, setIsHovering] = React.useState(false);
   const count = items.length;
@@ -378,9 +379,14 @@ export function FocusRail({
                 transition={{ duration: 0.28, delay: 0.05 }}
               >
                 <Button asChild className={projectActionButtonClass}>
-                  <Link href={activeItem.href} target="_blank">
+                  <Link
+                    href={activeItem.href}
+                    target="_blank"
+                    onMouseEnter={() => arrowIconRef.current?.startAnimation()}
+                    onMouseLeave={() => arrowIconRef.current?.stopAnimation()}
+                  >
                     Ver proyecto
-                    <ArrowUpRight size={13} strokeWidth={2.5} aria-hidden="true" />
+                    <ArrowUpRightIcon ref={arrowIconRef} size={13} className="shrink-0" />
                   </Link>
                 </Button>
               </motion.div>

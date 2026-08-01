@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
+import { flushSync } from "react-dom";
 import { getNextTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -53,6 +54,53 @@ export function ThemeToggle({
     });
   }, [isDark]);
 
+  const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const nextTheme = getNextTheme(resolvedTheme);
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (
+      typeof document === "undefined" ||
+      !document.startViewTransition ||
+      reduceMotion
+    ) {
+      setTheme(nextTheme);
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX || rect.left + rect.width / 2;
+    const y = event.clientY || rect.top + rect.height / 2;
+
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y),
+    );
+
+    const transition = document.startViewTransition(() => {
+      flushSync(() => {
+        setTheme(nextTheme);
+      });
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 480,
+          easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+          pseudoElement: "::view-transition-new(root)",
+        },
+      );
+    });
+  };
+
   return (
     <Button
       type="button"
@@ -63,7 +111,7 @@ export function ThemeToggle({
         className,
       )}
       aria-label={isDark ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
-      onClick={() => setTheme(getNextTheme(resolvedTheme))}
+      onClick={handleToggle}
     >
       <span
         ref={iconRef}
