@@ -195,7 +195,9 @@ describe("HomeSurface", () => {
     );
     expect(html).toContain('href="https://github.com/Ricardo-NM"');
     expect(html).toContain("group-hover/github-preview:pointer-events-auto");
-    expect(html).toContain("group/github-preview relative z-[80] hover:z-[150]");
+    expect(html).toContain(
+      "group/github-preview relative z-[80] hover:z-[150]",
+    );
     expect(html).toContain("left-full z-[150] hidden w-[262px]");
     expect(html).toContain("origin-left");
     expect(html).toContain("transition-[clip-path,opacity]");
@@ -233,7 +235,9 @@ describe("HomeSurface", () => {
       html.indexOf("group/linkedin-preview", desktopActionsStart),
     ).toBeGreaterThan(desktopActionsStart);
     expect(html).toContain("group/linkedin-preview");
-    expect(html).toContain("group/linkedin-preview relative z-[80] hover:z-[150]");
+    expect(html).toContain(
+      "group/linkedin-preview relative z-[80] hover:z-[150]",
+    );
     expect(html).toContain("group-hover/linkedin-preview:pointer-events-auto");
     expect(html).toContain("group-hover/linkedin-preview:delay-300");
     expect(html).toContain("group-focus-within/linkedin-preview:delay-300");
@@ -299,9 +303,13 @@ describe("HomeSurface", () => {
     }
 
     expect(html).toContain('aria-current="page"');
-    expect(html).toContain("M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z");
+    expect(html).toContain(
+      "M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",
+    );
     expect(html).toContain("M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2");
-    expect(html).toContain("M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z");
+    expect(html).toContain(
+      "M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z",
+    );
     expect(html).not.toContain('href="#acerca-de-mi"');
     expect(html).not.toContain('aria-label="Ir a Acerca de mí"');
     expect(html).not.toContain("lucide-user-round");
@@ -471,7 +479,7 @@ describe("HomeSurface", () => {
     expect(source).toContain("const projectRailItems: FocusRailItem[]");
     expect(html).toContain('data-project-focus-rail="true"');
     expect(html).toContain('aria-label="Carrusel de proyectos"');
-    expect(text).toContain("Gestión operativa – Comercio exterior");
+    expect(text).toContain("ERP para comercio exterior");
     expect(html).toContain('aria-label="Ver Totis® | Gestión de bienes"');
     expect(source).toContain('name: "KUENTAS"');
     expect(html).toContain('aria-label="Ver Xbox Card Studio"');
@@ -838,7 +846,7 @@ describe("HomeSurface", () => {
     expect(html).toContain('aria-labelledby="kpuga-tab"');
     expect(html).toContain('aria-selected="true"');
     expect(html).not.toContain("grid auto-rows-fr grid-cols-2 md:grid-cols-4");
-    expect(text).toContain("+15");
+    expect(text).toContain("+30");
     expect(text).toContain("USUARIOS");
     expect(text).toContain("VPS LINUX");
   });
@@ -924,9 +932,7 @@ describe("HomeSurface", () => {
     ].join("\n");
 
     expect(source).toContain("imageSrc: project.image.src");
-    expect(html).toContain(
-      'aria-label="Gestión operativa – Comercio exterior"',
-    );
+    expect(html).toContain('aria-label="ERP para comercio exterior"');
     expect(html).toContain('aria-label="Totis® | Gestión de bienes"');
     expect(source).toContain('name: "KUENTAS"');
     expect(html).toContain('aria-label="Xbox Card Studio"');

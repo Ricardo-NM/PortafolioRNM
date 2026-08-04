@@ -42,18 +42,17 @@ export const experiences = [
     mode: "Hibrido",
     image: experienceSecond,
     stats: [
-      { value: "+15", label: "USUARIOS" },
+      { value: "+30", label: "USUARIOS" },
       { value: "En producción", label: "VPS LINUX" },
       { value: "Centralización", label: "DE LA INFORMACIÓN" },
       { value: "ERP", label: "INTERNO" },
     ],
     bullets: [
-      "Diseñé y desarrollé una plataforma empresarial para centralizar la gestión operativa, documental y administrativa de procesos relacionados con comercio exterior.",
-      "Implementé arquitectura Full Stack utilizando Vite, React, Node.js, JavaScript, Tailwind CSS y MySQL.",
-      "Desarrollé APIs REST seguras mediante JWT y control de acceso basado en roles.",
-      "Incorporé funcionalidades en tiempo real mediante Socket.io para mejorar la comunicación interna y el seguimiento de operaciones.",
-      "Administré la infraestructura productiva sobre VPS Linux utilizando NGINX, PM2, HTTPS y políticas de seguridad orientadas a disponibilidad y protección de la información.",
-      "Participé directamente en el análisis de requerimientos, diseño técnico e implementación de funcionalidades alineadas con necesidades operativas del cliente.",
+      "Diseñé y desarrollé una plataforma empresarial para centralizar la gestión operativa, documental y administrativa de procesos relacionados con el comercio exterior.",
+      "Construí la arquitectura full stack de la plataforma utilizando React, Tailwind CSS, Node.js, Express y MySQL.",
+      "Diseñé e integré APIs REST seguras con autenticación mediante JWT y control de acceso basado en roles.",
+      "Incorporé comunicación en tiempo real con Socket.IO para facilitar la colaboración interna y el seguimiento de las operaciones.",
+      "Administré el entorno de producción en un VPS Linux mediante NGINX, PM2 y HTTPS, aplicando configuraciones orientadas a la seguridad, disponibilidad y estabilidad del sistema.",
     ],
     badges: [
       "FrontEnd",
@@ -80,12 +79,12 @@ export const experiences = [
       { value: "Digitalización", label: "DE PROCESOS" },
     ],
     bullets: [
-      "Desarrollo y mantenimiento de aplicaciones web empresariales utilizando tecnologías Full Stack.",
-      "Diseño e implementación de APIs para integración entre sistemas internos y servicios externos.",
-      "Administración de bases de datos relacionales y no relacionales para almacenamiento y consulta de información operativa.",
-      "Participación en levantamiento de requerimientos, análisis funcional y planificación bajo metodología SCRUM.",
-      "Despliegue y soporte de aplicaciones en entornos Windows Server mediante IIS.",
-      "Implementación de soluciones digitales que permitieron sustituir procesos manuales y mejorar la eficiencia operativa.",
+      "Desarrollé y mantuve aplicaciones web empresariales, implementando funcionalidades tanto en el frontend como en el backend.",
+      "Diseñé e integré APIs para facilitar la comunicación entre sistemas internos y servicios externos.",
+      "Administré bases de datos relacionales y no relacionales, realizando tareas de almacenamiento, consulta y gestión de información operativa.",
+      "Participé en el levantamiento de requerimientos, análisis funcional y planificación de actividades bajo la metodología Scrum.",
+      "Desplegué aplicaciones en entornos Windows Server mediante IIS y brindé soporte técnico para asegurar su correcto funcionamiento.",
+      " Implementé soluciones que permitieron digitalizar procesos manuales, reducir tareas repetitivas y mejorar la eficiencia operativa.",
     ],
     badges: [
       "FrontEnd",
@@ -101,7 +100,7 @@ export const experiences = [
 export const projectsData = [
   {
     id: "gestionO",
-    name: "Gestión operativa – Comercio exterior",
+    name: "ERP para comercio exterior",
     description:
       "Sistema privado orientado a centralizar procesos operativos, administrativos y documentales relacionados con gestión logística, seguimiento de referencias, control de documentos, facturación, reportes, comunicación interna y actividades de recursos humanos.",
     image: projectO,

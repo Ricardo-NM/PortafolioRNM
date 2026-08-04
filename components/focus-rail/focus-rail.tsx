@@ -235,7 +235,7 @@ export function FocusRail({
     <div
       aria-label="Carrusel de proyectos"
       className={cn(
-        "group relative flex min-h-[520px] w-full flex-col overflow-hidden bg-background text-foreground outline-none select-none",
+        "group relative flex min-h-[520px] w-full flex-col overflow-hidden bg-background text-foreground outline-none",
         className,
       )}
       data-project-focus-rail="true"
@@ -257,7 +257,7 @@ export function FocusRail({
       </div>
 
       <div className="relative z-10 flex flex-1 flex-col justify-center py-6">
-        <div className="relative mx-auto flex h-[220px] w-full max-w-5xl touch-pan-y items-center justify-center overflow-visible [perspective:900px] sm:h-[300px] sm:[perspective:1200px]">
+        <div className="relative mx-auto flex h-[220px] w-full max-w-5xl touch-pan-y items-center justify-center overflow-visible select-none [perspective:900px] sm:h-[300px] sm:[perspective:1200px]">
           {visibleRailItems.map(({ distance, isCenter, item, offset }) => {
             const xOffset = offset * (isMobileRail ? 210 : 320);
             const zOffset = -distance * (isMobileRail ? 80 : 180);
