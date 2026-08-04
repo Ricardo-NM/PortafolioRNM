@@ -144,7 +144,7 @@ export function SkillsSection() {
     <section
       id="habilidades"
       aria-labelledby="skills-title"
-      className="relative scroll-mt-24 bg-background px-3 section-deferred"
+      className="relative scroll-mt-24 bg-background px-3"
       data-scroll-section
     >
       <div className="skills-section-title-row relative flex h-12 items-center">

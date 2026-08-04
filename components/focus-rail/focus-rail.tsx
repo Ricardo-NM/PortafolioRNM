@@ -194,10 +194,12 @@ export function FocusRail({
     { offset, velocity }: PanInfo,
   ) {
     const swipe = swipePower(offset.x, velocity.x);
+    const threshold = isMobileRail ? 4000 : swipeConfidenceThreshold;
+    const minDistance = isMobileRail ? 40 : 80;
 
-    if (swipe < -swipeConfidenceThreshold) {
+    if (swipe < -threshold || offset.x < -minDistance) {
       handleNext();
-    } else if (swipe > swipeConfidenceThreshold) {
+    } else if (swipe > threshold || offset.x > minDistance) {
       handlePrev();
     }
   }
@@ -207,7 +209,8 @@ export function FocusRail({
       return [];
     }
 
-    const visibleOffsets = count < 5 ? [-1, 0, 1] : [-2, -1, 0, 1, 2];
+    const defaultOffsets = count < 5 ? [-1, 0, 1] : [-2, -1, 0, 1, 2];
+    const visibleOffsets = isMobileRail ? [-1, 0, 1] : defaultOffsets;
 
     return visibleOffsets.flatMap((offset) => {
       const absoluteIndex = active + offset;
@@ -225,7 +228,7 @@ export function FocusRail({
         },
       ];
     });
-  }, [active, count, items, loop]);
+  }, [active, count, isMobileRail, items, loop]);
 
   if (count === 0 || !activeItem) {
     return null;
@@ -260,7 +263,7 @@ export function FocusRail({
         <div className="relative mx-auto flex h-[220px] w-full max-w-5xl touch-pan-y items-center justify-center overflow-visible select-none [perspective:900px] sm:h-[300px] sm:[perspective:1200px]">
           {visibleRailItems.map(({ distance, isCenter, item, offset }) => {
             const xOffset = offset * (isMobileRail ? 210 : 320);
-            const zOffset = -distance * (isMobileRail ? 80 : 180);
+            const zOffset = isMobileRail ? 0 : -distance * 180;
             const sideScale = isMobileRail ? 0.92 : 0.84;
             const scale = isCenter ? 1 : sideScale;
             const rotateY = isMobileRail ? 0 : offset * -20;
@@ -268,6 +271,20 @@ export function FocusRail({
             const shouldUseHeavyEffects = !isMobileRail;
             const blur = shouldUseHeavyEffects ? distance * 3 : 0;
             const brightness = shouldUseHeavyEffects ? (isCenter ? 1 : 0.72) : 1;
+
+            const transitionConfig = isMobileRail
+              ? {
+                  duration: 0.22,
+                  ease: [0.25, 1, 0.5, 1],
+                }
+              : {
+                  filter: BASE_SPRING,
+                  opacity: BASE_SPRING,
+                  rotateY: BASE_SPRING,
+                  scale: TAP_SPRING,
+                  x: BASE_SPRING,
+                  z: BASE_SPRING,
+                };
 
             return (
               <motion.button
@@ -305,14 +322,18 @@ export function FocusRail({
                 style={{
                   willChange: "transform, opacity",
                 }}
-                transition={{
-                  filter: BASE_SPRING,
-                  opacity: BASE_SPRING,
-                  rotateY: BASE_SPRING,
-                  scale: TAP_SPRING,
-                  x: BASE_SPRING,
-                  z: BASE_SPRING,
-                }}
+                transition={
+                  isMobileRail
+                    ? { duration: 0.22, ease: [0.25, 1, 0.5, 1] }
+                    : {
+                        filter: BASE_SPRING,
+                        opacity: BASE_SPRING,
+                        rotateY: BASE_SPRING,
+                        scale: TAP_SPRING,
+                        x: BASE_SPRING,
+                        z: BASE_SPRING,
+                      }
+                }
                 type="button"
                 whileTap={isCenter ? { scale: 0.98 } : undefined}
               >
@@ -342,7 +363,7 @@ export function FocusRail({
                 exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
                 initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
                 key={activeItem.id}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: isMobileRail ? 0.2 : 0.3 }}
               >
                 <h3 className="text-xl font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5] sm:text-2xl">
                   {activeItem.title}
@@ -376,7 +397,7 @@ export function FocusRail({
                 exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
                 initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
                 key={activeItem.id}
-                transition={{ duration: 0.28, delay: 0.05 }}
+                transition={{ duration: isMobileRail ? 0.18 : 0.28, delay: isMobileRail ? 0.02 : 0.05 }}
               >
                 <Button asChild className={projectActionButtonClass}>
                   <Link

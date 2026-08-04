@@ -94,35 +94,32 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
         gsap.to(targets, {
           autoAlpha: 1,
           y: 0,
-          scale: 1,
-          duration: 0.54,
-          ease: "power3.out",
-          stagger: 0.055,
+          duration: 0.48,
+          ease: "power2.out",
+          stagger: 0.04,
           overwrite: "auto",
-          clearProps: "willChange",
+          clearProps: "willChange,transform,opacity,visibility",
         });
       };
 
       gsap.set(sectionTargets, {
         autoAlpha: 0,
-        y: 30,
-        scale: 0.99,
+        y: 18,
       });
 
       ScrollTrigger.batch(sectionTargets, {
-        start: "top 88%",
+        start: "top 90%",
         once: true,
         onEnter: revealIn,
       });
 
       gsap.set(revealTargets, {
         autoAlpha: 0,
-        y: 22,
-        scale: 0.985,
+        y: 14,
       });
 
       ScrollTrigger.batch(revealTargets, {
-        start: "top 88%",
+        start: "top 90%",
         once: true,
         onEnter: revealIn,
       });
@@ -140,13 +137,12 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
 
       gsap.fromTo(
         ".profile-section",
-        { autoAlpha: 0, y: 16, scale: 0.985 },
+        { autoAlpha: 0, y: 14 },
         {
           autoAlpha: 1,
           y: 0,
-          scale: 1,
-          duration: 0.62,
-          ease: "power3.out",
+          duration: 0.5,
+          ease: "power2.out",
           clearProps: "transform,opacity,visibility",
         },
       );

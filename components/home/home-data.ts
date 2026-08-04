@@ -155,7 +155,7 @@ export const projectsData = [
     id: "xboxCardStudio",
     name: "Xbox Card Studio",
     description:
-      "Aplicación web interactiva diseñada para la comunidad gamer que permite generar tarjetas de perfil personalizadas de Xbox Live en formato vertical y en alta resolución, listas para compartir en redes sociales.",
+      "Herramienta web creada para la comunidad gamer que permite sincronizar tu perfil de Xbox y personalizar manualmente una tarjeta de jugador con estética premium. Diseñada con formato 9:16, degradados dinámicos, insignias personalizadas, métricas de juegos y estadísticas reales, diseñadas especialmente para compartir en redes sociales.",
     image: projectF,
     link: "https://xcs.rnm.com.mx/",
     tech: [

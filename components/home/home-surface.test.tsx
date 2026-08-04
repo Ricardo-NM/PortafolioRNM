@@ -485,9 +485,7 @@ describe("HomeSurface", () => {
     expect(html).toContain('aria-label="Ver Xbox Card Studio"');
     expect(text).toContain("Sistema privado orientado a centralizar procesos");
     expect(source).toContain("Sistema web orientado a la gestión");
-    expect(source).toContain(
-      "Aplicación web interactiva diseñada para la comunidad gamer",
-    );
+    expect(source).toContain("Herramienta web creada para la comunidad gamer");
     expect(html).toContain('href="https://ricardo-nm.github.io/K-PUGA-Docs/"');
     expect(source).toContain(
       'link: "https://ricardo-nm.github.io/totis-gdb-docs/"',
