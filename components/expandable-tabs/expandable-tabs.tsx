@@ -57,7 +57,23 @@ export function ExpandableTabs({
   const [settledSelected, setSettledSelected] = React.useState(selected);
   const settledSelectedRef = React.useRef(selected);
   const labelRefs = React.useRef(new Map<number, HTMLSpanElement>());
+  const trailingActionRef = React.useRef<HTMLDivElement | null>(null);
   const hasAnimatedLabels = React.useRef(false);
+
+  React.useEffect(() => {
+    if (trailingActionVisible) {
+      return;
+    }
+
+    const activeElement = document.activeElement;
+
+    if (
+      activeElement instanceof HTMLElement &&
+      trailingActionRef.current?.contains(activeElement)
+    ) {
+      activeElement.blur();
+    }
+  }, [trailingActionVisible]);
 
   React.useLayoutEffect(() => {
     const previousSettledSelected = settledSelectedRef.current;
@@ -189,7 +205,8 @@ export function ExpandableTabs({
       })}
       {trailingAction && (
         <div
-          aria-hidden={!trailingActionVisible}
+          ref={trailingActionRef}
+          inert={!trailingActionVisible}
           className={cn(
             "flex h-9 w-11 shrink-0 overflow-hidden pl-2",
             trailingActionVisible ? "pointer-events-auto" : "pointer-events-none",

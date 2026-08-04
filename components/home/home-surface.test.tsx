@@ -617,12 +617,9 @@ describe("HomeSurface", () => {
     expect(source).toContain("data-active={isCenter}");
     expect(source).toContain("project-copy-motion");
     expect(source).toContain("key={activeItem.id}");
-    expect(source).toContain(
-      'initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}',
-    );
-    expect(source).toContain(
-      'exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}',
-    );
+    expect(source).toContain('useReducedMotion');
+    expect(source).toContain('mode="popLayout"');
+    expect(source).toContain('transition={{ duration: copyFadeDuration, ease: "easeOut" }}');
     expect(source).toContain("project-action-motion");
     expect(source).toContain("projectActionButtonClass");
     expect(source).toContain(
@@ -655,7 +652,9 @@ describe("HomeSurface", () => {
     expect(source).toContain("visibleRailItems");
     expect(source).toContain("React.useMemo");
     expect(source).toContain("useMediaQuery");
-    expect(source).toContain('willChange: "transform, opacity"');
+    expect(source).toContain(
+      'willChange: isCenter ? "transform, opacity" : undefined',
+    );
     expect(source).not.toContain('willChange: "transform, opacity, filter"');
     expect(source).not.toContain(
       "const blur = isCenter ? 0 : distance * (isMobileRail ? 1.4 : 3)",

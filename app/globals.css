@@ -53,6 +53,28 @@ body {
   -ms-overflow-style: none;
 }
 
+html.theme-fade::after {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 1;
+}
+
+html.theme-fade-to-light::after {
+  background: #fff;
+}
+
+html.theme-fade-to-dark::after {
+  background: #000;
+}
+
+html.theme-fade-ready::after {
+  opacity: 0;
+  transition: opacity 320ms ease-out;
+}
+
 html.lenis,
 html.lenis body {
   height: auto;

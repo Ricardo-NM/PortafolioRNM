@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   AnimatePresence,
   motion,
+  useReducedMotion,
   type PanInfo,
   type Transition,
 } from "framer-motion";
@@ -146,6 +147,9 @@ export function FocusRail({
   const activeIndex = count > 0 ? wrap(0, count, active) : 0;
   const activeItem = items[activeIndex];
   const isMobileRail = useMediaQuery("(max-width: 639px)");
+  const prefersReducedMotion = useReducedMotion();
+  const copyFadeDuration = prefersReducedMotion ? 0 : isMobileRail ? 0.16 : 0.24;
+  const copyFadeOffset = prefersReducedMotion ? 0 : isMobileRail ? 4 : 8;
 
   const handlePrev = React.useCallback(() => {
     if (count === 0 || (!loop && active === 0)) {
@@ -272,20 +276,6 @@ export function FocusRail({
             const blur = shouldUseHeavyEffects ? distance * 3 : 0;
             const brightness = shouldUseHeavyEffects ? (isCenter ? 1 : 0.72) : 1;
 
-            const transitionConfig = isMobileRail
-              ? {
-                  duration: 0.22,
-                  ease: [0.25, 1, 0.5, 1],
-                }
-              : {
-                  filter: BASE_SPRING,
-                  opacity: BASE_SPRING,
-                  rotateY: BASE_SPRING,
-                  scale: TAP_SPRING,
-                  x: BASE_SPRING,
-                  z: BASE_SPRING,
-                };
-
             return (
               <motion.button
                 aria-label={`Ver ${item.title}`}
@@ -319,9 +309,7 @@ export function FocusRail({
                   }
                 }}
                 onDragEnd={isCenter ? handleCardDragEnd : undefined}
-                style={{
-                  willChange: "transform, opacity",
-                }}
+                style={{ willChange: isCenter ? "transform, opacity" : undefined }}
                 transition={
                   isMobileRail
                     ? { duration: 0.22, ease: [0.25, 1, 0.5, 1] }
@@ -354,22 +342,23 @@ export function FocusRail({
           })}
         </div>
 
-        <div className="mx-auto mt-8 flex w-full max-w-4xl flex-col items-center justify-between gap-5 px-4 sm:px-6 min-[1200px]:flex-row">
-          <div className="min-h-28 flex-1 text-center min-[1200px]:text-left">
-            <AnimatePresence mode="wait">
-              <motion.div
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                className="project-copy-motion"
-                exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                key={activeItem.id}
-                transition={{ duration: isMobileRail ? 0.2 : 0.3 }}
-              >
+        <div className="mx-auto mt-8 w-full max-w-4xl px-4 sm:px-6 min-[1200px]:flex min-[1200px]:items-center">
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              className="flex w-full flex-col items-center justify-between gap-4 text-center min-[1200px]:flex-row min-[1200px]:text-left"
+              exit={{ opacity: 0, y: -copyFadeOffset }}
+              initial={{ opacity: 0, y: copyFadeOffset }}
+              key={activeItem.id}
+              transition={{ duration: copyFadeDuration, ease: "easeOut" }}
+            >
+              <div className="flex-1">
+                <div className="project-copy-motion">
                 <h3 className="text-xl font-bold leading-tight text-[#18181b] dark:text-[#f4f4f5] sm:text-2xl">
                   {activeItem.title}
                 </h3>
                 {activeItem.description ? (
-                  <p className="mt-3 max-w-2xl text-[13px] font-medium leading-relaxed text-[#52525c] dark:text-[#a1a1aa] sm:text-sm">
+                  <p className="mt-4 max-w-2xl text-[13px] font-medium leading-relaxed text-[#52525c] dark:text-[#a1a1aa] sm:text-sm">
                     {activeItem.description}
                   </p>
                 ) : null}
@@ -385,20 +374,11 @@ export function FocusRail({
                     ))}
                   </ul>
                 ) : null}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+                </div>
+              </div>
 
-          <AnimatePresence mode="wait">
-            {activeItem.href ? (
-              <motion.div
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                className="project-action-motion shrink-0"
-                exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                key={activeItem.id}
-                transition={{ duration: isMobileRail ? 0.18 : 0.28, delay: isMobileRail ? 0.02 : 0.05 }}
-              >
+              {activeItem.href ? (
+                <div className="project-action-motion shrink-0">
                 <Button asChild className={projectActionButtonClass}>
                   <Link
                     href={activeItem.href}
@@ -410,8 +390,9 @@ export function FocusRail({
                     <ArrowUpRightIcon ref={arrowIconRef} size={13} className="shrink-0" />
                   </Link>
                 </Button>
-              </motion.div>
-            ) : null}
+                </div>
+              ) : null}
+            </motion.div>
           </AnimatePresence>
         </div>
       </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { gsap } from "gsap";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
@@ -25,13 +24,14 @@ const themeToggleButtonClass =
 const themeTabButtonClass =
   "h-9 min-w-9 w-9 rounded-xl border-0 bg-muted p-0 text-[#18181b] shadow-none hover:border-0 hover:bg-muted hover:text-[#18181b] dark:bg-muted dark:text-[#f4f4f5] dark:hover:bg-muted dark:hover:text-[#f4f4f5]";
 
+const themeFadeDuration = 320;
+
 export function ThemeToggle({
   className,
   iconSize = 16,
   appearance = "banner",
 }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();
-  const iconRef = React.useRef<HTMLSpanElement | null>(null);
   const mounted = React.useSyncExternalStore(
     subscribe,
     getClientSnapshot,
@@ -39,33 +39,63 @@ export function ThemeToggle({
   );
 
   const isDark = mounted ? resolvedTheme === "dark" : true;
+  const themeFadeTimeoutRef = React.useRef<number | null>(null);
 
-  React.useEffect(() => {
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+  const handleTouchThemeChange = (nextTheme: "light" | "dark") => {
+    const root = document.documentElement;
 
-    gsap.to(iconRef.current, {
-      rotate: isDark ? 0 : 90,
-      scale: 1,
-      duration: reduceMotion ? 0 : 0.18,
-      ease: "power2.out",
-      overwrite: "auto",
+    if (themeFadeTimeoutRef.current !== null) {
+      window.clearTimeout(themeFadeTimeoutRef.current);
+    }
+
+    root.classList.remove(
+      "theme-fade",
+      "theme-fade-ready",
+      "theme-fade-to-light",
+      "theme-fade-to-dark",
+    );
+    root.classList.add(
+      "theme-fade",
+      nextTheme === "light" ? "theme-fade-to-light" : "theme-fade-to-dark",
+    );
+
+    setTheme(nextTheme);
+
+    window.requestAnimationFrame(() => {
+      root.classList.add("theme-fade-ready");
     });
-  }, [isDark]);
+
+    themeFadeTimeoutRef.current = window.setTimeout(() => {
+      root.classList.remove(
+        "theme-fade",
+        "theme-fade-ready",
+        "theme-fade-to-light",
+        "theme-fade-to-dark",
+      );
+      themeFadeTimeoutRef.current = null;
+    }, themeFadeDuration + 40);
+  };
 
   const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     const nextTheme = getNextTheme(resolvedTheme);
     const reduceMotion =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isTouchDevice =
+      typeof window !== "undefined" &&
+      window.matchMedia("(pointer: coarse)").matches;
 
     if (
       typeof document === "undefined" ||
       !document.startViewTransition ||
-      reduceMotion
+      reduceMotion ||
+      isTouchDevice
     ) {
-      setTheme(nextTheme);
+      if (isTouchDevice && !reduceMotion && typeof document !== "undefined") {
+        handleTouchThemeChange(nextTheme);
+      } else {
+        setTheme(nextTheme);
+      }
       return;
     }
 
@@ -93,7 +123,7 @@ export function ThemeToggle({
           ],
         },
         {
-          duration: 480,
+          duration: 260,
           easing: "cubic-bezier(0.4, 0, 0.2, 1)",
           pseudoElement: "::view-transition-new(root)",
         },
@@ -114,10 +144,9 @@ export function ThemeToggle({
       onClick={handleToggle}
     >
       <span
-        ref={iconRef}
         aria-hidden="true"
         className={cn(
-          "inline-flex items-center justify-center",
+          "inline-flex items-center justify-center transition-transform duration-150 ease-out",
           appearance === "tab" &&
             "text-[#18181b] opacity-100 dark:text-[#f4f4f5]",
         )}
